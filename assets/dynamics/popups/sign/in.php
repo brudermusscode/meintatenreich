@@ -23,7 +23,7 @@
                             <p class="trimfull">Nutzername oder E-Mail</p>
                         </div>
                         <div class="posrel">
-                            <input value="Justin" type="text" name="mail" placeholder="" class="tran-all">
+                            <input value="brudermusscode" type="text" name="mail" placeholder="" class="tran-all">
                             <div class="posabs" style="right:0;top:0;line-height:32px;width:32px;height:32px;text-align:center;">
                                 <i class="icon-user"></i>
                             </div>
@@ -34,7 +34,7 @@
                             <p class="trimfull">Passwort</p>
                         </div>
                         <div class="posrel">
-                            <input value="kek" type="password" name="password" placeholder="" class="tran-all">
+                            <input value="hallo123" type="password" name="password" placeholder="" class="tran-all">
                             <div class="posabs" style="right:0;top:0;line-height:32px;width:32px;height:32px;text-align:center;">
                                 <i class="icon-key-1"></i>
                             </div>

@@ -26,7 +26,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             </div>
                             <div class="input">
                                 <div class="actual">
-                                    <input class="tran-all" name="firstname" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn && strlen($user->firstname) > 0) echo $user->firstname; ?>">
+                                    <input class="tran-all" name="firstname" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn && strlen($my->firstname) > 0) echo $my->firstname; ?>">
                                 </div>
                             </div>
                         </div>
@@ -37,7 +37,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             </div>
                             <div class="input">
                                 <div class="actual">
-                                    <input class="tran-all" name="secondname" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn && strlen($user->secondname) > 0) echo $user->secondname; ?>">
+                                    <input class="tran-all" name="secondname" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn && strlen($my->secondname) > 0) echo $my->secondname; ?>">
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             </div>
                             <div class="input">
                                 <div class="actual">
-                                    <input class="tran-all" name="ref" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn) echo $user->mail; ?>">
+                                    <input class="tran-all" name="ref" type="text" placeholder="" autocomplete="off" value="<?php if ($loggedIn) echo $my->mail; ?>">
                                 </div>
                             </div>
                         </div>

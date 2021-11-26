@@ -31,7 +31,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
 
             <div class="body">
                 <div class="desc">
-                    <p>Für Sicherheitseinstellungen gehe bitte zur <a href="/a/security">Sicherheits-Abteilung</a></p>
+                    <p>Für Sicherheitseinstellungen gehe bitte zur <a href="/my/security">Sicherheits-Abteilung</a></p>
                 </div>
 
                 <form data-form="settings">

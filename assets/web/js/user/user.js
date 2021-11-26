@@ -134,7 +134,7 @@ $(function(){
         
         if(pwo === '' || pw1 === '' || pw2 === '') {
             showDialer('Bitte fülle alle Felder aus!');
-        } else if(pw1 !== pw2) {
+        } else if(!pw1 == pw2) {
             showDialer('Ihre neuen Passwörter stimmen nicht überein!');
         } else {
             
@@ -151,32 +151,32 @@ $(function(){
             
             $.ajax({
                 
+                url: url,
                 data: formData,
-                url: '/ajax/changepassword',
                 method: 'POST',
                 type: 'TEXT',
                 success: function(data) {
-                    
+
                     switch(data) {
                         case '0':
-                            res = 'Ein unbekannter Fehler ist aufgetreten!';
+                            res = 'Ein unbekannter Fehler ist aufgetreten';
                             break;
                         case '1':
-                            res = 'Ihre Passwörter stimmen nicht überein!';
+                            res = 'Das derzeitig verwendete Passwort ist falsch';
                             break;
                         case '2':
-                            res = 'Bitte verwenden Sie für Ihr neues Passwort nicht das alte!';
+                            res = 'Die Passwordbestätigung war ungültig';
                             break;
                         case '3':
-                            res = 'Ihr derzeitiges Passwort ist falsch!';
+                            res = 'Bitte verwende nicht dein altes Passwort';
                             break;
                         case '4':
-                            res = 'Ihr Passwort sollte zu Ihrer Sicherheit mindestens 8 Zeichen lang sein!';
+                            res = 'Das Passwort sollte mindestens aus 8 Zeichen bestehen';
                             break;
                         case '5':
                             res = 'Ihr Passwort enthält ungültige Zeichen!';
                             var pwcreact = $('[data-react="change-password"]');
-                            pwcreact.html('Gültige Zeichen sind: a-z, A-Z, 0-9, =.,_-+*#~?!&%$§/');
+                            pwcreact.html('Gültige Zeichen sind: a-z, A-Z, 0-9, =.,_-+*#~?!&%$§');
                             break;
                         default:
                             res = 'Ihr Passwort wurde erfolgreich geändert!';
@@ -196,6 +196,9 @@ $(function(){
                         wcOverlay.remove();
                     }, 200);
                     
+                },
+                error: function(data) {
+                    // nothing so far
                 }
                 
             });

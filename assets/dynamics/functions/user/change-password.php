@@ -2,6 +2,8 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
+$pdo->beginTransaction();
+
 if (
     isset($_REQUEST['oldpass'], $_REQUEST['newpass'], $_REQUEST['newpass2'])
     && $_REQUEST['oldpass'] !== ''
@@ -10,68 +12,63 @@ if (
     && $loggedIn
 ) {
 
-    // VARS
-    $oldpass = md5($_REQUEST['oldpass']);
-    $newpass = $_REQUEST['newpass'];
-    $newpass2 = $_REQUEST['newpass2'];
+    // variablize
+    $inputPasswordOld = $_REQUEST['oldpass'];
+    $inputPasswordNew = $_REQUEST['newpass'];
+    $inputPasswordNew2 = $_REQUEST['newpass2'];
     $uid = $my->id;
 
-    // check for equality between both passwords
-    if ($newpass === $newpass2) {
+    // check if old entered password matches the current one
+    if (password_verify($inputPasswordOld, $my->password)) {
 
-        // check if the password matches the current one
-        if (md5($newpass) !== $my->password) {
+        // check for equality between both passwords
+        if ($inputPasswordNew === $inputPasswordNew2) {
 
-            // check if current password is correct
-            if ($oldpass === $my->password) {
+            // check if current password is equal to new
+            if (!password_verify($inputPasswordNew, $my->password)) {
 
                 // check if the password is higher in length than x symbols
-                if (strlen($newpass) >= 8) {
+                if (strlen($inputPasswordNew) >= 8) {
 
                     // validate new password
-                    if (preg_match('/[^a-zA-Z0-9=.,_\-+*#~?!&%$§]/i', $newpass)) {
+                    if (!preg_match('/[^a-z0-9=.,_\-+*#~?!&%$§]/i', $inputPasswordNew)) {
 
-                        // MD5ify
-                        $newpass = md5($_REQUEST['newpass']);
-                        $newpass2 = md5($_REQUEST['newpass2']);
+                        // encrypt new password
+                        $newPassword = password_hash($inputPasswordNew, PASSWORD_DEFAULT);
 
-                        $update = $c->prepare("UPDATE customer SET password = ? WHERE id = ?");
-                        $update->bind_param('ss', $newpass, $uid);
-                        $update->execute();
+                        // update current password
+                        $update = $pdo->prepare("UPDATE customer SET password = ? WHERE id = ?");
+                        $update->execute([$newPassword, $uid]);
 
-                        $insert = $c->prepare("INSERT INTO customer_password_changes (uid, password, timestamp) VALUES (?,?,?)");
-                        $insert->bind_param('sss', $uid, $newpass, $timestamp);
-                        $insert->execute();
+                        // insert password change
+                        $insert = $pdo->prepare("INSERT INTO customer_password_changes (uid, password) VALUES (?,?)");
+                        $insert->execute([$uid, $newPassword]);
 
                         if ($update && $insert) {
-                            $c->commit();
-                            $c->close();
-                            $insert->close();
-                            $update->close();
+
+                            $pdo->commit();
                             exit('success');
                         } else {
-                            $c->rollback();
-                            $c->close();
-                            $insert->close();
-                            $update->close();
+
+                            $pdo->rollback();
                             exit('0');
                         }
                     } else {
                         exit('5'); // Invalid characters
                     }
                 } else {
-                    exit('4'); // New password too short
+                    exit('4'); // new password too short
                 }
             } else {
-                exit('3'); // Old password not matching
+                exit('3'); // used old password for new
             }
         } else {
-            exit('2'); // Passwords are the same
+            exit('2'); // passwords not matching
         }
     } else {
-        exit('1'); // Passwords not matching
+        exit('1'); // old password is wrong
     }
 } else {
 
-    exit;
+    exit("0");
 }
