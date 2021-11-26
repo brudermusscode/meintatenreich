@@ -1,0 +1,212 @@
+# [NC]: non case sensitive, cusTom, CuStOmm or just custom - doesn't matter then
+# [L]: last rule a specific condition will match
+
+Header set Access-Control-Allow-Origin "*"
+
+<ifModule mod_rewrite.c>
+
+    RewriteEngine on
+
+    # Remove "includeSubDomains" if you don't want to enforce HSTS on all subdomains
+    Header always set Strict-Transport-Security "max-age=31536000;includeSubDomains"
+
+</ifModule>
+
+# directory browsing
+Options All -Indexes
+
+# custom error pages
+ErrorDocument 500 /error.php
+ErrorDocument 401 /error.php
+ErrorDocument 404 /error.php
+RewriteRule ^oops(|)$ error.php
+
+# force https
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{REMOTE_ADDR} !^127\.0\.0\.1$
+RewriteCond %{HTTPS} !on
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+# force www.
+RewriteCond %{HTTP_HOST} ^meintatenreich\.de [NC]
+RewriteRule ^(.*)$ https://www.meintatenreich.de/$1 [R=301,NC,L]
+
+# pretty urls
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^([^.]+)$ $1.php [NC,L]
+
+# remove trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} /(.*)/$
+RewriteRule ^ /%1 [R=301,L]
+
+# dynamic sites
+RewriteRule ^ajax/(.*) assets/dynamics/$1 [NC,L]
+
+# courses
+RewriteRule ^course/(.*)$ courses/index.php?cid=$1 [NC,L]
+
+# customers
+RewriteRule ^my/(.*) customers/$1 [NC,L]
+RewriteRule ^my/bill/(..*)$ customers/pdf_test.php?pdfid=$1 [NC,L]
+RewriteRule ^my/sepa/(..*)$ customers/sepa.php?pmid=$1 [NC,L]
+
+# productview
+RewriteRule ^product/(.*)$ productview.php?artnr=$1 [NC,L]
+
+
+# ----------------------------------------------------------------------
+
+
+# OLD REMOVE PLEASE <> ALL
+RewriteRule ^x-adminauthprogress(|/)$ K4Bzb5RM72YpGGC.phps
+
+RewriteRule ^verify(|/)$ verify.php
+RewriteRule ^newpassword(|/)$ verify.password.php
+RewriteRule ^shop(|/)$ index.php
+RewriteRule ^search(|/)$ search.php
+RewriteRule ^maintenance(|/)$ maintenance.php
+RewriteRule ^scard(|/)$ scard.php
+RewriteRule ^scardsuccess(|/)$ scard_success.php
+RewriteRule ^contact(|/)$ contact.php
+
+
+# Intern
+RewriteRule ^intern(|/)$ intern/index.php
+RewriteRule ^intern/imprint(|/)$ intern/imprint.php
+RewriteRule ^intern/disclaimer(|/)$ intern/disclaimer.php
+RewriteRule ^intern/sepa(|/)$ intern/sepa.php
+
+# JS GET CONTENT
+# >> Global
+RewriteRule ^get/settings(|/)$ assets/dynamics/content/settings.php
+RewriteRule ^get/changepassword(|/)$ assets/dynamics/content/changepassword.php
+RewriteRule ^get/paymentmethod(|/)$ assets/dynamics/content/paymentmethod.php
+RewriteRule ^get/editpaymentmethod(|/)$ assets/dynamics/content/edit-paymentmethod.php
+RewriteRule ^get/address(|/)$ assets/dynamics/content/address.php
+RewriteRule ^get/editaddress(|/)$ assets/dynamics/content/edit-address.php
+RewriteRule ^get/search(|/)$ assets/dynamics/content/search.php
+# >> Login
+RewriteRule ^get/login(|/)$ assets/dynamics/content/login.php
+RewriteRule ^get/fgp(|/)$ assets/dynamics/content/login/forgot-password.php
+RewriteRule ^get/signup(|/)$ assets/dynamics/content/signup.php
+# >> Maintenance
+RewriteRule ^get/handlettering(|/)$ assets/dynamics/content/maintenance/handlettering.php
+RewriteRule ^get/mixedmedia(|/)$ assets/dynamics/content/maintenance/mixedmedia.php
+RewriteRule ^get/projectwith(|/)$ assets/dynamics/content/maintenance/projectwith.php
+RewriteRule ^get/maintenance(|/)$ assets/dynamics/content/maintenance/index.php
+# >> Products
+RewriteRule ^get/products(|/)$ assets/dynamics/content/products/index.php
+RewriteRule ^get/productviewdesc(|/)$ assets/dynamics/content/products/desc.php
+RewriteRule ^get/imageviewer(|/)$ assets/dynamics/content/products/image-viewer.php
+RewriteRule ^get/addrating(|/)$ assets/dynamics/content/products/add-rating.php
+RewriteRule ^get/myrating(|/)$ assets/dynamics/content/elem/my-rating.php
+RewriteRule ^get/searchRequest(|/)$ assets/dynamics/content/products/search-request.php
+# >> Scard
+RewriteRule ^get/accountsscard(|/)$ assets/dynamics/content/scard/accounts-scard.php
+RewriteRule ^get/pricing(|/)$ assets/dynamics/content/scard/pricing.php
+RewriteRule ^get/overview(|/)$ assets/dynamics/content/scard/overview.php
+
+
+# JS GET ELEMENTS
+RewriteRule ^elem/paymentmethod(|/)$ assets/dynamics/content/elem/paymentmethod.php
+RewriteRule ^elem/confirmdelete(|/)$ assets/dynamics/content/elem/confirm-delete.php
+RewriteRule ^elem/confirmcancelorder(|/)$ assets/dynamics/content/elem/confirm-cancel-order.php
+RewriteRule ^elem/address(|/)$ assets/dynamics/content/elem/address.php
+
+
+
+
+######### ADMIN PAGE ##########
+RewriteRule ^hk/admin/v1/secret/overview(|/)$ housekeeping/index.php
+RewriteRule ^hk/admin/v1/secret/overview/messages(|/)$ housekeeping/messages.php
+RewriteRule ^hk/admin/v1/secret/manage/orders(|/)$ housekeeping/manage/orders.php
+RewriteRule ^hk/admin/v1/secret/manage/customers(|/)$ housekeeping/manage/customers.php
+RewriteRule ^hk/admin/v1/secret/manage/app(|/)$ housekeeping/manage/app.php
+RewriteRule ^hk/admin/v1/secret/manage/products(|/)$ housekeeping/manage/products.php
+RewriteRule ^hk/admin/v1/secret/manage/ratings(|/)$ housekeeping/manage/ratings.php
+RewriteRule ^hk/admin/v1/secret/manage/courses(|/)$ housekeeping/manage/courses.php
+RewriteRule ^hk/admin/v1/secret/functions/mailer(|/)$ housekeeping/functions/mailer.php
+
+
+# AP: JS GET => Elements #
+RewriteRule ^hk/get/elements/manage/products/addimage(|/)$ housekeeping/assets/dynamics/elements/manage/products/add.image.php
+RewriteRule ^hk/get/elements/manage/courses/date(|/)$ housekeeping/assets/dynamics/elements/manage/courses/date.php
+
+# AP: JS GET #
+RewriteRule ^hk/get/overview/all(|/)$ housekeeping/assets/dynamics/content/overview/all.php
+RewriteRule ^hk/get/overview/all/orders(|/)$ housekeeping/assets/dynamics/content/overview/filter/orders.php
+RewriteRule ^hk/get/overview/all/customers(|/)$ housekeeping/assets/dynamics/content/overview/filter/customers.php
+RewriteRule ^hk/get/overview/all/ratings(|/)$ housekeeping/assets/dynamics/content/overview/filter/ratings.php
+
+# AP: JS GET, MANAGE => Orders #
+RewriteRule ^hk/get/overview/messages(|/)$ housekeeping/assets/dynamics/content/overview/messages/got.sent.php
+
+# AP: JS GET, MANAGE => Orders #
+RewriteRule ^hk/get/manage/orders/order(|/)$ housekeeping/assets/dynamics/content/manage/orders/manage.order.php
+
+# AP: JS GET, MANAGE => Customers #
+RewriteRule ^hk/get/manage/customers/sendcustommail(|/)$ housekeeping/assets/dynamics/content/manage/customers/send.custom.mail.php
+RewriteRule ^hk/get/manage/customers/overview(|/)$ housekeeping/assets/dynamics/content/manage/customers/overview.php
+RewriteRule ^hk/get/manage/customers/orders(|/)$ housekeeping/assets/dynamics/content/manage/customers/orders.php
+
+# AP: JS GET, MANAGE => Courses #
+RewriteRule ^hk/get/manage/course(|/)$ housekeeping/assets/dynamics/content/manage/courses/manage.course.php
+RewriteRule ^hk/get/manage/course/add(|/)$ housekeeping/assets/dynamics/content/manage/courses/add.php
+RewriteRule ^hk/get/manage/course/dates(|/)$ housekeeping/assets/dynamics/content/manage/courses/manage.dates.php
+
+# AP: JS GET, MANAGE => Products #
+RewriteRule ^hk/get/manage/product/edit(|/)$ housekeeping/assets/dynamics/content/manage/products/edit.php
+RewriteRule ^hk/get/manage/product/add(|/)$ housekeeping/assets/dynamics/content/manage/products/add.php
+RewriteRule ^hk/get/manage/product/category/add(|/)$ housekeeping/assets/dynamics/content/manage/products/add.category.php
+RewriteRule ^hk/get/manage/product/category/edit(|/)$ housekeeping/assets/dynamics/content/manage/products/edit.category.php
+
+# AP: JS GET, FUNCTIONS => Mailer #
+RewriteRule ^hk/get/func/mailer(|/)$ housekeeping/assets/dynamics/content/functions/mailer.php
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+# AP: JS FUNC, GLOBAL #
+RewriteRule ^hk/ajax/global/messages(|/)$ housekeeping/assets/dynamics/cronjobs/msg.php
+
+
+# AP: JS FUNC, OVERVIEW => Messages #
+RewriteRule ^hk/ajax/overview/messages/actions(|/)$ housekeeping/assets/dynamics/functions/overview/messages/actions.php
+RewriteRule ^hk/ajax/overview/messages/check(|/)$ housekeeping/assets/dynamics/functions/overview/messages/check.php
+
+# AP: JS FUNC, MANAGE => Orders #
+RewriteRule ^hk/ajax/manage/orders/changestatus(|/)$ housekeeping/assets/dynamics/functions/manage/orders/change.status.php
+RewriteRule ^hk/ajax/manage/orders/paid(|/)$ housekeeping/assets/dynamics/functions/manage/orders/change.paid.php
+
+# AP: JS FUNC, MANAGE => App #
+RewriteRule ^hk/ajax/manage/app(|/)$ housekeeping/assets/dynamics/functions/manage/app/save.php
+
+# AP: JS FUNC, MANAGE => Products #
+RewriteRule ^hk/ajax/manage/product/edit(|/)$ housekeeping/assets/dynamics/functions/manage/products/edit.php
+RewriteRule ^hk/ajax/manage/product/add/save(|/)$ housekeeping/assets/dynamics/functions/manage/products/add.php
+RewriteRule ^hk/ajax/manage/product/add/uploadimage(|/)$ housekeeping/assets/dynamics/functions/manage/products/upload.image.php
+RewriteRule ^hk/ajax/manage/product/edit/uploadimage(|/)$ housekeeping/assets/dynamics/functions/manage/products/edit.upload.image.php
+RewriteRule ^hk/ajax/manage/product/category/add(|/)$ housekeeping/assets/dynamics/functions/manage/products/add.category.php
+RewriteRule ^hk/ajax/manage/product/category/edit(|/)$ housekeeping/assets/dynamics/functions/manage/products/edit.category.php
+RewriteRule ^hk/ajax/manage/product/category/edit/delete(|/)$ housekeeping/assets/dynamics/functions/manage/products/edit.delete.category.php
+
+# AP: JS FUNC, MANAGE => Courses #
+RewriteRule ^hk/ajax/manage/course/edit(|/)$ housekeeping/assets/dynamics/functions/manage/courses/edit.php
+RewriteRule ^hk/ajax/manage/course/add(|/)$ housekeeping/assets/dynamics/functions/manage/courses/add.php
+RewriteRule ^hk/ajax/manage/course/toggle(|/)$ housekeeping/assets/dynamics/functions/manage/courses/toggle.php
+RewriteRule ^hk/ajax/manage/course/delete(|/)$ housekeeping/assets/dynamics/functions/manage/courses/delete.php
+RewriteRule ^hk/ajax/manage/course/dates/add(|/)$ housekeeping/assets/dynamics/functions/manage/courses/add.date.php
+RewriteRule ^hk/ajax/manage/course/dates/delete(|/)$ housekeeping/assets/dynamics/functions/manage/courses/delete.date.php
+
+# AP: JS FUNC, FUNCTIONS => Mailer #
+RewriteRule ^hk/ajax/func/mailer(|/)$ housekeeping/assets/dynamics/functions/functions/mailer.php
+
+# AP: JS FUNC, MAILING #
+RewriteRule ^hk/ajax/mail/dc(|/)$ housekeeping/assets/dynamics/functions/mail/deliverycosts.php
+RewriteRule ^hk/ajax/mail/custom(|/)$ housekeeping/assets/dynamics/functions/mail/custom.php
+
+
+# AP: JS GET, FILTERING #
+RewriteRule ^hk/get/manage/filter/orders(|/)$ housekeeping/assets/dynamics/content/manage/orders/filter/index.php
+RewriteRule ^hk/get/manage/filter/products(|/)$ housekeeping/assets/dynamics/content/manage/products/filter/index.php
+RewriteRule ^hk/get/manage/filter/customers(|/)$ housekeeping/assets/dynamics/content/manage/customers/filter/index.php

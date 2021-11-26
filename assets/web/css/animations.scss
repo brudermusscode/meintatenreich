@@ -1,0 +1,57 @@
+.zoom-in {
+  animation: zoom-in 0.4s cubic-bezier(0.1, 0.82, 0.25, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0.8);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.fall-in {
+  animation: fall-in 0.4s cubic-bezier(0.1, 0.82, 0.25, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fall-in {
+  from {
+    transform: scale(1.4);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.fade-in-opacity {
+  animation: fade-in-opacity 0.2s linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-in-opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.glow {
+  animation: glow 1s linear infinite;
+}
+
+@keyframes glow {
+  from {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
