@@ -1,8 +1,6 @@
 <?php
 
-// ERROR CODE :: 0
-
-include_once '../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (
     isset($_REQUEST['oldpass'], $_REQUEST['newpass'], $_REQUEST['newpass2'])
@@ -18,16 +16,20 @@ if (
     $newpass2 = $_REQUEST['newpass2'];
     $uid = $my->id;
 
-    // CHECKS
+    // check for equality between both passwords
     if ($newpass === $newpass2) {
 
-        if (md5($newpass) !== $user['password']) {
+        // check if the password matches the current one
+        if (md5($newpass) !== $my->password) {
 
-            if ($oldpass === $user['password']) {
+            // check if current password is correct
+            if ($oldpass === $my->password) {
 
+                // check if the password is higher in length than x symbols
                 if (strlen($newpass) >= 8) {
 
-                    if (preg_match('/^[a-zA-Z0-9=.,_\-+*#~?!&%$§\/]+$/', $newpass)) {
+                    // validate new password
+                    if (preg_match('/[^a-zA-Z0-9=.,_\-+*#~?!&%$§]/i', $newpass)) {
 
                         // MD5ify
                         $newpass = md5($_REQUEST['newpass']);

@@ -1,6 +1,6 @@
 <?php
 
-include_once '../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-change-password' && $loggedIn) {
 
@@ -79,7 +79,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-change-password' 
 
 } else {
 
-    exit;
+    exit("0");
 }
 
 ?>

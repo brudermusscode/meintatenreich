@@ -46,6 +46,8 @@ if (
                                 $key = $login->createString(64);
                                 $displayname = 'customer-' . $login->createString(12);
 
+                                $password = password_hash($password, PASSWORD_DEFAULT);
+
                                 // insert new customer
                                 $insertCustomer = $pdo->prepare("
                                     INSERT INTO customer (displayname, mail, password, verification_key, remoteaddr, httpx) 

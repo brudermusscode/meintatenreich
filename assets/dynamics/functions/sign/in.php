@@ -15,7 +15,7 @@ if (
 
         // set variables for requested values
         $mail = htmlspecialchars($_REQUEST["mail"]);
-        $pass = md5($_REQUEST["password"]);
+        $pass = $_REQUEST["password"];
 
         // get user data and compare
         $getUserData = $pdo->prepare("SELECT * FROM customer WHERE mail = ? or displayname = ?");
@@ -26,7 +26,7 @@ if (
             $user = $getUserData->fetch();
             $loginpass = $user->password;
 
-            if ($pass == $loginpass) {
+            if (password_verify($pass, $loginpass)) {
 
                 // IMPORTANT VARIABLES
                 $id = $user->id;

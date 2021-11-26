@@ -2,6 +2,8 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
+$pdo->beginTransaction();
+
 if (isset($_REQUEST['displayname'], $_REQUEST['firstname'], $_REQUEST['secondname'])) {
 
     // variablize
@@ -77,11 +79,11 @@ if (isset($_REQUEST['displayname'], $_REQUEST['firstname'], $_REQUEST['secondnam
 
     if ($update) {
 
-        $c->commit();
+        $pdo->commit();
         exit('success');
     } else {
 
-        $c->rollback();
+        $pdo->rollback();
         exit('0');
     }
 } else {
