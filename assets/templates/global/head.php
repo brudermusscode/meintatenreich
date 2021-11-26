@@ -29,6 +29,9 @@
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/shop.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/sign.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/sign.get.js"></script>
+    <?php if ($loggedIn) { ?>
+        <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/user.js"></script>
+    <?php } ?>
 
     <?php if ($pid == "contact") { ?>
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/contact.js"></script>

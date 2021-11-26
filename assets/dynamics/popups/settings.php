@@ -1,10 +1,11 @@
 <?php
 
-include_once '../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $loggedIn) {
 
     if ($_REQUEST['which'] !== false) {
+
         $which = htmlspecialchars($_REQUEST['which']);
     }
 
@@ -39,7 +40,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
                         <div class="input w100">
                             <p>Anzeigename</p>
                             <div class="actual w100">
-                                <input type="text" name="displayname" placeholder="<?php echo $user['displayname']; ?>" class="tran-all">
+                                <input type="text" name="displayname" placeholder="<?php echo $my->displayname; ?>" class="tran-all">
                             </div>
                         </div>
                     </div>
@@ -49,7 +50,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
                             <div class="input w100">
                                 <p>Vorname</p>
                                 <div class="actual w100">
-                                    <input type="text" name="firstname" placeholder="<?php echo $user['firstname']; ?>" class="tran-all">
+                                    <input type="text" name="firstname" placeholder="<?php echo $my->firstname; ?>" class="tran-all">
                                 </div>
                             </div>
                         </div>
@@ -58,7 +59,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
                             <div class="input w100">
                                 <p>Nachname</p>
                                 <div class="actual w100">
-                                    <input type="text" name="secondname" placeholder="<?php echo $user['secondname']; ?>" class="tran-all">
+                                    <input type="text" name="secondname" placeholder="<?php echo $my->secondname; ?>" class="tran-all">
                                 </div>
                             </div>
                         </div>
@@ -68,7 +69,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
                         <div class="input w100">
                             <p>E-Mail Adresse</p>
                             <div class="actual w100">
-                                <input disabled type="text" name="mail" placeholder="<?php echo $user['mail']; ?>" class="tran-all">
+                                <input disabled type="text" name="mail" placeholder="<?php echo $my->mail; ?>" class="tran-all">
                             </div>
                         </div>
                     </div>
@@ -85,7 +86,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'open-settings' && $log
 
 } else {
 
-    exit;
+    exit("0");
 }
 
 ?>

@@ -3,7 +3,7 @@ $(function(){
 
     let body = $("body");
 
-    
+
     // ############################
     // ++ startup 
     // ############################
@@ -511,6 +511,131 @@ $(function(){
             
         });
 
+    })
+
+
+    // #############################
+    // ++ orders
+    // #############################
+
+    // >> cancel, confirmation popup
+    .on('click', '[data-action="cancel-order"]', function() {
+    
+        var id = $(this).data('json')[0].id;
+        var action = 'cancel-order';
+        
+        addOverlay(body, dark = true);
+        var ov = body.find('page-overlay');
+        addLoader(ov, 'floating');
+        var lo = ov.find('loader').parent();
+        
+        $.ajax({
+            
+            data: { action: action, id: id },
+            url: '/elem/confirmcancelorder',
+            method: 'POST',
+            type: 'HTML',
+            success: function(data) {
+                
+                lo.remove();
+                ov.append(data);
+                
+            }
+            
+        });
+        
+    })
+
+    // >> cancel
+    .on('click', '[data-action="request-cancel-order"]', function() {
+        
+        var id = $(this).data('json')[0].id;
+        var action = 'request-cancel-order';
+        var res;
+        
+        var ov = body.find('page-overlay');
+        var ovCl = ov.find('close-overlay').remove();
+        var wc = ov.find('wide-container');
+        addOverlay(wc, dark = true);
+        var wcOv = wc.find('page-overlay');
+        var wcOvCl = wcOv.find('close-overlay').remove();
+        addLoader(wcOv, 'floating');
+        var wcLo = wcOv.find('loader').parent();
+        
+        $.ajax({
+            
+            data: { action: action, id: id },
+            url: '/ajax/requestcancelorder',
+            method: 'POST',
+            type: 'TEXT',
+            success: function(data) {
+                
+                switch(data) {
+                    case '':
+                    case '0':
+                        res = 'Ein unbekannter Fehler ist aufgetreten.';
+                        break;
+                    case '1':
+                        res = 'Diese bestellung scheint nicht zu existieren!';
+                        break;
+                    case '2':
+                        res = 'Die Stornierungsfrist von 2 Stunden ist bereits abgelaufen.';
+                        closePageoverlay();
+                        break;
+                    default:
+                        res = 'Stornierung erfolgreich, bitte warten...';
+                        setTimeout(function(){
+                            
+                            window.location.replace(window.location);
+                            
+                        }, 1200);
+                }
+                
+                showDialer(res);
+                
+            }
+            
+        });
+        
+    })
+    
+    // >> pay
+    .on('click', '[data-action="manage:order,pay"]', function(){
+        
+        let $t = $(this);
+        let id = $t.data('json')[0].id;
+        let dS = { id: id };
+        let url = '/ajax/orders/pay';
+        let res;
+        
+        showDialer('Bitte warten...');
+        
+        let ajax = $.ajax({
+            url: url,
+            data: dS,
+            method: pmeth,
+            type: 'JSON',
+            success: function(data){
+                
+                switch(data){
+                    case '0':
+                    default:
+                        res = 'Ein unbekannter Fehler ist aufgetreten...';
+                        break;
+                    case '1':
+                        res = 'Diese Bestellung scheint nicht zu existieren...';
+                        break;
+                    case 'success':
+                        res = 'Als bezahlt markiert!';
+                        $t.removeAttr('data-action data-json').attr('disabled', 'disabled').html('Als bezahlt markiert').toggleClass('hlf-white-s hlf-blue-s');
+                }
+                
+                showDialer(res);
+                
+            }
+            
+        });
+        
     });
 
 });
