@@ -26,7 +26,7 @@ if (
     $pmeth = 'bank';
 
     // validate account holder: sign
-    if (!preg_match('/[^a-z]/i', $acc)) {
+    if (!preg_match('/[^a-z\s]/i', $acc)) {
 
         // validate bic: sign
         if (!preg_match('/[^0-9a-z]/i', $bic)) {
@@ -46,7 +46,10 @@ if (
 
                         // CREATE VARS & RESPONSE
                         $newid = $pdo->lastInsertId();
-                        $res   = ['pmid' => $newid];
+                        $res   = [
+                            'pmid' => $newid,
+                            "sepa" => $sepa
+                        ];
 
                         // check for billing preference
                         $getBillingPreference = $pdo->prepare("SELECT * FROM customer_billings_prefs WHERE uid = ?");
@@ -58,7 +61,7 @@ if (
 
                             // update billing preference
                             $updateBillingPreference = $pdo->prepare("UPDATE customer_billings_prefs SET payment = ?, pid = ?, timestamp = CURRENT_TIMESTAMP WHERE uid = ?");
-                            $updateBillingPreference->execute($pmeth, $newid, $uid);
+                            $updateBillingPreference->execute([$pmeth, $newid, $uid]);
                         } else {
 
                             // insert new billing preference

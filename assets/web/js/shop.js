@@ -289,8 +289,7 @@ $(function(){
             let formData = $('[data-form="payment-method"]').serialize();
             let add = $('[data-react="add-content"]');
             let url = dynamicHost + "/ajax/functions/shop/add-billing";
-            let res;
-            let pmid;
+            let res, pmid, sepa;
             
             $.ajax({
                 
@@ -299,11 +298,7 @@ $(function(){
                 method: 'POST',
                 type: 'TEXT',
                 success: function(data) {
-                    
-                    // parse response
-                    data = $.parseJSON(data);
-                    pmid = data.pmid;
-                    
+
                     switch(data) {
                         case '0':
                             res = 'Oh nein! Ein Fehler!';
@@ -325,6 +320,11 @@ $(function(){
                             break;
                         default:
                             res = 'Erfolgreich hinzugefügt!';
+
+                            // parse response
+                            data = $.parseJSON(data);
+                            pmid = data.pmid;
+                            sepa = data.sepa;
 
                             wc.remove();
 
@@ -349,14 +349,25 @@ $(function(){
                             $.ajax({
 
                                 url: url,
-                                data: { acc: acc, bic: bic, iban: iban, pmid: pmid },
+                                data: { 
+                                    acc: acc, 
+                                    bic: bic, 
+                                    iban: iban, 
+                                    pmid: pmid, 
+                                    sepa: sepa 
+                                },
                                 method: 'POST',
                                 type: 'HTML',
                                 success: function(data) {
 
-                                    add.prepend(data);
+                                    switch(data) {
+                                        case "0":
+                                            res = "Something went wrong";
+                                            break;
+                                        default:
+                                            add.prepend(data);
+                                    }
                                 }
-
                             });
                     }
                     
