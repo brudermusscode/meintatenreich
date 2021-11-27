@@ -1,9 +1,19 @@
 <?php
 
-include_once '../../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (
-    isset($_REQUEST['fullname'], $_REQUEST['country'], $_REQUEST['str'], $_REQUEST['hnr'], $_REQUEST['extra'], $_REQUEST['postcode'], $_REQUEST['tel'], $_REQUEST['city'])
+    isset(
+        $_REQUEST['fullname'],
+        $_REQUEST['country'],
+        $_REQUEST['str'],
+        $_REQUEST['housenumber'],
+        $_REQUEST['extra'],
+        $_REQUEST['postcode'],
+        $_REQUEST['tel'],
+        $_REQUEST['city'],
+        $_REQUEST['address']
+    )
     && is_numeric($_REQUEST['adid'])
     && $loggedIn
 ) {

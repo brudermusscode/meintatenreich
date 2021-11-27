@@ -64,7 +64,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add-address' && $logge
                             <div class="input w100">
                                 <p>Hausnr.</p>
                                 <div class="actual w100 posrel">
-                                    <input type="text" name="hnr" placeholder="" class="tran-all">
+                                    <input type="text" name="housenumber" placeholder="" class="tran-all">
                                 </div>
                             </div>
                         </div>
