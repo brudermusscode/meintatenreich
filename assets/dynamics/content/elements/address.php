@@ -59,9 +59,8 @@ if (
 
 <?php
 
-    exit;
 } else {
-    exit;
+    exit("0");
 }
 
 ?>

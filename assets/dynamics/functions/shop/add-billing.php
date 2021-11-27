@@ -26,7 +26,7 @@ if (
     $pmeth = 'bank';
 
     // validate account holder: sign
-    if (!preg_match('/[^a-z\s]/i', $acc)) {
+    if ($shop->validateName($acc)) {
 
         // validate bic: sign
         if (!preg_match('/[^0-9a-z]/i', $bic)) {
@@ -60,13 +60,13 @@ if (
                         if ($getBillingPreference->rowCount() > 0) {
 
                             // update billing preference
-                            $updateBillingPreference = $pdo->prepare("UPDATE customer_billings_prefs SET payment = ?, pid = ?, timestamp = CURRENT_TIMESTAMP WHERE uid = ?");
-                            $updateBillingPreference->execute([$pmeth, $newid, $uid]);
+                            $updateBillingPreference = $pdo->prepare("UPDATE customer_billings_prefs SET pid = ?, timestamp = CURRENT_TIMESTAMP WHERE uid = ?");
+                            $updateBillingPreference->execute([$newid, $uid]);
                         } else {
 
                             // insert new billing preference
-                            $insertBillingPreference = $pdo->prepare("INSERT INTO customer_billings_prefs (uid,payment,pid) VALUES (?,?,?)");
-                            $insertBillingPreference->execute([$uid, $pmeth, $newid]);
+                            $insertBillingPreference = $pdo->prepare("INSERT INTO customer_billings_prefs (uid,pid) VALUES (?,?)");
+                            $insertBillingPreference->execute([$uid, $newid]);
                         }
 
                         // INSERT SEPA

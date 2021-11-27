@@ -77,7 +77,7 @@ if (
 
                             $updateAddressPreference = false;
                             $insertAddressPreference = false;
-                            if ($my->addressPreference = true) {
+                            if ($my->addressPreference) {
 
                                 // update address preferences
                                 $updateAddressPreference = $pdo->prepare("UPDATE customer_addresses_prefs SET adid = ? WHERE uid = ?");

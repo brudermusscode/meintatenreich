@@ -10,7 +10,7 @@ if (
 
 ?>
 
-    <div class="notice-papel lt" data-action="edit-payment-method" data-json='[{"uid":"<?php echo $my->id; ?>", "pmid":"<?php echo $_REQUEST['pmid']; ?>"}]'>
+    <div id="np-<?php echo $_REQUEST['pmid']; ?>" class="notice-papel lt" data-action="edit-payment-method" data-json='[{"uid":"<?php echo $my->id; ?>", "pmid":"<?php echo $_REQUEST['pmid']; ?>"}]'>
 
         <div class="edit-pm tran-all-cubic">
             <p class="almid"><i class="icon-edit-3"></i></p>

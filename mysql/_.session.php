@@ -152,28 +152,26 @@ class login
         return $s;
     }
 
-
-    // GET USER ID
-    // # please remove when time
-    public static function getUID()
-    {
-
-        $login = new login;
-        global $pdo;
-
-        if ($login->isAuthed($pdo)) {
-            return $_SESSION['id'];
-        }
-        return 0;
-    }
-
-
     // LOGOUT
     public static function logout()
     {
         setcookie('UN', '', time() - 1, "/");
         setcookie('TOK', '', time() - 1, "/");
         setcookie('SER', '', time() - 1, "/");
+    }
+}
+
+$shop = new shop;
+
+class shop
+{
+    public static function validateName($nameString)
+    {
+        if (!preg_match('/[^a-z\-\s]/i', $nameString)) {
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -205,7 +203,12 @@ if ($loggedIn) {
 
     // check customers address preference
     $my->addressPreference = false;
-    $addressPreference = $pdo->prepare("SELECT * FROM customer_addresses_prefs WHERE uid = ?");
+    $addressPreference = $pdo->prepare("
+        SELECT *, customer_addresses.id AS aid, customer_addresses_prefs.id AS apid 
+        FROM customer_addresses_prefs, customer_addresses  
+        WHERE customer_addresses.id = customer_addresses_prefs.adid 
+        AND customer_addresses_prefs.uid = ? 
+    ");
     $addressPreference->execute([$sessionid]);
 
     if ($addressPreference->rowCount() > 0) {

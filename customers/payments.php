@@ -161,7 +161,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                 <div class="np-inr">
                                     <div class="option mt2">
                                         <p class="desc ttup">Kontoinhaber</p>
-                                        <p class="actual trimfull"><?php echo $p->account; ?></p>
+                                        <p class="actual trimfull" react-edit-account><?php echo $p->account; ?></p>
                                     </div>
                                     <div class="option mt2">
                                         <p class="desc ttup">BIC (Swift-Code)</p>

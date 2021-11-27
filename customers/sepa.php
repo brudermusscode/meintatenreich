@@ -13,48 +13,33 @@ if (!$loggedIn) {
 if (isset($_GET['pmid'])) {
 
     $pmid = htmlspecialchars($_GET['pmid']);
+    $uid = $my->id;
 
-    // get payment method
-    $getPayment = $c->prepare("SELECT * FROM customer_billings WHERE id = ? AND uid = ?");
-    $getPayment->execute([$pmid, $my->id]);
+    // check if billing method belongs to user/exists
+    $getBilling = $pdo->prepare("
+        SELECT *, customer_billings.id AS bid, customer_billings_sepa.id AS bsid 
+        FROM customer_billings, customer_billings_sepa 
+        WHERE customer_billings.id = customer_billings_sepa.pmid 
+        AND customer_billings.id = ? 
+        AND customer_billings.uid = ?
+    ");
+    $getBilling->execute([$pmid, $uid]);
 
-    if ($getPayment->rowCount() > 0) {
+    if ($getBilling->rowCount() > 0) {
 
-        $p = $getPayment->fetch();
+        $b = $getBilling->fetch();
 
-        // get SEPA
-        $getPaymentSEPA = $c->prepare("SELECT * FROM customer_billings_sepa WHERE pmid = ? AND active = '1'");
-        $getPaymentSEPA->execute([$pmid]);
+        if (!$my->addressPreference) {
 
-        if ($getPaymentSEPA->rowCount() > 0) {
-
-            $ps = $getPaymentSEPA->fetch();
-
-            // get address preference
-            $getAddressPreference = $c->prepare("
-                SELECT * 
-                FROM customer_addresses_prefs, customer_addresses 
-                WHERE customer_addresses_prefs.adid = customer_addresses.id
-                AND customer_addresses_prefs.uid = ?
-                ORDER BY id DESC LIMIT 1
-            ");
-            $getAddressPreference->execute([$my->id]);
-
-            if ($getAddressPreference->rowCount() > 0) {
-
-                $ap = $getAddressPreference->fetch();
-            } else {
-
-                $ad = 'Keine Adresse hinzugefügt';
-            }
-        } else {
-            header('location: ../oops');
+            $address = 'Keine Adresse hinzugefügt';
         }
     } else {
-        header('location: ../oops');
+
+        //header('location: ../oops');
     }
 } else {
-    header('location: ../oops');
+
+    //header('location: ../oops');
 }
 
 include_once $sroot . "/assets/templates/global/head.php";
@@ -80,7 +65,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                     </div>
                     <div>
                         <p class="fw6">Mandats-Identifikationsnummer</p>
-                        <p><?php echo $ps->mid; ?></p>
+                        <p><?php echo $b->mid; ?></p>
                     </div>
 
                     <div class="mt24">
@@ -90,32 +75,40 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                     <div class="mb12">
                         <p class="fw6">Vorname und Nachname (Kontoinhaber)</p>
-                        <p><?php echo $p->account; ?></p>
+                        <p><?php echo $b->account; ?></p>
                     </div>
 
-                    <div class="mb12">
-                        <p class="fw6">Straße und Hausnummer</p>
-                        <p><?php echo $p->address; ?></p>
-                    </div>
+                    <?php if (!$my->addressPreference) { ?>
+                        <div class="mb12">
+                            <p class="fw6">Adresse</p>
+                            <p><?php echo $address; ?>. <a href="/my/addresses">Klicke hier, um eine Adresse hinzuzufügen.</a></p>
+                        </div>
+                    <?php } else { ?>
+                        <div class="mb12">
+                            <p class="fw6">Straße und Hausnummer</p>
+                            <p><?php echo $ap->address; ?></p>
+                        </div>
 
-                    <div class="mb12">
-                        <p class="fw6">Postleitzahl und Ort</p>
-                        <p><?php echo $p->postcode . ' ' . $p->city; ?></p>
-                    </div>
+                        <div class="mb12">
+                            <p class="fw6">Postleitzahl und Ort</p>
+                            <p><?php echo $ap->postcode . ' ' . $ap->city; ?></p>
+                        </div>
+                    <?php } ?>
+
 
                     <div class="mb12">
                         <p class="fw6">Kreditinstitut (BIC)</p>
-                        <p><?php echo '' . substr($p->bic, 0, 2) . '&bull;&bull;&bull;&bull;&bull;&bull;&bull;' . substr($p->bic, -2); ?></p>
+                        <p><?php echo '' . substr($b->bic, 0, 2) . '&bull;&bull;&bull;&bull;&bull;&bull;&bull;' . substr($b->bic, -2); ?></p>
                     </div>
 
                     <div class="mb12">
                         <p class="fw6">Internationale Bankkontonummer (IBAN)</p>
-                        <p><?php echo 'Endet auf ' . substr($p->iban, -2); ?></p>
+                        <p><?php echo 'Endet auf ' . substr($b->iban, -2); ?></p>
                     </div>
 
                     <div class="mb12">
                         <p class="fw6">Datum</p>
-                        <p><?php echo $ps->timestamp; ?></p>
+                        <p><?php echo $b->timestamp; ?></p>
                     </div>
 
                     <div class="mt24">

@@ -396,78 +396,71 @@ $(function(){
         var t = $(this);
         var tdata = t.data('json');
         var pmid = tdata[0].pmid;
+        let url = dynamicHost + "/ajax/popups/edit-billing";
         
         $.ajax({
             
+            url: url,
             data: { action: action, pmid: pmid },
-            url: '/get/editpaymentmethod',
             method: 'POST',
             type: 'HTML',
             success: function(data) {
                 
-                loader.remove();
-                overlay.append(data);
-                
+                switch(data) {
+                    case "0":
+                    case "1":
+                        res = "Something went wrong";
+                        break;
+                    default:
+                        loader.remove();
+                        overlay.append(data);
+                }
             }
-            
         });
-        
     })
     
     // >> edit
     .on('click', '[data-action="request-edit-payment-method"]', function(){
         
-        var form  = $('[data-form="edit-payment-method"]');
-        var acc   = $.trim(form.find('input[name="acc"]').val());
-        var bic   = $.trim(form.find('input[name="bic"]').val());
-        var iban  = $.trim(form.find('input[name="iban"]').val());
-        var pmid  = form.find('input[name="pmid"]').val();
-        
-        var overlay = body.find('page-overlay');
-        var wc = $('wide-container');
+        let overlay = body.find('page-overlay');
+        let wc = $('wide-container');
         addOverlay(wc, dark = true);
-        var wcOverlay = wc.find('page-overlay');
+        let wcOverlay = wc.find('page-overlay');
         addLoader(wcOverlay, 'floating');
         wcOverlay.find('close-overlay').remove();
 
-        var formData = $('[data-form="edit-payment-method"]').serialize();
-        var res;
-        var addpm = $('[data-react="add-payment-method"]');
+        let pmid = $('[data-form="edit-payment-method"]').serializeArray();
+        let formData = $('[data-form="edit-payment-method"]').serialize();
+        let noticePaper = $('#np-' + pmid[0].value);
+        let changeName = noticePaper.find("[react-edit-account]");
+        let url = dynamicHost + "/ajax/functions/shop/edit-billing";
+        let res;
 
         $.ajax({
 
+            url: url,
             data: formData,
-            url: '/ajax/editpaymentmethod',
             method: 'POST',
             type: 'TEXT',
             success: function(data) {
                 
                 switch(data) {
                     case '0':
-                        res = 'Ein unbekannter Fehler ist aufgetreten!';
-                        break;
                     case '1':
-                        res = 'Ein Fehler ist aufgetreten. Dieser wurde wahrscheinlich durch Manipulation über die Developer-Konsole ausgelöst und wurde in unserem System vermerkt.';
+                        res = 'Oh nein! Ein Fehler!';
                         break;
                     case '2':
-                        res = 'Ihre Eingaben enthalten ungültige Zeichen (Kontoinhaber)!';
-                        break;
-                    case '3':
-                        res = 'Ihre Eingaben enthalten ungültige Zeichen (BIC/Swift-Code)!';
-                        break;
-                    case '4':
-                        res = 'Ihre Eingaben enthalten ungültige Zeichen (IBAN)!';
-                        break;
-                    case '5':
-                        res = 'Die BIC (Swift-Code) kann nur maximal aus 8-11 Zeichen bestehen!';
-                        break;
-                    case '6':
-                        res = 'Die IBAN kann nur maximal aus 34 Zeichen bestehen!';
+                        res = 'Der eingegebene Kontoinhaber enthält ungültige Zeichen';
                         break;
                     default:
-                        res = 'Ihre Bankverbindung wurde erfolgreich bearbeitet!';
+                        res = 'Die Bankverbindung wurde erfolgreich bearbeitet';
+
                         wc.remove();
+
                         addTextDialogue(overlay, 'Erfolgreich gespeichert!');
+
+                        changeName.html(data);
+
                         setTimeout(function(){
                             overlay.removeAttr('style');
                             setTimeout(function(){
@@ -492,31 +485,34 @@ $(function(){
     // >> delete
     .on('click', '[data-action="delete-payment-method"]', function(){
 
-        var t = $(this);
-        var tdata = t.data('json');
-        var id = tdata[0].id;
-        var which = tdata[0].which;
-        var action = 'delete';
+        let t = $(this);
+
+        let tdata = t.data('json');
+        let id = tdata[0].id;
+        let which = tdata[0].which;
+        let action = 'delete';
         
-        var wc = $('body').find('wide-container');
-        var wcinr = wc.find('.zoom-in');
+        let wc = $('body').find('wide-container');
+        let wcinr = wc.find('.zoom-in');
         addOverlay(wcinr, dark = true);
-        var wcinrOverlay = wcinr.find('page-overlay');
-        var closeOverlay = wcinrOverlay.find('close-overlay').remove();
+        let wcinrOverlay = wcinr.find('page-overlay');
+        let closeOverlay = wcinrOverlay.find('close-overlay').remove();
         addLoader(wcinrOverlay, 'floating');
-        var loader = wcinrOverlay.find('loader').parent();
+        let loader = wcinrOverlay.find('loader').parent();
         
+        let url = dynamicHost + "/ajax/content/elements/delete-confirmation";
+
         $.ajax({
             
+            url: url,
             data: { action: action, id: id },
-            url: '/elem/confirmdelete',
             method: 'POST',
             type: 'HTML',
             success: function(data) {
                 
                 loader.remove();
                 wcinrOverlay.prepend(data);
-                var input = wcinrOverlay.find('input[name="which"]').val(which);
+                let input = wcinrOverlay.find('input[name="which"]').val(which);
                 
             }
             
@@ -526,7 +522,7 @@ $(function(){
 
 
     // #############################
-    // ++ orders
+    // ++ addresses
     // #############################
 
     // >> add popoup
@@ -598,7 +594,7 @@ $(function(){
                 method: 'POST',
                 type: 'TEXT',
                 success: function(data) {
-                    
+
                     switch(data) {
                         case '0':
                             res = 'Oh nein! Ein Fehler!';
@@ -675,6 +671,8 @@ $(function(){
 
                 },
                 error: function(data) {
+                    
+                    console.log(data.responseText);
                 }
 
             });
@@ -852,21 +850,21 @@ $(function(){
         var res;
         
         if(which === 'address') {
-            url = '/ajax/deleteaddress';
+            url = '/ajax/functions/shop/delete-address';
             dia = 'Adresse';
-        } else if(which === 'payment-method') {
-            url = '/ajax/deletepaymentmethod';
+        } else if(which === 'billing') {
+            url = '/ajax/functions/shop/delete-billing';
             dia = 'Bankverbindung';
         }
         
         $.ajax({
             
-            data: { id: id },
             url: url,
+            data: { id: id },
             method: 'POST',
             type: 'TEXT',
             success: function(data) {
-                
+
                 var np = $('[data-react="add-content"]').find('#np-'+id);
                 
                 if(data === '1' || data === '0') {
@@ -890,6 +888,8 @@ $(function(){
                     lelOverlay.remove();
                 }, 400);
                 
+            },
+            error: function(data) {
             }
             
         });
