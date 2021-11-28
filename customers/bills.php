@@ -9,6 +9,16 @@ require_once $sroot . '/assets/templates/dompdf/autoload.inc.php';
 Dompdf\Autoloader::register();
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
+
+$options = new Options();
+$options->setIsRemoteEnabled(true);
+
+define("DOMPDF_ENABLE_REMOTE", true);
+define("DOMPDF_TEMP_DIR", "DOMPDF_DIR" . " / tmp");
+
+$dompdf = new Dompdf($options);
+
 
 if (isset($_GET["bid"])) {
 
@@ -74,16 +84,6 @@ if (
 } else {
     echo "not logged in"; // not logged in
 }
-
-
-
-
-
-define("DOMPDF_ENABLE_REMOTE", true);
-define("DOMPDF_TEMP_DIR", "DOMPDF_DIR" . " / tmp");
-
-// instantiate and use the dompdf class
-$dompdf = new Dompdf();
 
 ob_start();
 
