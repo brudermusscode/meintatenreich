@@ -51,7 +51,6 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
                 FROM products, products_images 
                 WHERE products.id = products_images.pid 
                 AND products_images.isgal = '1' 
-                AND products.available = '1' 
                 ORDER BY $order
             ");
             $getProducts->execute();
@@ -73,7 +72,6 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
                 FROM products, products_images 
                 WHERE products.id = products_images.pid 
                 AND products_images.isgal = '1' 
-                AND products.available = '1' 
                 AND products.cid = ?
                 ORDER BY $order
             ");
@@ -180,9 +178,17 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
                         <div class="pr-img-outer posrel">
 
                             <?php if ($checkRes->rowCount() > 0) { ?>
+
                                 <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
                                     <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Reserviert</p>
                                 </div>
+
+                            <?php } else if ($p->available == "0") { ?>
+
+                                <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
+                                    <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Nicht verfügbar</p>
+                                </div>
+
                             <?php } ?>
 
                             <div class="img vishid opa0 tran-all" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $p->url; ?>) center no-repeat;background-size:cover;">

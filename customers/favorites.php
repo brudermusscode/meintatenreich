@@ -18,7 +18,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                 <?php
 
-                // GET FAVORITE PRODUCTS
+                // get all favorized products
                 $getFavoriteProducts = $pdo->prepare("SELECT * FROM shopping_card_remember WHERE uid = ?");
                 $getFavoriteProducts->execute([$my->id]);
 
@@ -41,13 +41,12 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                         // get product's information
                         $getProduct = $pdo->prepare("
-                                    SELECT products.*, products.id AS pid, products_images.url 
-                                    FROM products, products_images 
-                                    WHERE products.id = products_images.pid 
-                                    AND products_images.isgal = '1' 
-                                    AND products.available = '1' 
-                                    AND products.id = ?
-                                ");
+                            SELECT products.*, products.id AS pid, products_images.url 
+                            FROM products, products_images 
+                            WHERE products.id = products_images.pid 
+                            AND products_images.isgal = '1' 
+                            AND products.id = ?
+                        ");
                         $getProduct->execute([$f->pid]);
                         $fp = $getProduct->fetch();
 
@@ -67,9 +66,17 @@ include_once $sroot . "/assets/templates/global/header.php";
                                     <div class="pr-img-outer posrel">
 
                                         <?php if ($getReservedProduct->rowCount() > 0) { ?>
+
                                             <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
                                                 <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Reserviert</p>
                                             </div>
+
+                                        <?php } else if ($fp->available == "0") { ?>
+
+                                            <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
+                                                <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Nicht verfügbar</p>
+                                            </div>
+
                                         <?php } ?>
 
                                         <div class="img vishid opa0 tran-all" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $fp->url; ?>) center no-repeat;background-size:cover;">

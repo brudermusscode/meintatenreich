@@ -142,24 +142,34 @@ include_once $sroot . "/assets/templates/global/header.php";
                             <?php
 
                             if (!($sNum >= $p->amt)) {
-                                if ($reserved === false) {
+                                if ($reserved == true) {
 
                             ?>
-
-                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard" data-json='[{"id":"<?php echo $prid; ?>"}]'>
-                                        <p><i class="icon-shopping-basket"></i></p>
-                                        <p class="ml12 trimfull">In den Warenkorb</p>
-                                    </div>
-
-                                <?php   } else { ?>
 
                                     <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
                                         <p><i class="icon-flash"></i></p>
                                         <p class="ml12 trimfull">Reserviert</p>
                                     </div>
 
+                                <?php   } else if ($p->available == "0") { ?>
+
+                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
+                                        <p><i class="icon-shopping-basket"></i></p>
+                                        <p class="ml12 trimfull">Nicht verfügbar</p>
+                                    </div>
+
                                 <?php
 
+                                } else {
+
+                                ?>
+
+                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard" data-json='[{"id":"<?php echo $prid; ?>"}]'>
+                                        <p><i class="icon-shopping-basket"></i></p>
+                                        <p class="ml12 trimfull">In den Warenkorb</p>
+                                    </div>
+
+                                <?php
                                 }
                             } else {
 
