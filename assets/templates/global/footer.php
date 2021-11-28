@@ -5,7 +5,7 @@
         <p class="tac"><?php echo $main["year"]; ?> &copy; <?php echo $main["name"]; ?></p>
 
         <ul class="almid-h posabs mt6">
-            <a href="<?php echo $url["intern"]; ?>/disclaimer">
+            <a href="<?php echo $url["intern"]; ?>/privacy">
                 <li>
                     <p>Datenschutz</p>
                 </li>

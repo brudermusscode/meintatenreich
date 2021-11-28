@@ -54,7 +54,6 @@ RewriteRule ^sepa/(..*)$ customers/sepa.php?pmid=$1 [NC,L]
 # productview
 RewriteRule ^product/(.*)$ productview.php?artnr=$1 [NC,L]
 
-
 # ----------------------------------------------------------------------
 
 
