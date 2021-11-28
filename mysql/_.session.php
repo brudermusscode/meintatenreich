@@ -174,6 +174,7 @@ class shop
         return false;
     }
 
+
     public static function removeFileType($str)
     {
         $str = preg_replace("/(.+)\.php$/", "$1", $str);
