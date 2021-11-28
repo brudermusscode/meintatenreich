@@ -37,8 +37,6 @@ $(function() {
                         
                         grecaptcha.reset();
                         let resp;
-                        
-                        console.log(data);
 
                         switch(data) {
                             case '0':
@@ -74,7 +72,7 @@ $(function() {
                                 addTextDialogue(overlay, 'Erfolg!');
 
                                 setTimeout(function(){
-                                    //window.location.reload();
+                                    window.location.reload();
                                 }, 2000);
                         }
                         

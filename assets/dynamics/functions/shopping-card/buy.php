@@ -120,16 +120,22 @@ if (
                             $price = number_format($price, 2, ',', '.');
                             $res = ['price' => $price, 'delivery' => $delivery];
 
-                            // PREPARE SUCCESS MAIL
-                            /* $mailbody = file_get_contents('../../../../assets/templates/mail/order.html');
-                            $mailbody = str_replace('%orderid%', $orderid, $mailbody);
-                            $mailsubject = $config['mail_order_subject'];
-                            $mailheader  = $config['mail_header']; */
+                            // prepare verification mail
+                            $mailsubject = $mail['subjectOrder'];
 
+                            if ($delivery == "single") {
+                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/order.html');
+                            } else {
+                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/orderCombi.html');
+                            }
+                            $mailbody = str_replace('%price%', $price, $mailbody);
+                            $mailbody = str_replace('%orderid%', $orderid, $mailbody);
+
+                            $mailheader  = $mail['header'];
 
                             if (
-                                $insertOrder && $insertProducts && $updateReservations && $insertAdminLog && $insertBillPdf && $deleteShoppingCard
-                                //mail($user['mail'], $mailsubject, $mailbody, $mailheader)
+                                $insertOrder && $insertProducts && $updateReservations && $insertAdminLog && $insertBillPdf && $deleteShoppingCard &&
+                                mail($my->mail, $mailsubject, $mailbody, $mailheader)
                             ) {
 
                                 $pdo->commit();
