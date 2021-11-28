@@ -258,13 +258,16 @@ $(function(){
             type: 'HTML',
             success: function(data) {
             
-                loader.remove();
-                overlay.append(data);
-            
+                switch(data) {
+                    case "0":
+                        console.log("Someone likes to play");
+                        break;
+                    default:
+                        loader.remove();
+                        overlay.append(data);
+                }
             }
-            
         });
-        
     })
 
     // >> add
@@ -510,14 +513,18 @@ $(function(){
             type: 'HTML',
             success: function(data) {
                 
-                loader.remove();
-                wcinrOverlay.prepend(data);
-                let input = wcinrOverlay.find('input[name="which"]').val(which);
-                
+                switch(data) {
+                    case "0":
+                        console.log("Someone likes to play");
+                        break;
+                    default:
+                        loader.remove();
+                        wcinrOverlay.prepend(data);
+                        let input = wcinrOverlay.find('input[name="which"]').val(which);
+                }
             }
-            
-        });
 
+        });
     })
 
 
@@ -681,7 +688,7 @@ $(function(){
         
     })
     
-    // >> Edit
+    // >> edit: open popup
     .on('click', '[data-action="edit-address"]', function(){
         
         addOverlay(body);
@@ -693,17 +700,30 @@ $(function(){
         var t = $(this);
         var tdata = t.data('json');
         var adid = tdata[0].adid;
+
+        console.error(adid, tdata);
+
+        let url = dynamicHost + "/ajax/popups/edit-address";
         
         $.ajax({
             
+            url: url,
             data: { action: action, adid: adid },
-            url: '/get/editaddress',
             method: 'POST',
             type: 'HTML',
             success: function(data) {
                 
-                loader.remove();
-                overlay.append(data);
+                console.log(data);
+
+                switch (data) {
+                    case "0":
+                    case "1":
+                        console.log("Someone likes to play");
+                        break;
+                    default:
+                        loader.remove();
+                        overlay.append(data);
+                }
                 
             }
             
@@ -711,6 +731,7 @@ $(function(){
         
     })
 
+    // >> edit: request
     .on('click', '[data-action="request-edit-address"]', function(){
         
         var form  = $('[data-form="edit-payment-method"]');
@@ -793,7 +814,7 @@ $(function(){
         
     })
     
-    // >> Delete
+    // >> delete
     .on('click', '[data-action="delete-address"]', function(){
 
         var t = $(this);
@@ -809,11 +830,13 @@ $(function(){
         var closeOverlay = wcinrOverlay.find('close-overlay').remove();
         addLoader(wcinrOverlay, 'floating');
         var loader = wcinrOverlay.find('loader').parent();
+
+        let url = dynamicHost + "/ajax/content/elements/delete-confirmation";
         
         $.ajax({
             
+            url: url,
             data: { action: action, id: id },
-            url: '/elem/confirmdelete',
             method: 'POST',
             type: 'HTML',
             success: function(data) {
@@ -828,7 +851,9 @@ $(function(){
 
     })
     
-    // delete someth
+    // ------------------------------
+
+    // deletion confirmation popup
     .on('click', '[data-action="request-delete"]', function(){
         
         var t = $(this);
@@ -867,19 +892,21 @@ $(function(){
 
                 var np = $('[data-react="add-content"]').find('#np-'+id);
                 
-                if(data === '1' || data === '0') {
-                    res = 'Ein unbekannter Fehler ist aufgetreten!';
-                } else {
-                    res = dia+' erfolgreich entfernt!';
-                    wc.remove();
-                    np.fadeOut(800);
-                    addTextDialogue(overlay, 'Erfolgreich gelöscht!');
-                    setTimeout(function(){
-                        overlay.removeAttr('style');
+                switch(data) {
+                    case "0":
+                        res = 'Oh nein! Ein Fehler!';
+                        break;
+                    default:
+                        res = dia+' erfolgreich entfernt!';
+                        wc.remove();
+                        np.fadeOut(800);
+                        addTextDialogue(overlay, 'Erfolgreich gelöscht!');
                         setTimeout(function(){
-                            overlay.remove();
-                        }, 400);
-                    }, 1000);
+                            overlay.removeAttr('style');
+                            setTimeout(function(){
+                                overlay.remove();
+                            }, 400);
+                        }, 1000);
                 }
                 
                 showDialer(res);
@@ -890,12 +917,14 @@ $(function(){
                 
             },
             error: function(data) {
+                // add error output
             }
             
         });
         
     })
 
+    // close deletion confirmation popup
     .on('click', '[data-action="cancel-delete"]', function(){
         
         var wcinrOverlay = body.find('wide-container .zoom-in page-overlay').removeAttr('style');

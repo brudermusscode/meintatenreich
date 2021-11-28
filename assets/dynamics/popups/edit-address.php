@@ -1,8 +1,6 @@
 <?php
 
-// ERROR CODE :: 0
-
-include_once '../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (
     isset($_REQUEST['action'], $_REQUEST['adid'])
@@ -15,16 +13,14 @@ if (
     $adid = $_REQUEST['adid'];
     $uid  = $my->id;
 
-    // CHECK AUTHENTICITY
-    $select = $c->prepare("SELECT * FROM customer_addresses WHERE id = ? AND uid = ?");
-    $select->bind_param('ss', $adid, $uid);
-    $select->execute();
-    $sel_r = $select->get_result();
+    // check existence of address
+    $getAddress = $pdo->prepare("SELECT * FROM customer_addresses WHERE id = ? AND uid = ?");
+    $getAddress->execute([$adid, $uid]);
 
-    if ($sel_r->rowCount() > 0) {
+    if ($getAddress->rowCount() > 0) {
 
-        $s = $sel_r->fetch_assoc();
-        $select->close();
+        // fetch address data
+        $a = $getAddress->fetch();
 
 ?>
 
@@ -47,7 +43,7 @@ if (
 
                     <form data-form="edit-address">
 
-                        <input type="hidden" value="<?php echo $s['id']; ?>" name="adid">
+                        <input type="hidden" value="<?php echo $a->id; ?>" name="adid">
 
                         <!-- NAME -->
                         <div>
@@ -55,7 +51,7 @@ if (
                                 <div class="input w100">
                                     <p>Vollständiger Name</p>
                                     <div class="actual w100">
-                                        <input type="text" name="fullname" placeholder="<?php echo $s['fullname']; ?>" class="tran-all">
+                                        <input type="text" name="fullname" placeholder="<?php echo $a->fullname; ?>" class="tran-all">
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +76,7 @@ if (
                                 <div class="input w100">
                                     <p>Adresse</p>
                                     <div class="actual w100">
-                                        <input type="text" name="address" placeholder="<?php echo $s['address']; ?>" class="tran-all">
+                                        <input type="text" name="address" placeholder="<?php echo $a->address; ?>" class="tran-all">
                                     </div>
                                 </div>
                             </div>
@@ -98,10 +94,10 @@ if (
                                         <div class="cl"></div>
                                     </div>
                                     <div class="actual w100">
-                                        <input type="text" name="extra" placeholder="<?php if ($s['additional'] === 'none') {
+                                        <input type="text" name="extra" placeholder="<?php if ($a->additional === 'none') {
                                                                                             echo 'Keinen Zusatz';
                                                                                         } else {
-                                                                                            echo $s['additional'];
+                                                                                            echo $a->additional;
                                                                                         } ?>" class="tran-all">
                                     </div>
                                 </div>
@@ -114,7 +110,7 @@ if (
                                 <div class="input w100">
                                     <p>Postleitzahl</p>
                                     <div class="actual w100">
-                                        <input type="text" name="postcode" placeholder="<?php echo $s['postcode']; ?>" class="tran-all">
+                                        <input type="text" name="postcode" placeholder="<?php echo $a->postcode; ?>" class="tran-all">
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +119,7 @@ if (
                                 <div class="input w100">
                                     <p>Stadt</p>
                                     <div class="actual w100 posrel">
-                                        <input type="text" name="city" placeholder="<?php echo $s['city']; ?>" class="tran-all">
+                                        <input type="text" name="city" placeholder="<?php echo $a->city; ?>" class="tran-all">
                                     </div>
                                 </div>
                             </div>
@@ -135,7 +131,7 @@ if (
                                 <div class="input w100">
                                     <p class="lt">Telefon</p>
                                     <div class="actual w100">
-                                        <input type="text" name="tel" placeholder="<?php echo $s['tel']; ?>" class="tran-all">
+                                        <input type="text" name="tel" placeholder="<?php echo $a->tel; ?>" class="tran-all">
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +142,7 @@ if (
                     <div class="mt12">
                         <div class="disfl jstfycc">
                             <button data-action="request-edit-address" class="hellofresh hlf-brown rd3">Speichern</button>
-                            <button data-action="delete-address" data-json='[{"id":"<?php echo $s['id']; ?>", "which":"address"}]' class="ml24 hellofresh hlf-white rd3" style="color:#F34236;">Löschen</button>
+                            <button data-action="delete-address" data-json='[{"id":"<?php echo $a->id; ?>", "which":"address"}]' class="ml24 hellofresh hlf-white rd3" style="color:#F34236;">Löschen</button>
                         </div>
                     </div>
 
@@ -158,12 +154,9 @@ if (
 <?php
 
     } else {
-        exit('1');
+        exit('1'); // address doesn't exist
     }
 } else {
-    exit;
+    exit("0");
 }
-
-$c->close();
-
 ?>

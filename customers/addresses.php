@@ -147,7 +147,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                     ?>
 
-                            <div id="np-<?php echo $c->id; ?>" class="notice-papel lt" data-action="edit-address" data-json='[{"uid":"<?php echo $c->id; ?>"}]'>
+                            <div id="np-<?php echo $c->id; ?>" class="notice-papel lt" data-action="edit-address" data-json='[{"adid":"<?php echo $c->id; ?>", "uid":"<?php echo $c->id; ?>"}]'>
 
                                 <div class="edit-pm tran-all-cubic">
                                     <p class="almid"><i class="icon-edit-3"></i></p>

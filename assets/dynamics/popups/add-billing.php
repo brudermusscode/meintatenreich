@@ -2,7 +2,11 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add-payment-method' && $loggedIn) {
+if (
+    isset($_REQUEST['action']) &&
+    $_REQUEST['action'] == 'add-payment-method' &&
+    $loggedIn
+) {
 
 ?>
 
@@ -80,7 +84,6 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add-payment-method' &&
 <?php
 
 } else {
-
     exit("0");
 }
 
