@@ -1,43 +1,45 @@
 <?php
 
-// ERROR CODE :: 0
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-include_once '../../../../mysql/_.session.php';
+$pdo->beginTransaction();
 
 if (
     isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])
 ) {
 
+    // create debugging array
+    $debugArray = [];
+
+    // variablize
     $id = $_REQUEST['id'];
     $uid = $my->id;
-    $res = [];
 
-    // CHECK EXISTENCE OF ORDER
-    $sel = $c->prepare("SELECT * FROM customer_buys WHERE id = ? AND uid = ?");
-    $sel->bind_param('ss', $id, $uid);
-    $sel->execute();
-    $sr = $sel->get_result();
-    $sel->close();
+    // check if order exists
+    $getOrder = $pdo->prepare("SELECT * FROM customer_buys WHERE id = ? AND uid = ?");
+    $getOrder->execute([$id, $uid]);
 
-    if ($sr->rowCount()) {
+    if ($getOrder->rowCount()) {
+
+        // add debug
+        $debugArray["orderExists"] = true;
 
         // UPDATE ORDER
-        $upd = $c->prepare("UPDATE customer_buys SET paid = '1' WHERE id = ? AND uid = ?");
-        $upd->bind_param('ss', $id, $uid);
-        $upd->execute();
+        $update = $pdo->prepare("UPDATE customer_buys SET paid = '1', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
+        $update->execute([$id, $uid]);
 
-        if ($upd) {
-            $c->commit();
-            $c->close();
-            exit('success');
+        if ($update) {
+
+            $pdo->commit();
+            exit(json_encode($debugArray));
         } else {
-            $c->rollback();
-            $c->close();
+
+            $pdo->rollback();
             exit('0');
         }
     } else {
         exit('1');
     }
 } else {
-    exit;
+    exit("0");
 }

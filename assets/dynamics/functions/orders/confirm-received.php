@@ -1,68 +1,79 @@
 <?php
 
-// ERROR CODE :: 0
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-include_once '../../../../mysql/_.session.php';
+$pdo->beginTransaction();
 
 if (
     isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])
 ) {
 
+    // create debugging array
+    $debugArray = [];
+
+    // variablize
     $id = $_REQUEST['id'];
     $uid = $my->id;
-    $res = [];
 
-    // CHECK EXISTENCE OF ORDER
-    $sel = $c->prepare("SELECT * FROM customer_buys WHERE id = ? AND uid = ? AND status != 'done'");
-    $sel->bind_param('ss', $id, $uid);
-    $sel->execute();
-    $sr = $sel->get_result();
-    $sel->close();
+    // check order existence and source
+    $getOrder = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ? AND id = ?");
+    $getOrder->execute([$uid, $id]);
 
-    if ($sr->rowCount()) {
+    if ($getOrder->rowCount() > 0) {
+
+        // add debug-
+        $debugArray["orderExists"] = true;
+
+        // fetch order information
+        $o = $getOrder->fetch();
 
         $pids = [];
-        $selProducts = $c->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
-        $selProducts->bind_param('s', $id);
-        $selProducts->execute();
-        $selProducts_r = $selProducts->get_result();
-        $selProducts->close();
-        while ($p = $selProducts_r->fetch_assoc()) {
-            $pids[] = $p['pid'];
+        $updateProducts = false;
+        $deleteReservations = false;
+        $loopedProducts = 0;
+        $loopedReservations = 0;
+
+        $getOrderProducts = $pdo->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
+        $getOrderProducts->execute([$id]);
+
+        foreach ($getOrderProducts->fetchAll() as $op) {
+            $pids[] = $op->pid;
+
+            $updateProducts = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
+            $updateProducts->execute([$op->pid]);
+
+            if ($updateProducts) {
+                $loopedProducts++;
+            }
+
+            $deleteReservations = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
+            $deleteReservations->execute([$op->pid]);
+
+            if ($deleteReservations) {
+                $loopedReservations++;
+            }
         }
 
-        $updProducts = true;
-        $delRes = true;
-        foreach ($pids as $pid) {
-
-            // MAKE PRODUCTS UNAVAILABLE
-            $updProducts = $c->prepare("UPDATE products SET available = '0' WHERE id = ?");
-            $updProducts->bind_param('s', $pid);
-            $updProducts->execute();
-
-            // REMOVE RESERVATIONS
-            $delRes = $c->prepare("DELETE FROM products_reserved WHERE pid = ?");
-            $delRes->bind_param('s', $pid);
-            $delRes->execute();
-        }
+        // add debug
+        $debugArray["orderProductsUpdated"] = $loopedProducts . "/" . $getOrderProducts->rowCount();
+        $debugArray["orderProductsReservationsDeleted"] = $loopedReservations . "/" . $getOrderProducts->rowCount();
 
         // UPDATE ORDER
-        $upd = $c->prepare("UPDATE customer_buys SET status = 'done' WHERE id = ? AND uid = ?");
-        $upd->bind_param('ss', $id, $uid);
-        $upd->execute();
+        $updateOrder = $pdo->prepare("UPDATE customer_buys SET status = 'done', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
+        $updateOrder->execute([$id, $uid]);
 
-        if ($upd && $updProducts && $delRes) {
-            $c->commit();
-            $c->close();
-            exit('success');
+        if ($updateOrder && $updateProducts && $deleteReservations) {
+
+            $pdo->commit();
+            exit(json_encode($debugArray));
         } else {
-            $c->rollback();
-            $c->close();
+
+            $pdo->rollback();
             exit('0');
         }
     } else {
-        exit('1');
+        exit('1'); // order does not exist
     }
 } else {
-    exit;
+    exit("0");
 }

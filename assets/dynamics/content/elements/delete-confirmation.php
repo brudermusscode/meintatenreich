@@ -16,7 +16,7 @@ if (
     <div data-structure="confirm-window" class='posabs almid w100'>
         <div class='zoom-in bgf ml36 mr36 rd3 mshd-2'>
             <div class='p42'>
-                <p style='font-size:1.2em;' class='c3 tac'>Sind Sie sicher?</p>
+                <p style='font-size:1.2em;' class='c3 tac'>Bist du sicher?</p>
                 <div class='jstfycc disfl mt24'>
                     <input class="hidden-elem" type="hidden" name="which" value>
                     <button data-action='request-delete' data-json='[{"id":"<?php echo $id; ?>"}]' class='hellofresh hlf-green rd3 mr12'>Ja, bitte!</button>

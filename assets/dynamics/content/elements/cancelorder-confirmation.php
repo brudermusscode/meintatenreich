@@ -1,6 +1,6 @@
 <?php
 
-include_once '../../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
 if (
     isset($_REQUEST['action'], $_REQUEST['id'])
@@ -29,7 +29,7 @@ if (
 <?php
 
 } else {
-    exit;
+    exit("0");
 }
 
 ?>

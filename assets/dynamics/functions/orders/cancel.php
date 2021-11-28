@@ -1,8 +1,8 @@
 <?php
 
-// ERROR CODE :: 0
+include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-include_once '../../../../mysql/_.session.php';
+$pdo->beginTransaction();
 
 if (
     isset($_REQUEST['action'], $_REQUEST['id'])
@@ -10,71 +10,81 @@ if (
     && is_numeric($_REQUEST['id'])
 ) {
 
+    // create debugging array
+    $debugArray = [];
+
+    // variablize
     $id = $_REQUEST['id'];
     $uid = $my->id;
 
-    // CHECK ORDER ACCESSABILITY
-    $sel = $c->prepare("SELECT * FROM customer_buys WHERE uid = ? AND id = ?");
-    $sel->bind_param('ss', $uid, $id);
-    $sel->execute();
-    $s_r = $sel->get_result();
+    // check order existence and source
+    $getOrder = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ? AND id = ?");
+    $getOrder->execute([$uid, $id]);
 
-    if ($s_r->rowCount() > 0) {
+    if ($getOrder->rowCount() > 0) {
 
-        $s = $s_r->fetch_assoc();
-        $sel->close();
+        // add debug-
+        $debugArray["orderExists"] = true;
 
-        // CHECK CANCABILITY
-        if ($s['cancability'] === '1') {
+        // fetch order information
+        $o = $getOrder->fetch();
 
-            // GET PRODUCTS FROM SCARD
-            $sel = $c->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
-            $sel->bind_param('s', $id);
-            $sel->execute();
-            $s_r = $sel->get_result();
+        // check if order still is cancable
+        if ($o->cancability == '1') {
 
-            if ($s_r->rowCount() > 0) {
+            // add debug-
+            $debugArray["orderCancable"] = true;
 
-                // MAKE ARRAY OF PRODUCTS
+            // get products from order
+            $getOrderProducts = $pdo->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
+            $getOrderProducts->execute([$id]);
+
+            $updateOrder = false;
+            $deleteReservations = false;
+
+            if ($getOrderProducts->rowCount() > 0) {
+
+                // add debug
+                $looped = 0;
+                $debugArray["orderProductsExist"] = true;
+
+                // create array of products
                 $products = [];
-                while ($prd = $s_r->fetch_assoc()) {
-                    $products[] = (int)$prd['pid'];
+                foreach ($getOrderProducts->fetchAll() as $op) {
+                    $products[] = (int)$op->pid;
+
+                    // remove reservations for all products
+                    $deleteReservations = $pdo->prepare("DELETE FROM products_reserved WHERE uid = ? AND pid = ?");
+                    $deleteReservations->execute([$uid, $op->pid]);
+
+                    if ($deleteReservations) {
+                        $looped++;
+                    }
                 }
-            }
-            $sel->close();
 
-            foreach ($products as $pid) {
-
-                // REMOVE RESERVATIONS
-                $delRes = $c->prepare("DELETE FROM products_reserved WHERE uid = ? AND pid = ?");
-                $delRes->bind_param('ss', $uid, $pid);
-                $delRes->execute();
+                // add debug
+                $debugArray["orderProductsReservationsDeleted"] = $looped . "/" . $getOrderProducts->rowCount();
             }
 
-            // CANCEL ORDER
-            $upd = $c->prepare("UPDATE customer_buys SET status = 'canceled', cancability = '0' WHERE uid = ? AND id = ?");
-            $upd->bind_param('ss', $uid, $id);
-            $upd->execute();
+            // update order to diabled
+            $updateOrder = $pdo->prepare("UPDATE customer_buys SET status = 'canceled', cancability = '0', updated = CURRENT_TIMESTAMP WHERE uid = ? AND id = ?");
+            $updateOrder->execute([$uid, $id]);
 
-            if ($upd && $delRes) {
-                $c->commit();
-                $upd->close();
-                $delRes->close();
-                $c->close();
-                exit('success');
+            if ($updateOrder && $deleteReservations) {
+
+                $pdo->commit();
+                exit(json_encode($debugArray));
             } else {
-                $c->rollback();
-                $upd->close();
-                $delRes->close();
-                $c->close();
+
+                $pdo->rollback();
                 exit('0');
             }
         } else {
-            exit('2'); // CANCABILITY
+            exit('2'); // not cancable
         }
     } else {
-        exit('1'); // ORDER NOT YOURS/DOESN'T EXIST
+        exit('1'); // order doesn't exist/not owner
     }
 } else {
-    exit;
+    exit("0");
 }

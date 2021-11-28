@@ -150,47 +150,6 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         </div>
                                     </div>
 
-                                    <script>
-                                        $(function() {
-
-                                            let $doc = $(document);
-                                            let $bod = $('body');
-
-                                            $doc.on('click', '[data-action="order:received,confirm"]', function() {
-
-                                                let $t = $(this);
-                                                let id = $t.data('json')[0].id;
-                                                let dS = {
-                                                    id: id
-                                                };
-                                                let url = '/ajax/orders/confirm-received';
-                                                let res;
-
-                                                let ajax = $.ajax({
-
-                                                    url: url,
-                                                    data: dS,
-                                                    type: 'TEXT',
-                                                    method: 'POST',
-                                                    success: function(data) {
-                                                        if (data !== 'success') {
-                                                            res = 'Ein Fehler ist aufgetreten...';
-                                                        } else {
-                                                            res = 'Vielen Dank für die Bestätigung!';
-                                                            $t.attr('disabled', 'disabled');
-                                                            $t.html('Ware erhalten bestätigt');
-                                                        }
-
-                                                        showDialer(res);
-                                                    }
-
-                                                });
-
-                                            });
-
-                                        });
-                                    </script>
-
                                     <div class="mt12">
 
                                         <!-- PRODUCTS GOT -->
@@ -230,7 +189,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         </div>
 
                                         <!-- PAYMENT MADE -->
-                                        <?php if ($o->cancability === '0') { ?>
+                                        <?php if ($o->status !== 'canceled') { ?>
                                             <div class="ml4 lt">
                                                 <?php if ($o->paid === '0') { ?>
                                                     <button type="button" class="hellofresh hlf-blue-s normal rd3 mshd-1" data-action="manage:order,pay" data-json='[{"id":"<?php echo $o->id; ?>"}]'>
@@ -368,7 +327,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             </product-card>
                         </a>
 
-                    <?php } // END WHILE 
+                    <?php }
                     ?>
 
 

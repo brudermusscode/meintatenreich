@@ -62,61 +62,11 @@ RewriteRule ^x-adminauthprogress(|/)$ K4Bzb5RM72YpGGC.phps
 
 RewriteRule ^verify(|/)$ verify.php
 RewriteRule ^newpassword(|/)$ verify.password.php
-RewriteRule ^shop(|/)$ index.php
 RewriteRule ^search(|/)$ search.php
 RewriteRule ^maintenance(|/)$ maintenance.php
-RewriteRule ^scard(|/)$ scard.php
-RewriteRule ^scardsuccess(|/)$ scard_success.php
-RewriteRule ^contact(|/)$ contact.php
 
 
-# Intern
-RewriteRule ^intern(|/)$ intern/index.php
-RewriteRule ^intern/imprint(|/)$ intern/imprint.php
-RewriteRule ^intern/disclaimer(|/)$ intern/disclaimer.php
-RewriteRule ^intern/sepa(|/)$ intern/sepa.php
-
-# JS GET CONTENT
-# >> Global
-RewriteRule ^get/settings(|/)$ assets/dynamics/content/settings.php
-RewriteRule ^get/changepassword(|/)$ assets/dynamics/content/changepassword.php
-RewriteRule ^get/paymentmethod(|/)$ assets/dynamics/content/paymentmethod.php
-RewriteRule ^get/editpaymentmethod(|/)$ assets/dynamics/content/edit-paymentmethod.php
-RewriteRule ^get/address(|/)$ assets/dynamics/content/address.php
-RewriteRule ^get/editaddress(|/)$ assets/dynamics/content/edit-address.php
-RewriteRule ^get/search(|/)$ assets/dynamics/content/search.php
-# >> Login
-RewriteRule ^get/login(|/)$ assets/dynamics/content/login.php
-RewriteRule ^get/fgp(|/)$ assets/dynamics/content/login/forgot-password.php
-RewriteRule ^get/signup(|/)$ assets/dynamics/content/signup.php
-# >> Maintenance
-RewriteRule ^get/handlettering(|/)$ assets/dynamics/content/maintenance/handlettering.php
-RewriteRule ^get/mixedmedia(|/)$ assets/dynamics/content/maintenance/mixedmedia.php
-RewriteRule ^get/projectwith(|/)$ assets/dynamics/content/maintenance/projectwith.php
-RewriteRule ^get/maintenance(|/)$ assets/dynamics/content/maintenance/index.php
-# >> Products
-RewriteRule ^get/products(|/)$ assets/dynamics/content/products/index.php
-RewriteRule ^get/productviewdesc(|/)$ assets/dynamics/content/products/desc.php
-RewriteRule ^get/imageviewer(|/)$ assets/dynamics/content/products/image-viewer.php
-RewriteRule ^get/addrating(|/)$ assets/dynamics/content/products/add-rating.php
-RewriteRule ^get/myrating(|/)$ assets/dynamics/content/elem/my-rating.php
-RewriteRule ^get/searchRequest(|/)$ assets/dynamics/content/products/search-request.php
-# >> Scard
-RewriteRule ^get/accountsscard(|/)$ assets/dynamics/content/scard/accounts-scard.php
-RewriteRule ^get/pricing(|/)$ assets/dynamics/content/scard/pricing.php
-RewriteRule ^get/overview(|/)$ assets/dynamics/content/scard/overview.php
-
-
-# JS GET ELEMENTS
-RewriteRule ^elem/paymentmethod(|/)$ assets/dynamics/content/elem/paymentmethod.php
-RewriteRule ^elem/confirmdelete(|/)$ assets/dynamics/content/elem/confirm-delete.php
-RewriteRule ^elem/confirmcancelorder(|/)$ assets/dynamics/content/elem/confirm-cancel-order.php
-RewriteRule ^elem/address(|/)$ assets/dynamics/content/elem/address.php
-
-
-
-
-######### ADMIN PAGE ##########
+# ADMIN PAGE
 RewriteRule ^hk/admin/v1/secret/overview(|/)$ housekeeping/index.php
 RewriteRule ^hk/admin/v1/secret/overview/messages(|/)$ housekeeping/messages.php
 RewriteRule ^hk/admin/v1/secret/manage/orders(|/)$ housekeeping/manage/orders.php

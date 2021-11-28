@@ -942,37 +942,41 @@ $(function(){
     // >> cancel confirmation popup
     .on('click', '[data-action="cancel-order"]', function() {
     
-        var id = $(this).data('json')[0].id;
-        var action = 'cancel-order';
         
         addOverlay(body, dark = true);
-        var ov = body.find('page-overlay');
+        let ov = body.find('page-overlay');
         addLoader(ov, 'floating');
-        var lo = ov.find('loader').parent();
+        let lo = ov.find('loader').parent();
         
+        let id = $(this).data('json')[0].id;
+        let action = 'cancel-order';
+        let url = dynamicHost + "/ajax/content/elements/cancelorder-confirmation";
+
         $.ajax({
             
+            url: url,
             data: { action: action, id: id },
-            url: '/elem/confirmcancelorder',
             method: 'POST',
             type: 'HTML',
             success: function(data) {
                 
-                lo.remove();
-                ov.append(data);
-                
+                switch(data) {
+                    case "0":
+                        console.log("someone likes to play");
+                        break;
+                    default:
+                        lo.remove();
+                        ov.append(data);
+                }
+            },
+            error: function(data) {
+                console.error(data.responseText);
             }
-            
         });
-        
     })
 
     // >> cancel
     .on('click', '[data-action="request-cancel-order"]', function() {
-        
-        var id = $(this).data('json')[0].id;
-        var action = 'request-cancel-order';
-        var res;
         
         var ov = body.find('page-overlay');
         var ovCl = ov.find('close-overlay').remove();
@@ -983,24 +987,26 @@ $(function(){
         addLoader(wcOv, 'floating');
         var wcLo = wcOv.find('loader').parent();
         
+        let id = $(this).data('json')[0].id;
+        let action = 'request-cancel-order';
+        let res;
+        let url = dynamicHost + "/ajax/functions/orders/cancel";
+
         $.ajax({
             
+            url: url,
             data: { action: action, id: id },
-            url: '/ajax/requestcancelorder',
             method: 'POST',
             type: 'TEXT',
             success: function(data) {
-                
+
                 switch(data) {
-                    case '':
                     case '0':
-                        res = 'Ein unbekannter Fehler ist aufgetreten.';
-                        break;
                     case '1':
-                        res = 'Diese bestellung scheint nicht zu existieren!';
+                        res = 'Oh nein! Ein Fehler!';
                         break;
                     case '2':
-                        res = 'Die Stornierungsfrist von 2 Stunden ist bereits abgelaufen.';
+                        res = 'Die Stornierungsfrist von 2 Stunden ist bereits abgelaufen';
                         closePageoverlay();
                         break;
                     default:
@@ -1014,6 +1020,9 @@ $(function(){
                 
                 showDialer(res);
                 
+            },
+            error: function(data) {
+                // add error log
             }
             
         });
@@ -1026,7 +1035,7 @@ $(function(){
         let $t = $(this);
         let id = $t.data('json')[0].id;
         let dS = { id: id };
-        let url = '/ajax/orders/pay';
+        let url = dynamicHost + '/ajax/functions/orders/pay';
         let res;
         
         showDialer('Bitte warten...');
@@ -1034,20 +1043,17 @@ $(function(){
         let ajax = $.ajax({
             url: url,
             data: dS,
-            method: pmeth,
+            method: "POST",
             type: 'JSON',
             success: function(data){
                 
                 switch(data){
                     case '0':
-                    default:
-                        res = 'Ein unbekannter Fehler ist aufgetreten...';
-                        break;
                     case '1':
-                        res = 'Diese Bestellung scheint nicht zu existieren...';
+                        res = 'Oh nein! Ein Fehler!';
                         break;
-                    case 'success':
-                        res = 'Als bezahlt markiert!';
+                    default:
+                        res = 'Als bezahlt markiert';
                         $t.removeAttr('data-action data-json').attr('disabled', 'disabled').html('Als bezahlt markiert').toggleClass('hlf-white-s hlf-blue-s');
                 }
                 
@@ -1057,8 +1063,44 @@ $(function(){
             
         });
         
-    });
+    })
 
+    // >> confirm received
+    .on('click', '[data-action="order:received,confirm"]', function() {
+
+        let $t = $(this);
+        let id = $t.data('json')[0].id;
+        let dS = {
+            id: id
+        };
+        let url = dynamicHost + '/ajax/functions/orders/confirm-received';
+        let res;
+
+        $.ajax({
+
+            url: url,
+            data: dS,
+            type: 'TEXT',
+            method: 'POST',
+            success: function(data) {
+
+                console.log($.parseJSON(data));
+
+                switch(data) {
+                    case "0":
+                    case "1":
+                        console.log("someone likes to play");
+                        break;
+                    default:
+                        res = 'Vielen Dank für die Bestätigung!';
+                        $t.attr('disabled', 'disabled');
+                        $t.html('Ware erhalten bestätigt');
+                }
+
+                showDialer(res);
+            }
+        });
+    });
 });
 
 // load shop front with products
