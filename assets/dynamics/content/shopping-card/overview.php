@@ -212,19 +212,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'scard-overview') {
         $(function() {
 
             <?php if ($my->billingPreference) { ?>
-                let which;
-
-                <?php
-
-                if ($bp->payment === 'bank') {
-                    echo "which = 'bank';";
-                } else {
-                    echo "which = 'paypal';";
-                }
-
-                ?>
-
-                var clickPaymentMethod = $('[data-action="accounts-scard"]').find('.list ul li[data-json=\'[{"which":"' + which + '"}]\']').click();
+                var clickPaymentMethod = $('[data-action="accounts-scard"]').find('.list ul li[data-json=\'[{"which":"bank"}]\']').click();
             <?php } ?>
 
             <?php if ($my->addressPreference) { ?>

@@ -192,7 +192,12 @@ if ($loggedIn) {
 
     // check customers billing preference
     $my->billingPreference = false;
-    $billingPreference = $pdo->prepare("SELECT * FROM customer_billings_prefs WHERE uid = ?");
+    $billingPreference = $pdo->prepare("
+        SELECT *, customer_billings.id AS bid, customer_billings_prefs.id AS bpid 
+        FROM customer_billings_prefs, customer_billings  
+        WHERE customer_billings.id = customer_billings_prefs.pid 
+        AND customer_billings_prefs.uid = ? 
+    ");
     $billingPreference->execute([$sessionid]);
 
     if ($billingPreference->rowCount() > 0) {

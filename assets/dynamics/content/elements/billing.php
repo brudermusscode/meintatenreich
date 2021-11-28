@@ -20,7 +20,7 @@ if (
         <div class="np-inr">
             <div class="option mt2">
                 <p class="desc ttup">Kontoinhaber</p>
-                <p class="actual trimfull"><?php echo $_REQUEST['acc']; ?></p>
+                <p class="actual trimfull" react-edit-account><?php echo $_REQUEST['acc']; ?></p>
             </div>
             <div class="option mt2">
                 <p class="desc ttup">BIC (Swift-Code)</p>

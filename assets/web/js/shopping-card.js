@@ -59,23 +59,27 @@ $(function(document) {
     .on('click', '[data-action="accounts-scard"] .list ul li', function() {
 
         var t = $(this);
-        var which = t.data('json')[0].which;
         var action = t.closest('[data-element="select"]').data('action');
         var accountReact = $('[data-react="account-scard"]');
-        var res;
         let url = dynamicHost + "/ajax/content/shopping-card/billings";
 
         $.ajax({
 
             url: url,
-            data: { action: action, which: which },
+            data: { action: action },
             method: 'POST',
             type: 'TEXT',
             success: function(data) {
 
-                accountReact.empty();
-                accountReact.removeClass('vishid opa0 hw1');
-                accountReact.append(data);
+                switch(data) {
+                    case "0":
+                        console.log("someone likes to play");
+                        break;
+                    default:
+                        accountReact.empty();
+                        accountReact.removeClass('vishid opa0 hw1');
+                        accountReact.append(data);
+                }
 
             }
 
@@ -234,13 +238,13 @@ function getScardOverview() {
         type: 'HTML',
         success: function(data) {
 
-            if(data !== '') {
-
-                append.empty();
-                append.append(data);
-            } else {
-
-                showDialer('Ein unbekannter Fehler ist aufgetreten!');
+            switch(data) {
+                case "0":
+                    document.location.replace("/");
+                    break;
+                default:
+                    append.empty();
+                    append.append(data);
             }
 
             ov.removeAttr('style');
