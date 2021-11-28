@@ -163,47 +163,50 @@ $(function() {
         
     })
 
-    // sign >> in >> forgot password
+    // >> forgot password open popup
     .on('click', '[data-action="forgot-password"]', function(){
         
-        var form;
-        var ov = body.find('page-overlay');
-        var lc = ov.find('login-container');
-        var ac = 'forgot-password';
-        
-        
+        let ov = body.find('page-overlay');
+        let lc = ov.find('login-container');
+        let ac = 'forgot-password';
         
         lc.fadeOut(100);
         addLoader(ov, 'floating');
         var lo = ov.find('loader').parent();
         
+        let url = dynamicHost + "/ajax/popups/forgot-password";
+
         setTimeout(function(){
             
             $.ajax({
 
+                url: url,
                 data: { action: ac },
-                url: '/get/fgp',
                 method: 'POST',
                 type: 'HTML',
                 success: function(data) {
 
-                    lo.remove();
-                    ov.append(data);
-                    form = $('[data-form="fgp"]').find('input[name="mail"]').focus();
-                    
+                    switch(data) {
+                        case "0":
+                        case "1":
+                            console.log("someone likes to play");
+                            break;
+                        default:
+                            lo.remove();
+                            ov.append(data);
+                            form = $('[data-form="fgp"]').find('input[name="mail"]').focus();
+                    }
                 }
-
             });
-            
         }, 100);
-        
     })
 
+    // >> forgot password send mail
     .on('click', '[data-action="new-password"]', function() {
         
         var form = $('[data-form="fgp"]');
         var val  = $.trim(form.find('input[name="mail"]').val());
-        var ac = 'request-new-password';
+        var ac = 'forgot-password';
         var res;
         
         var dataString = form.serialize() + '&action=' + ac;
@@ -221,14 +224,18 @@ $(function() {
             var wcOv = wc.find('page-overlay');
             addLoader(wcOv, 'floating');
             
+            let url = dynamicHost + "/ajax/functions/sign/forgot-password";
+
             $.ajax({
 
+                url: url,
                 data: dataString,
-                url: '/ajax/fgp',
                 method: 'POST',
                 type: 'TEXT',
                 success: function(data) {
-                    
+
+                    console.log(data);
+
                     wcOv.removeAttr('style');
                     setTimeout(function(){
                         wcOv.remove();
@@ -237,13 +244,14 @@ $(function() {
                     switch(data) {
                         case '':
                         case '0':
-                            res = 'Ein unbekannter Fehler ist aufgetreten.';
+                        case '2':
+                            res = 'Oh nein! Ein Fehler!';
                             break;
                         case '1':
-                            res = 'Deine E-Mail hat ein falsches Format. Bitte Nutze name@host.endung!';
+                            res = 'Deine E-Mail hat ein falsches Format. Bitte Nutze name@host.endung';
                             break;
                         default:
-                            res = 'Falls die angegebene E-Mail Adresse existiert, haben wir eine Mail zum Zurücksetzen des Passworts gesendet.'
+                            res = 'Falls die angegebene E-Mail Adresse existiert, haben wir eine Mail zum Zurücksetzen des Passworts gesendet'
                             ov.removeAttr('style');
                             setTimeout(function(){
                                 ov.remove();
@@ -261,6 +269,7 @@ $(function() {
         
     })
 
+    // >> forgot password close popup
     .on('submit', '[data-form="fgp"]', function(e) {
         
         var btn = $(this).parents().eq(3).find('button');
@@ -270,11 +279,12 @@ $(function() {
         
     })
 
+    // forgot password request
     .on('click', '[data-action="request-new-password"]', function() {
 
         var form = $('[data-form="new-password"]');
         var inputsEmpty = checkFormInputEmpty(form);
-        var action = 'request-new-password';
+        var action = 'forgot-password-2';
         var res;
 
         if(inputsEmpty === false) {
@@ -290,13 +300,17 @@ $(function() {
             var lo = ov.find('loader').parent();
             var dataArray = ['', '0', '1', '5', '2', '3', '4'];
 
+            let url = dynamicHost + "/ajax/functions/sign/forgot-password";
+
             $.ajax({
 
+                url: url,
                 data: formData,
-                url: '/ajax/requestnewpassword',
                 method: 'POST',
                 type: 'TEXT',
                 success: function(data) {
+
+                    console.log($.parseJSON(data));
 
                     lo.remove();
 
@@ -315,21 +329,26 @@ $(function() {
                     switch(data) {
                         case '':
                         case '0':
-                        case '1':
                         case '5':
                             res = 'Ein unbekannter Fehler ist aufgetreten.';
                             break;
+                        case '1':
+                            res = 'Du hast dein Passwort über diesen Key bereits geändert';
+                            break;
                         case '2':
-                            res = 'Deine Passwörter stimmen nicht überein!';
+                            res = 'Deine eingegebenen Passwörter stimmen nicht überein';
                             break;
                         case '3':
-                            res = 'Dein Passwort sollte zu Deiner eigenen Sicherheit min. 8 Zeichen enthalten!';
+                            res = 'Dein Passwort sollte sicherheitshalber min. 8 Zeichen enthalten';
                             break;
                         case '4':
-                            res = 'Dein Passwort enthält unzulässige Zeichen. Erlaubt sind a-z, A-Z, 0-9, =.,_-+*#~?!&%$§/!';
+                            res = 'Dein Passwort enthält unzulässige Zeichen. Erlaubt sind a-z, A-Z, 0-9, =.,_-+*#~?!&%$§!';
                             break;
                         default:
                             res = 'Erfolgreich geändert!';
+                            setTimeout(function(){
+                                window.location.replace("/");
+                            }, 600);
 
                     }
 

@@ -182,6 +182,14 @@ class shop
         return false;
     }
 
+    public static function validatePassword($str)
+    {
+        if (!preg_match('/[^a-z0-9=.,_+*#~?!&%$§\-]/i', $str)) {
+            return true;
+        }
+
+        return false;
+    }
 
     public static function removeFileType($str)
     {

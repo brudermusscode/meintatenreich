@@ -1,7 +1,6 @@
 <?php
 
-require_once "./mysql/_.session.php";
-require_once "./mysql/_.maintenance.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 $ptit = "Ändere dein Passwort";
 $pid = "verify.password";
@@ -9,28 +8,25 @@ $pid = "verify.password";
 $auth = false;
 
 if (isset($_GET['id'], $_GET['value'])) {
+
     $id = $_GET['id'];
     $key = $_GET['value'];
 
-    // CHECK
-    $sel = $c->prepare('SELECT * FROM customer_password_forgot WHERE uid = ? AND value = ?');
-    $sel->bind_param('ss', $id, $key);
-    $sel->execute();
-    $s_r = $sel->get_result();
+    // get password verification key
+    $getPasswordForgot = $pdo->prepare('SELECT * FROM customer_password_forgot WHERE uid = ? AND value = ?');
+    $getPasswordForgot->execute([$id, $key]);
 
-    if ($s_r->rowCount() > 0) {
+    if ($getPasswordForgot->rowCount() > 0) {
 
         $auth = true;
     } else {
         exit(header('location: /'));
     }
-
-    $sel->close();
 } else {
-    exit(header('location: ./'));
+    exit(header('location: /'));
 }
 
-include_once "./assets/templates/global/head.php";
+include_once $sroot . "/assets/templates/global/head.php";
 
 ?>
 
@@ -65,6 +61,31 @@ include_once "./assets/templates/global/head.php";
         background: white;
         word-wrap: break-word;
     }
+
+    .main-content {
+        width: 600px;
+        margin: 0 auto;
+        position: relative;
+        font-size: 1.2em;
+        border-radius: 12px;
+    }
+
+    .main-content.box {
+        background-color: white;
+        border-radius: 3px;
+        padding: 24px 32px;
+    }
+
+    .btn {
+        border: 0;
+        border-radius: 3px;
+        color: white;
+        background: #8BC34A;
+        padding: 18px 32px;
+        font-size: 1.2em;
+        text-align: center;
+    }
+
 
     input[type="password"] {
         padding-right: 32px;
@@ -110,11 +131,17 @@ include_once "./assets/templates/global/head.php";
 <div class="easy-main">
 
     <div class="easy-hdr">
-        <img onload="fadeInVisOpa($(this))" class="tran-all" src="<?php echo $imgurl; ?>/global/g3766.png">
+        <img onload="fadeInVisOpa($(this))" class="tran-all" src="<?php echo $url["img"]; ?>/global/g3766.png">
     </div>
 
     <div class="easy-box mshd-1 rd3">
-        <div class="p32">
+        <div class="p42">
+
+            <div class="mb24">
+                <p class="tac">
+                    <strong>Ändere dein Passwort</strong>
+                </p>
+            </div>
 
             <?php if ($auth === true) { ?>
 
