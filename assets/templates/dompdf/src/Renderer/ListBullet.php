@@ -27,7 +27,7 @@ class ListBullet extends AbstractRenderer
      */
     static function get_counter_chars($type)
     {
-        static $cache = array();
+        static $cache = [];
 
         if (isset($cache[$type])) {
             return $cache[$type];
@@ -75,9 +75,9 @@ class ListBullet extends AbstractRenderer
     }
 
     /**
-     * @param integer $n
+     * @param int $n
      * @param string $type
-     * @param integer $pad
+     * @param int|null $pad
      *
      * @return string
      */
@@ -105,7 +105,7 @@ class ListBullet extends AbstractRenderer
             case "lower-alpha":
             case "lower-latin":
             case "a":
-                $text = chr(($n % 26) + ord('a') - 1);
+                $text = chr((($n - 1) % 26) + ord('a'));
                 break;
 
             case "upper-roman":
@@ -135,7 +135,7 @@ class ListBullet extends AbstractRenderer
     {
         $style = $frame->get_style();
         $font_size = $style->font_size;
-        $line_height = (float)$style->length_in_pt($style->line_height, $frame->get_containing_block("h"));
+        $line_height = $style->line_height;
 
         $this->_set_opacity($frame->get_opacity($style->opacity));
 
@@ -229,12 +229,16 @@ class ListBullet extends AbstractRenderer
                     $spacing = 0;
                     $font_family = $style->font_family;
 
+                    // Out-of-flow list items do not have a containing line
                     $line = $li->get_containing_line();
-                    list($x, $y) = array($frame->get_position("x"), $line->y);
+                    $x = $frame->get_position("x");
+                    $y = $line ? $line->y : $li->get_position("y");
 
                     $x -= $this->_dompdf->getFontMetrics()->getTextWidth($text, $font_family, $font_size, $spacing);
 
                     // Take line-height into account
+                    // TODO: should the line height take into account the line height of the containing block (per previous logic)
+                    // $line_height = (float)$style->length_in_pt($style->line_height, $frame->get_containing_block("h"));
                     $line_height = $style->line_height;
                     $y += ($line_height - $font_size) / 4; // FIXME I thought it should be 2, but 4 gives better results
 
@@ -248,7 +252,7 @@ class ListBullet extends AbstractRenderer
         }
 
         $id = $frame->get_node()->getAttribute("id");
-        if (strlen($id) > 0)  {
+        if (strlen($id) > 0) {
             $this->_canvas->add_named_dest($id);
         }
     }

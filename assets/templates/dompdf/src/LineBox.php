@@ -7,8 +7,10 @@
  */
 namespace Dompdf;
 
+use Dompdf\FrameDecorator\AbstractFrameDecorator;
 use Dompdf\FrameDecorator\Block;
 use Dompdf\FrameDecorator\Page;
+use Dompdf\Positioner\Inline as InlinePositioner;
 
 /**
  * The line box class
@@ -27,12 +29,12 @@ class LineBox
     protected $_block_frame;
 
     /**
-     * @var Frame[]
+     * @var AbstractFrameDecorator[]
      */
-    protected $_frames = array();
+    protected $_frames = [];
 
     /**
-     * @var integer
+     * @var int
      */
     public $wc = 0;
 
@@ -62,19 +64,26 @@ class LineBox
     public $right = 0.0;
 
     /**
-     * @var Frame
+     * @var AbstractFrameDecorator
      */
     public $tallest_frame = null;
 
     /**
      * @var bool[]
      */
-    public $floating_blocks = array();
+    public $floating_blocks = [];
 
     /**
      * @var bool
      */
     public $br = false;
+
+    /**
+     * Whether the line box contains any inline-positioned frames.
+     *
+     * @var bool
+     */
+    public $inline = false;
 
     /**
      * Class constructor
@@ -85,7 +94,7 @@ class LineBox
     public function __construct(Block $frame, $y = 0)
     {
         $this->_block_frame = $frame;
-        $this->_frames = array();
+        $this->_frames = [];
         $this->y = $y;
 
         $this->get_float_offsets();
@@ -124,7 +133,7 @@ class LineBox
 
         $parent = $p;
 
-        $childs = array();
+        $childs = [];
 
         foreach ($floating_frames as $_floating) {
             $p = $_floating->get_parent();
@@ -139,9 +148,6 @@ class LineBox
         return $childs;
     }
 
-    /**
-     *
-     */
     public function get_float_offsets()
     {
         static $anti_infinite_loop = 10000; // FIXME smelly hack
@@ -243,7 +249,7 @@ class LineBox
     }
 
     /**
-     * @return Frame[]
+     * @return AbstractFrameDecorator[]
      */
     function &get_frames()
     {
@@ -251,11 +257,53 @@ class LineBox
     }
 
     /**
-     * @param Frame $frame
+     * @param AbstractFrameDecorator $frame
      */
     public function add_frame(Frame $frame)
     {
         $this->_frames[] = $frame;
+
+        if ($frame->get_positioner() instanceof InlinePositioner) {
+            $this->inline = true;
+        }
+    }
+
+    /**
+     * Remove the frame at the given index and all following frames from the
+     * line.
+     *
+     * @param int $index
+     */
+    public function remove_frames(int $index): void
+    {
+        $lastIndex = count($this->_frames) - 1;
+
+        if ($index < 0 || $index > $lastIndex) {
+            return;
+        }
+
+        for ($i = $lastIndex; $i >= $index; $i--) {
+            $f = $this->_frames[$i];
+            unset($this->_frames[$i]);
+            $this->w -= $f->get_margin_width();
+        }
+
+        // Reset array indices
+        $this->_frames = array_values($this->_frames);
+
+        // Recalculate the height of the line
+        $h = 0.0;
+        $this->inline = false;
+
+        foreach ($this->_frames as $f) {
+            $h = max($h, $f->get_margin_height());
+
+            if ($f->get_positioner() instanceof InlinePositioner) {
+                $this->inline = true;
+            }
+        }
+
+        $this->h = $h;
     }
 
     /**
@@ -267,8 +315,8 @@ class LineBox
     {
         $width = 0;
 
-        foreach ($this->get_frames() as $frame) {
-            $width += $frame->calculate_auto_width();
+        foreach ($this->_frames as $frame) {
+            $width += $frame->get_margin_width();
         }
 
         return $this->w = $width;
@@ -279,7 +327,7 @@ class LineBox
      */
     public function __toString()
     {
-        $props = array("wc", "y", "w", "h", "left", "right", "br");
+        $props = ["wc", "y", "w", "h", "left", "right", "br"];
         $s = "";
         foreach ($props as $prop) {
             $s .= "$prop: " . $this->$prop . "\n";
@@ -288,10 +336,6 @@ class LineBox
 
         return $s;
     }
-    /*function __get($prop) {
-      if (!isset($this->{"_$prop"})) return;
-      return $this->{"_$prop"};
-    }*/
 }
 
 /*

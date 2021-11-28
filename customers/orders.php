@@ -208,7 +208,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         <?php } ?>
 
                                         <div class="ml4 lt">
-                                            <a href="/my/bills/<?php echo $opdf->id; ?>" target="_blank" style="color:rgb(80, 104, 161);">
+                                            <a href="/bills/<?php echo $opdf->id; ?>" target="_blank" style="color:rgb(80, 104, 161);">
                                                 <button type="button" class="hellofresh hlf-pink-s normal rd3 mshd-1">
                                                     Rechnung
                                                 </button>

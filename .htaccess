@@ -48,7 +48,7 @@ RewriteRule ^course/(.*)$ courses/index.php?cid=$1 [NC,L]
 
 # customers
 RewriteRule ^my/(.*) customers/$1 [NC,L]
-RewriteRule ^my/bill/(..*)$ customers/pdf_test.php?pdfid=$1 [NC,L]
+RewriteRule ^bills/(..*)$ customers/bills.php?bid=$1 [NC,L]
 RewriteRule ^sepa/(..*)$ customers/sepa.php?pmid=$1 [NC,L]
 
 # productview
