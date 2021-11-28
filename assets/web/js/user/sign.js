@@ -37,13 +37,11 @@ $(function() {
                         
                         grecaptcha.reset();
                         let resp;
-
-                        console.error(data);
                         
+                        console.log(data);
+
                         switch(data) {
-                            case '':
                             case '0':
-                            default:
                                 resp = 'Ein unbekannter Fehler ist aufgetreten.';
                                 break;
                             case '1':
@@ -67,13 +65,17 @@ $(function() {
                             case '7':
                                 resp = 'Diese E-Mail Adresse wird bereits verwendet';
                                 break;
-                            case 'success':
+                            default:
+
                                 resp = 'Du hast Dich erfolgreich registriert. Eine E-Mail zur Bestätigung wurde an <span style="color:#F1D394;"><strong>'+mail+'</strong></span> gesendet!';
+                                
                                 lc.remove();
+
                                 addTextDialogue(overlay, 'Erfolg!');
+
                                 setTimeout(function(){
-                                    window.location.replace("/");
-                                }, 3000);
+                                    //window.location.reload();
+                                }, 2000);
                         }
                         
                         showDialer(resp);

@@ -34,6 +34,14 @@ $url = [
     "mobile" => $system_settings->mobile
 ];
 
+$mail = [
+    "header"  => 'MIME-Version: 1.0' . "\r\n" .
+        'Content-type: text/html; charset=utf-8' . "\r\n" .
+        'From: MeinTatenReich <noreply@meintatenreich.de>' . "\r\n",
+    "subjectSignup" => 'Deine Registrierung auf MeinTatenreich - Jetzt abschließen!',
+    "subjectForgotPassword" => 'Passwort vergessen?',
+    "subjectOrder" => 'Bestätigung Deiner Bestellung auf MeinTatenreich'
+];
 
 // LOGIN CLASS
 $login = new login;
