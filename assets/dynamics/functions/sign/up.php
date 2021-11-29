@@ -2,138 +2,166 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// strat mysql transactions
-$pdo->beginTransaction();
-
 // create debug array
 $debugArray = [];
 
 if (
-    isset($_REQUEST["mail"], $_REQUEST["password"], $_REQUEST["password2"], $_REQUEST["g-recaptcha-response"])
+    isset($_REQUEST["mail"], $_REQUEST["password"], $_REQUEST["password2"], $_REQUEST["g-recaptcha-response"], $_REQUEST["agb"])
     && !$loggedIn
 ) {
 
-    // add debug-
+    // variablize
+    $agb = htmlspecialchars($_REQUEST["agb"]);
+    $inputmail = htmlspecialchars($_REQUEST["mail"]);
+    $password = $_REQUEST["password"];
+    $password2 = $_REQUEST["password2"];
+    $remoteaddr = $_SERVER['REMOTE_ADDR'];
+    $captcha = $_REQUEST["g-recaptcha-response"];
+
+    // add debug
     $debugArray["requestComplete"] = true;
 
     // check if cookies are accepted
     if (isset($_COOKIE['cookies']) && $_COOKIE['cookies'] === 'true') {
 
-        // add debug-
+        // add debug
         $debugArray["cookiesAccepted"] = true;
 
         // check if disclaimer box is checked
-        if (isset($_REQUEST["agb"]) && $_REQUEST["agb"] === 'on') {
+        if ($agb === 'on') {
 
-            // add debug-
+            // add debug
             $debugArray["disclaimerAccepted"] = true;
-
-            // variablize
-            $agb = htmlspecialchars($_REQUEST["agb"]);
-            $inputmail = htmlspecialchars($_REQUEST["mail"]);
-            $password = $_REQUEST["password"];
-            $password2 = $_REQUEST["password2"];
-            $remoteaddr = $_SERVER['REMOTE_ADDR'];
-            $captcha = $_REQUEST["g-recaptcha-response"];
 
             // check password matching
             if ($password === $password2) {
 
-                // add debug-
+                // add debug
                 $debugArray["passwordsMatch"] = true;
 
                 // check for password range
-                if (strlen($_POST["password"]) >= 8 && strlen($_POST["password"]) <= 32) {
+                if (strlen($password) >= 8 && strlen($password) <= 32) {
 
-                    // add debug-
+                    // add debug
                     $debugArray["passwordValid"] = true;
 
                     // check for grecaptcha
                     $captchaResponse = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $conf["recaptcha_privatekey"] . "&response=" . $captcha . "&remoteip=" . $remoteaddr));
                     if ($captchaResponse->success) {
 
-                        // add debug-
+                        // add debug
                         $debugArray["gRecaptchaValid"] = true;
 
                         // check email format
                         if (filter_var($inputmail, FILTER_VALIDATE_EMAIL)) {
 
-                            // add debug-
+                            // start mysql transactions
+                            $pdo->beginTransaction();
+
+                            // add debug
                             $debugArray["emailValid"] = true;
 
-                            // check on mail
-                            $getAllMail = $pdo->prepare("SELECT * FROM customer WHERE mail = ?");
-                            $getAllMail->execute([$inputmail]);
-                            $getAllMail->fetch();
+                            // variablize
+                            $httpxfor = $login->get_client_ip();
+                            $key = $login->createString(64);
+                            $displayname = 'customer-' . $login->createString(12);
 
-                            // check for email existence
-                            if ($getAllMail->rowCount() < 1) {
+                            // hash password
+                            $password = password_hash($password, PASSWORD_DEFAULT);
 
-                                // add debug-
-                                $debugArray["emailInUse"] = false;
+                            // insert new customer
+                            $insertCustomer = $pdo->prepare("
+                                INSERT INTO customer (displayname, mail, password, remoteaddr, httpx) 
+                                VALUES (?,?,?,?,?)
+                            ");
+                            $try = $shop->tryExecute($insertCustomer, [$displayname, $inputmail, $password, $remoteaddr, $httpxfor], $pdo);
 
-                                $httpxfor = $login->get_client_ip();
-                                $key = $login->createString(64);
-                                $displayname = 'customer-' . $login->createString(12);
+                            if (is_array($try) && $try["status"] == true) {
 
-                                $password = password_hash($password, PASSWORD_DEFAULT);
+                                // add debug
+                                $debugArray["insertCustomer"] = true;
 
-                                // insert new customer
-                                $insertCustomer = $pdo->prepare("
-                                    INSERT INTO customer (displayname, mail, password, remoteaddr, httpx) 
-                                    VALUES (?,?,?,?,?)
-                                ");
-                                $insertCustomer->execute([$displayname, $inputmail, $password, $remoteaddr, $httpxfor]);
+                                // get last inserted id
+                                $newid = $try["lastInsertId"];
 
                                 // create login
-                                $newid = $pdo->lastInsertId();
                                 $token = $login->createString(64);
                                 $serial = $login->createString(64);
 
                                 // create session
-                                $create_session = $pdo->prepare("INSERT INTO system_sessions (uid,token,serial,remoteaddr,httpx) VALUES (?,?,?,?,?)");
-                                $create_session->execute([$newid, $token, $serial, $remoteaddr, $httpxfor]);
+                                $insertSession = $pdo->prepare("INSERT INTO system_sessions (uid,token,serial,remoteaddr,httpx) VALUES (?,?,?,?,?)");
+                                $try = $shop->tryExecute($insertSession, [$newid, $token, $serial, $remoteaddr, $httpxfor], $pdo);
 
-                                // insert admin log
-                                $insertAdminLog = $pdo->prepare("INSERT INTO admin_overview (rid, ttype) VALUES (?,'customer')");
-                                $insertAdminLog->execute([$newid]);
+                                if (is_array($try) && $try["status"] == true) {
 
-                                // create verification key
-                                $insertVerification = $pdo->prepare("INSERT INTO customer_verifications (uid, vkey) VALUES (?,?)");
-                                $insertVerification->execute([$newid, $key]);
+                                    // add debug
+                                    $debugArray["insertSession"] = true;
 
-                                // prepare verification mail
-                                $mailsubject = $mail['subjectSignup'];
+                                    // insert admin log
+                                    $insertAdminLog = $pdo->prepare("INSERT INTO admin_overview (rid, ttype) VALUES (?,'customer')");
+                                    $try = $shop->tryExecute($insertAdminLog, [$newid], $pdo);
 
-                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/signup.html');
-                                $mailbody = str_replace('%mail%', $inputmail, $mailbody);
-                                $mailbody = str_replace('%url%', $url["main"] . "/my/verification?id=" . $newid . "&key=" . $key, $mailbody);
+                                    if (is_array($try) && $try["status"] == true) {
 
-                                $mailheader  = $mail['header'];
+                                        // add debug
+                                        $debugArray["insertAdminLog"] = true;
 
-                                // check insertions
-                                if (
-                                    $insertCustomer && $create_session && $insertAdminLog && $insertVerification &&
-                                    mail($inputmail, $mailsubject, $mailbody, $mailheader)
-                                ) {
+                                        // create verification key
+                                        $insertVerification = $pdo->prepare("INSERT INTO customer_verifications (uid, vkey) VALUES (?,?)");
+                                        $try = $shop->tryExecute($insertVerification, [$newid, $key], $pdo);
 
-                                    // add debug-
-                                    $debugArray["success"] = true;
+                                        if (is_array($try) && $try["status"] == true) {
 
-                                    $login->createCookie($newid, $displayname, $token, $serial);
-                                    $login->createSession($newid, $displayname, $token, $serial);
+                                            // add debug
+                                            $debugArray["insertVerification"] = true;
 
-                                    $pdo->commit();
-                                    exit(json_encode($debugArray));
+                                            // prepare mail's body
+                                            $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/signup.html');
+                                            $mailbody = str_replace('%mail%', $inputmail, $mailbody);
+                                            $mailbody = str_replace('%url%', $url["main"] . "/my/verification?id=" . $newid . "&key=" . $key, $mailbody);
+
+                                            // send mail
+                                            $try = $shop->trySendMail(
+                                                $inputmail,
+                                                "Deine Registrierung auf MeinTatenreich - Jetzt abschließen!",
+                                                $mailbody,
+                                                $mail["header"]
+                                            );
+
+                                            if ($try) {
+
+                                                // add debug
+                                                $debugArray["success"] = true;
+
+                                                $login->createCookie($newid, $displayname, $token, $serial);
+                                                $login->createSession($newid, $displayname, $token, $serial);
+
+                                                $pdo->commit();
+                                                exit(json_encode($debugArray));
+                                            } else {
+                                                exit("0");
+                                            }
+                                        } else {
+                                            exit("0");
+                                        }
+                                    } else {
+                                        exit("0");
+                                    }
                                 } else {
-
-                                    $pdo->rollback();
                                     exit("0");
                                 }
                             } else {
-                                exit('7');
-                            } // mail does exist
 
+                                // switch through error cases and give back
+                                // message to user
+                                switch ($try["code"]) {
+                                    case "23000": // duplicate key
+                                        exit("7");
+                                        break;
+                                    default:
+                                        exit("0");
+                                }
+                            }
                         } else {
                             exit('6');
                         } // email has wrong format

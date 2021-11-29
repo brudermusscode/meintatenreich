@@ -196,6 +196,64 @@ class shop
         $str = preg_replace("/(.+)\.php$/", "$1", $str);
         return $str;
     }
+
+    public static function tryExecute($stmt, $params, $connection)
+    {
+
+        // TO DO: add support for several queries
+        // -----
+        // check if passed $params is of array type
+        if (!is_array($params)) {
+            $params = [$params];
+        }
+
+        try {
+
+            // try executing the statement
+            $stmt->execute($params);
+
+            $errorInformation = [
+                "status" => true,
+                "lastInsertId" => $connection->lastInsertId()
+            ];
+
+            return $errorInformation;
+        } catch (PDOException $e) {
+
+            // catch error information
+            $errorInformation = [
+                "status" => false,
+                "message" => $e->getMessage(),
+                "code" => $e->getCode()
+            ];
+
+            // rollback data and return error information
+            $connection->rollback();
+            return $errorInformation;
+        }
+
+        return false;
+    }
+
+    public static function trySendMail($address, $subject, $body, $header)
+    {
+        try {
+
+            mail($address, $subject, $body, $header);
+            return true;
+        } catch (PDOException $e) {
+
+            $errorInformation = [
+                "status" => false,
+                "code" => $e->getCode(),
+                "message" => $e->getMessage()
+            ];
+
+            return $errorInformation;
+        }
+
+        return false;
+    }
 }
 
 

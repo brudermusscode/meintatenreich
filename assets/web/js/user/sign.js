@@ -65,10 +65,9 @@ $(function() {
                                 break;
                             default:
 
+                                console.log($.parseJSON(data));
                                 resp = 'Du hast Dich erfolgreich registriert. Eine E-Mail zur Bestätigung wurde an <span style="color:#F1D394;"><strong>'+mail+'</strong></span> gesendet!';
-                                
                                 lc.remove();
-
                                 addTextDialogue(overlay, 'Erfolg!');
 
                                 setTimeout(function(){
