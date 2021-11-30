@@ -2,8 +2,6 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-$pdo->beginTransaction();
-
 if (
     isset($_REQUEST['mail'], $_REQUEST['password'])
     && $_REQUEST['mail'] !== ''
@@ -18,55 +16,43 @@ if (
         $pass = $_REQUEST["password"];
 
         // get user data and compare
-        $getUserData = $pdo->prepare("SELECT * FROM customer WHERE mail = ? or displayname = ?");
-        $getUserData->execute([$mail, $mail]);
+        $getUserData = $pdo->prepare("SELECT * FROM customer WHERE mail = ?");
+        $getUserData->execute([$mail]);
 
         if ($getUserData->rowCount() > 0) {
 
-            $user = $getUserData->fetch();
-            $loginpass = $user->password;
+            $user = $getUserData->fetch(PDO::FETCH_ASSOC);
+            $loginpass = $user["password"];
 
             if (password_verify($pass, $loginpass)) {
 
-                // IMPORTANT VARIABLES
-                $id = $user->id;
-                $username = $user->displayname;
+                // begin mysql transaction
+                $pdo->beginTransaction();
+
+                // variablize
+                $id = $user["id"];
                 $token = $login->createString(64);
                 $serial = $login->createString(64);
                 $remoteaddr = $_SERVER['REMOTE_ADDR'];
                 $httpxfor = $login->get_client_ip();
 
+                // update old session
+                $updateSession = $pdo->prepare("UPDATE system_sessions SET uid = ?, token = ?, serial = ?, remoteaddr = ?, httpx = ? WHERE uid = ?");
+                $try = $shop->tryExecute($updateSession, [$id, $token, $serial, $remoteaddr, $httpxfor, $id], $pdo);
 
-                // check for existing session
-                $getOldSession = $pdo->prepare("SELECT * FROM system_sessions WHERE uid = ?");
-                $getOldSession->execute([$id]);
-                $hasSession = false;
-                if ($getOldSession->rowCount() > 0) {
-                    $hasSession = true;
-                }
+                if (is_array($try) && $try["status"]) {
 
-                // delete old records
-                if ($hasSession) {
+                    // create validation cookie
+                    $login->createCookie($token, $serial);
 
-                    $create_session = $pdo->prepare("UPDATE system_sessions SET uid = ?, token = ?, serial = ?, remoteaddr = ?, httpx = ? WHERE uid = ?");
-                    $create_session->execute([$id, $token, $serial, $remoteaddr, $httpxfor, $id]);
-                } else {
+                    // create validation session
+                    $login->createSession($user, $token, $serial);
 
-                    $create_session = $pdo->prepare("INSERT INTO system_sessions (uid,token,serial,remoteaddr,httpx) VALUES (?,?,?,?,?)");
-                    $create_session->execute([$id, $token, $serial, $remoteaddr, $httpxfor]);
-                }
-
-                $login->createCookie($id, $username, $token, $serial);
-                $login->createSession($id, $username, $token, $serial);
-
-                if ($create_session) {
-
+                    // commit
                     $pdo->commit();
-                    exit('success');
+                    exit("success");
                 } else {
-
-                    $pdo->rollback();
-                    exit('1');
+                    exit("0");
                 }
             } else {
                 exit('4');

@@ -123,8 +123,6 @@ $(function() {
                     
                     let resp;
 
-                    console.log(data);
-
                     switch(data) {
                         case '1':
                             resp = 'Ein unbekannter Fehler ist aufgetreten und wurde umgehend gemeldet.';
@@ -143,7 +141,7 @@ $(function() {
                             lc.remove();
                             addTextDialogue(overlay, 'Hallo<br>'+mail);
                             setTimeout(function(){
-                                window.location.replace("/");
+                                window.location.reload();
                             }, 1200);
                             
                     }

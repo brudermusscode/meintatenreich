@@ -1,9 +1,12 @@
 <?php
 
+// create session when cookies are accepted and no
+// session was started before
 if (!isset($_SESSION) && isset($_COOKIE['cookies']) && $_COOKIE['cookies'] == 'true') {
     session_start();
 }
 
+// include prepare file
 require_once "_.prepare.php";
 
 // get system settings
@@ -11,6 +14,7 @@ $get_system_settings = $pdo->prepare("SELECT * FROM system_settings, system_urls
 $get_system_settings->execute([$conf["environment"]]);
 $system_settings = $get_system_settings->fetch();
 
+// create main array with system specific information
 $main = [
     "name" => $system_settings->name,
     "year" => $system_settings->year,
@@ -20,6 +24,7 @@ $main = [
     "fulldate" => date("Y-m-d H:i:s")
 ];
 
+// create url array with system urls
 $url = [
     "main" => $system_settings->main,
     "maintenance" => $system_settings->maintenance,
@@ -34,6 +39,7 @@ $url = [
     "mobile" => $system_settings->mobile
 ];
 
+// create mail array for predefined mail constructions
 $mail = [
     "header"  => 'MIME-Version: 1.0' . "\r\n" .
         'Content-type: text/html; charset=utf-8' . "\r\n" .
@@ -43,7 +49,6 @@ $mail = [
     "subjectOrder" => 'Bestätigung Deiner Bestellung auf MeinTatenreich'
 ];
 
-// LOGIN CLASS
 $login = new login;
 
 class login
@@ -81,76 +86,60 @@ class login
     public function isAuthed($pdo)
     {
 
-        if (isset($_COOKIE['UID']) && isset($_COOKIE['TOK']) && isset($_COOKIE['SER']) && empty($_SESSION)) {
+        if (isset($_COOKIE['TOK']) && isset($_COOKIE['SER']) && !empty($_SESSION)) {
 
-            $this->logout();
-        } else if (isset($_COOKIE['UID']) && isset($_COOKIE['TOK']) && isset($_COOKIE['SER']) && !empty($_SESSION)) {
+            $cookieToken = $_COOKIE['TOK'];
+            $cookieSerial = $_COOKIE['SER'];
+            $sessionToken = $_SESSION["token"];
+            $sessionSerial = $_SESSION["serial"];
+            $sessionId = $_SESSION["id"];
 
-            $myid = $_COOKIE['UID'];
-            $mytoken = $_COOKIE['TOK'];
-            $myserial = $_COOKIE['SER'];
+            // check if cookies and serial are same
+            if (
+                $cookieToken == $sessionToken &&
+                $cookieSerial == $sessionSerial
+            ) {
 
-            $get_session_information = $pdo->prepare("SELECT * FROM system_sessions WHERE uid = ? AND token = ? AND serial = ?");
-            $get_session_information->execute([$myid, $mytoken, $myserial]);
+                // get session from database
+                $getSession = $pdo->prepare("SELECT * FROM system_sessions WHERE uid = ? AND token = ? AND serial = ?");
+                $getSession->execute([$sessionId, $sessionToken, $sessionSerial]);
 
-            // check session existence
-            if ($get_session_information->rowCount() > 0) {
+                if ($getSession->rowCount() > 0) {
 
-                $sess = $get_session_information->fetch();
-
-                // CHECK IF COOKIES HAVE LEGIT VALUES
-                if ($sess->uid == $myid && $sess->token == $mytoken && $sess->serial == $myserial) {
-
-                    // CHECK IF ACTUAL SESSION HAS LEGIT VALUES
-                    if ($sess->uid == $_SESSION['id'] && $sess->token == $_SESSION['token'] && $sess->serial == $_SESSION['serial']) {
-
-                        // RETURN TRUE:: USER IS AUTHED!
-                        return true;
-                    }
+                    // everything's fine, user is logged in
+                    return true;
+                } else {
+                    $this->logout();
                 }
             } else {
-
-                // delete all cookies
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-
-                    $i = 0;
-                    $len = count($cookies);
-
-                    foreach ($cookies as $cookie) {
-
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        setcookie($name, '', time() - 1000);
-                        setcookie($name, '', time() - 1000, '/');
-
-                        $i++;
-
-                        if ($i == $len - 1) {
-                            header("Refresh:0");
-                        }
-                    }
-                }
+                $this->logout();
             }
+        } else {
+            $this->logout();
         }
     }
 
     // CREATE COOKIE
-    public static function createCookie($id, $username, $token, $serial)
+    public static function createCookie($token, $serial)
     {
-        setcookie('UID', $id, time() + (86400) * 30, "/");
-        setcookie('UN', $username, time() + (86400) * 30, "/");
+
         setcookie('TOK', $token, time() + (86400) * 30, "/");
         setcookie('SER', $serial, time() + (86400) * 30, "/");
     }
 
     // CREATE SESSION
-    public static function createSession($id, $username, $token, $serial)
+    public static function createSession($array, $token, $serial)
     {
-        $_SESSION['id'] = $id;
-        $_SESSION['displayname'] = $username;
-        $_SESSION['token'] = $token;
-        $_SESSION['serial'] = $serial;
+
+        foreach ($array as $k => $v) {
+
+            $_SESSION[$k] = $v;
+        }
+
+        $_SESSION["token"] = $token;
+        $_SESSION["serial"] = $serial;
+
+        return $_SESSION;
     }
 
     // CREATE UNIQUE STRING
@@ -263,12 +252,12 @@ if ($loggedIn) {
 
     $sessionid = $_SESSION['id'];
 
-    $getUserData = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
-    $getUserData->execute([$sessionid]);
-    $my = $getUserData->fetch();
+    // convert SESSION array to object and store in $my
+    $my = (object) $_SESSION;
 
+    // get shopping card
     $getScardAmt = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND active = '1'");
-    $getScardAmt->execute([$sessionid]);
+    $getScardAmt->execute([$my->id]);
     $scardamt = $getScardAmt->rowCount();
 
     // check customers billing preference
@@ -279,7 +268,7 @@ if ($loggedIn) {
         WHERE customer_billings.id = customer_billings_prefs.pid 
         AND customer_billings_prefs.uid = ? 
     ");
-    $billingPreference->execute([$sessionid]);
+    $billingPreference->execute([$my->id]);
 
     if ($billingPreference->rowCount() > 0) {
 
@@ -295,7 +284,7 @@ if ($loggedIn) {
         WHERE customer_addresses.id = customer_addresses_prefs.adid 
         AND customer_addresses_prefs.uid = ? 
     ");
-    $addressPreference->execute([$sessionid]);
+    $addressPreference->execute([$my->id]);
 
     if ($addressPreference->rowCount() > 0) {
 
