@@ -2,7 +2,7 @@ $(function(document) {
 
     let body = $("body");
 
-    // Delete
+    // delete
     $(document).on('click', '[data-action="delete-scard"]', function() {
         
         var t = $(this);
@@ -15,6 +15,7 @@ $(function(document) {
         var appendPricing = $('[data-react="pricing"]');
         formData = formData + '&action=pricing';
         let url = dynamicHost + "/ajax/functions/shopping-card/delete";
+        let $shoppingCardAmount = $('[data-react="add-scard"] p');
         
         $.ajax({
             
@@ -26,33 +27,35 @@ $(function(document) {
 
                 switch(data) {
                     case '':
-                    default:
                     case '0':
-                        res = 'Ein unbekannter Fehler ist aufgetreten.';
+                        res = 'Oh nein! Ein Fehler!';
                         break;
                     case '1':
-                        res = 'Das von Ihnen gewählt Produkt existiert nicht!';
+                        res = 'Dieses Produkt scheint nicht mehr in deinem Warenkorb zu sein';
                         break;
-                    case '2':
-                        res = 'Produkt vom Warenkorb entfernt!';
-                        
+                    default:
+
+                        res = 'Produkt wurde entfernt';
+
+                        $shoppingCardAmount.html(data.shoppingCardAmount);
+
                         if(body.hasClass('calculated')) {
                             pricing(formData, appendPricing);
                         }
                         
                         t.parents().eq(1).css({ 'visibility':'hidden', 'opacity':'0' });
+
                         setTimeout(function(){
+
                             t.parents().eq(1).remove();
                         }, 400);
                 }
                 
                 showDialer(res);
-                
-                
+            },
+            error: function(data) {
             }
-            
         });
-        
     })
 
     // Select payment method
