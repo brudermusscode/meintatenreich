@@ -42,16 +42,14 @@ if (isset($_GET['id'], $_GET['key'])) {
                 AND customer.id = ? 
                 AND customer_verifications.vkey = ?
             ");
-            $update->execute([$id, $key]);
+            $try = $shop->tryExecute($update, [$id, $key], $pdo);
 
-            if ($update) {
+            if (is_array($try) && $try) {
+
+                $_SESSION["verified"] = "1";
 
                 $pdo->commit();
                 $status = 'success'; // verified
-            } else {
-
-                $pdo->rollback();
-                $status = 'error'; // some shitty error
             }
         }
     } else {

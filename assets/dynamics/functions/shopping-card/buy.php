@@ -118,7 +118,10 @@ if (
 
                             // format price properly
                             $price = number_format($price, 2, ',', '.');
-                            $res = ['price' => $price, 'delivery' => $delivery];
+                            $res = [
+                                'price' => $price,
+                                'delivery' => $delivery
+                            ];
 
                             // prepare verification mail
                             $mailsubject = $mail['subjectOrder'];
@@ -138,6 +141,10 @@ if (
                                 mail($my->mail, $mailsubject, $mailbody, $mailheader)
                             ) {
 
+                                // reset shopping card amount
+                                $_SESSION["shoppingCardAmount"] = 0;
+
+                                // commit
                                 $pdo->commit();
                                 exit(json_encode($res));
                             } else {

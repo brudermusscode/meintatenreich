@@ -122,6 +122,8 @@ $(function() {
                 success: function(data) {
                     
                     let resp;
+                    
+                    console.log(data);
 
                     switch(data) {
                         case '1':

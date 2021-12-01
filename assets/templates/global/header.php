@@ -89,7 +89,7 @@
                             <p>Warenkorb</p>
                             <?php if ($loggedIn) { ?>
                                 <div data-react="add-scard" class="shopping-cart-amt mshd-1">
-                                    <p><?php echo $scardamt; ?></p>
+                                    <p><?php echo $_SESSION["shoppingCardAmount"]; ?></p>
                                 </div>
                             <?php } ?>
                         </li>

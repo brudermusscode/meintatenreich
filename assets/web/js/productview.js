@@ -96,8 +96,7 @@ $(function() {
         let t = $(this);
         let id = t.data('json')[0].id;
         let action = 'add-scard';
-        let hdrscard = $('[data-react="add-scard"] p');
-        let hdrscardInt = parseInt(hdrscard.text());
+        let $shoppingCardAmount = $('[data-react="add-scard"] p');
         let res;
         let url = dynamicHost + "/ajax/functions/productview/add-shoppingcard";
         
@@ -111,9 +110,7 @@ $(function() {
             method: 'POST',
             type: 'TEXT',
             success: function(data) {
-                
-                console.log(data);
-                
+
                 switch(data) {
                     case '':
                         res = 'Bitte logge Dich ein, um forzufahren!';
@@ -134,14 +131,21 @@ $(function() {
                         res = 'Das produkt ist bereits in Deinem Warenkorb!';
                         break;
                     default:
-                        res = 'Produkt wurde für 6 Stunden reserviert.'
-                        hdrscard.html(hdrscardInt + 1);
+
+                        console.log(data);
+
+                        $shoppingCardAmount.html(data.shoppingCardAmount);
+
+                        res = 'Produkt wurde für 6 Stunden reserviert.';
                         t.find('p:nth-of-type(2)').html('Im Warenkorb');
                         t.find('p:first-of-type i').attr('class', 'icon-ok');
                 }
                 
                 showDialer(res);
                 
+            },
+            error: function(data) {
+                console.log(data);
             }
             
         });

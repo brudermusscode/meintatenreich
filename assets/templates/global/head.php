@@ -93,4 +93,45 @@
 
     <?php } ?>
 
+    <style>
+        [data-element="dumper"] {
+            left: -250px;
+            background: rgba(255, 255, 255, .9);
+            border-radius: 0px;
+            top: 0;
+            position: fixed;
+            z-index: 9999999999999;
+            width: 300px;
+            height: 100vh;
+            transition: all .1s ease-out;
+        }
+
+        [data-element="dumper"]:hover {
+            left: 0;
+        }
+
+        [data-element="dumper"] .title {
+            font-size: 1.2em;
+        }
+    </style>
+
+    <script>
+        $(function(document, window) {
+
+            setTimeout(function() {
+                $("[data-element='dumper']").load(location.href + " [data-element='dumper']>*", "");
+            }, 600);
+        });
+    </script>
+
+    <div data-element="dumper" class="mshd-4">
+        <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">
+            <p class="title"><strong>SESSION dump</strong></p>
+            <pre class="ovhid"><?php $administrate = new administrate;
+                                var_dump($administrate->getDump("session")); ?></pre>
+            <p class="mt24 title"><strong>REQUEST dump</strong></p>
+            <pre class="ovhid"><?php var_dump($administrate->getDump("request")); ?></pre>
+        </div>
+    </div>
+
     <div id="app">

@@ -1,8 +1,8 @@
 <?php
 
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
+header('Content-type: application/json');
 
-$pdo->beginTransaction();
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (
     isset($_REQUEST['action'], $_REQUEST['id'])
@@ -34,6 +34,13 @@ if (
                 $getProductAdded = $pdo->prepare("SELECT * FROM shopping_card WHERE pid = ? AND uid = ?");
                 $getProductAdded->execute([$id, $uid]);
 
+                // begin transactions
+                $pdo->beginTransaction();
+
+                $insert = false;
+                $update = false;
+                $insertReservation = false;
+
                 if ($getProductAdded->rowCount() < 1) {
 
                     // all fine, 
@@ -53,8 +60,15 @@ if (
 
                 if (($insert || $update) && $insertReservation) {
 
+                    $_SESSION["shoppingCardAmount"]++;
+
+                    $errorInformation = [
+                        "status" => true,
+                        "shoppingCardAmount" => $_SESSION["shoppingCardAmount"]
+                    ];
+
                     $pdo->commit();
-                    exit('success');
+                    exit(json_encode($errorInformation));
                 } else {
 
                     $pdo->rollback();

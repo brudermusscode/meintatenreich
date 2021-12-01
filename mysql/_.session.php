@@ -21,7 +21,8 @@ $main = [
     "maintenance" => $system_settings->maintenance,
     "displayerrors" => $system_settings->display_errors,
     "mwstr" => $system_settings->mwstr,
-    "fulldate" => date("Y-m-d H:i:s")
+    "fulldate" => date("Y-m-d H:i:s"),
+    "endlessCookie" => time() + (10 * 365 * 24 * 60 * 60)
 ];
 
 // create url array with system urls
@@ -82,7 +83,7 @@ class login
         return $_SERVER['REMOTE_ADDR'];
     }
 
-    // CHECK LOGIN STATE
+    // check login state for user
     public function isAuthed($pdo)
     {
 
@@ -119,7 +120,7 @@ class login
         }
     }
 
-    // CREATE COOKIE
+    // create session cookie
     public static function createCookie($token, $serial)
     {
 
@@ -127,32 +128,31 @@ class login
         setcookie('SER', $serial, time() + (86400) * 30, "/");
     }
 
-    // CREATE SESSION
-    public static function createSession($array, $token, $serial)
+    // create session session
+    public static function createSession($array, $token, $serial, $amount)
     {
 
         foreach ($array as $k => $v) {
-
             $_SESSION[$k] = $v;
         }
 
         $_SESSION["token"] = $token;
         $_SESSION["serial"] = $serial;
+        $_SESSION["shoppingCardAmount"] = $amount;
 
         return $_SESSION;
     }
 
-    // CREATE UNIQUE STRING
+    // create unique strings
     public static function createString($len)
     {
         $s = bin2hex(random_bytes($len));
         return $s;
     }
 
-    // LOGOUT
+    // logout from session
     public static function logout()
     {
-        setcookie('UN', '', time() - 1, "/");
         setcookie('TOK', '', time() - 1, "/");
         setcookie('SER', '', time() - 1, "/");
     }
@@ -186,7 +186,7 @@ class shop
         return $str;
     }
 
-    public static function tryExecute($stmt, $params, $connection)
+    public static function tryExecute($stmt, $params, $connection, $commit = false)
     {
 
         // TO DO: add support for several queries
@@ -205,6 +205,10 @@ class shop
                 "status" => true,
                 "lastInsertId" => $connection->lastInsertId()
             ];
+
+            if ($commit) {
+                $connection->commit();
+            }
 
             return $errorInformation;
         } catch (PDOException $e) {
@@ -246,6 +250,26 @@ class shop
 }
 
 
+class administrate
+{
+
+    function getDump($dump)
+    {
+
+        switch ($dump) {
+            case "session":
+                return print_r($_SESSION);
+                break;
+            case "request":
+                return print_r($_REQUEST);
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+}
+
 // get information about logged in customer
 $loggedIn = $login->isAuthed($pdo);
 if ($loggedIn) {
@@ -254,11 +278,6 @@ if ($loggedIn) {
 
     // convert SESSION array to object and store in $my
     $my = (object) $_SESSION;
-
-    // get shopping card
-    $getScardAmt = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND active = '1'");
-    $getScardAmt->execute([$my->id]);
-    $scardamt = $getScardAmt->rowCount();
 
     // check customers billing preference
     $my->billingPreference = false;

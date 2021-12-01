@@ -14,6 +14,7 @@ if (
         // set variables for requested values
         $mail = htmlspecialchars($_REQUEST["mail"]);
         $pass = $_REQUEST["password"];
+        $commit = true;
 
         // get user data and compare
         $getUserData = $pdo->prepare("SELECT * FROM customer WHERE mail = ?");
@@ -21,8 +22,9 @@ if (
 
         if ($getUserData->rowCount() > 0) {
 
-            $user = $getUserData->fetch(PDO::FETCH_ASSOC);
-            $loginpass = $user["password"];
+            // fetch user information and create object
+            $u = $getUserData->fetch();
+            $loginpass = $u->password;
 
             if (password_verify($pass, $loginpass)) {
 
@@ -30,7 +32,7 @@ if (
                 $pdo->beginTransaction();
 
                 // variablize
-                $id = $user["id"];
+                $uid = $u->id;
                 $token = $login->createString(64);
                 $serial = $login->createString(64);
                 $remoteaddr = $_SERVER['REMOTE_ADDR'];
@@ -38,18 +40,16 @@ if (
 
                 // update old session
                 $updateSession = $pdo->prepare("UPDATE system_sessions SET uid = ?, token = ?, serial = ?, remoteaddr = ?, httpx = ? WHERE uid = ?");
-                $try = $shop->tryExecute($updateSession, [$id, $token, $serial, $remoteaddr, $httpxfor, $id], $pdo);
+                $updateSession = $shop->tryExecute($updateSession, [$uid, $token, $serial, $remoteaddr, $httpxfor, $uid], $pdo, $commit);
 
-                if (is_array($try) && $try["status"]) {
+                if (is_array($updateSession) && $updateSession["status"]) {
 
-                    // create validation cookie
+                    $getShoppingCardAmount = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND active = '1'");
+                    $getShoppingCardAmount->execute([$uid]);
+
                     $login->createCookie($token, $serial);
+                    $login->createSession($u, $token, $serial, $getShoppingCardAmount->rowCount());
 
-                    // create validation session
-                    $login->createSession($user, $token, $serial);
-
-                    // commit
-                    $pdo->commit();
                     exit("success");
                 } else {
                     exit("0");
