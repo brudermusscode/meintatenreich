@@ -270,23 +270,28 @@ $(function(){
 
     // add > upload images
     .on('click', '#upload-new-images', function(e){
-        
-        let $t = $(this);
-        let cas;
-        let res;
-        let addToArrayError;
-        let $c = $t.closest('[data-react="manage:products,add,addImage,show"]');
 
-        addOverlay('255,255,255', $c, '%', false);
-        let $cOv = $c.find('page-overlay');
-        addLoader('color', $cOv);
-        let $covLo = $cOv.find('color-loader');
+        let $t, $c, $append, overlay, closeOverlay, chosen, cas, res, addToArrayError;
+
+        $t = $(this),
+        $c = $t.closest('[data-react="manage:products,add,addImage,show"]'),
+        cas,
+        res,
+        addToArrayError;
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
         
-        let chosen = false;
+        // no images have been chosen so far
+        chosen = false;
         
+        // start new fileupload (jquery)
         $('#upload-new-images').fileupload({
 
-            url: '/hk/ajax/manage/product/add/uploadimage',
+            url: '/_magic_/ajax/functions/manage/products/upload-images',
             dataType: 'json',
             autoUpload: false,
             add: function(e, data) {
