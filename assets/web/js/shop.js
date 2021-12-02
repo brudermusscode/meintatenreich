@@ -21,7 +21,7 @@ $(function(){
     // show search results on page: search
     } else if(body.hasClass('search')) {
         var q = body.find('#main').data('json')[0].q;
-        loadProductsUrl = dynamicHost + '/ajax/content/shop/search';
+        loadProductsUrl = dynamicHost + '/ajax/content/shop/search-redirect';
         loadProductsData = 'action=get-products&order=id&q='+q;
         loadShop(loadProductsData, loadProductsUrl, loadProducts);
     }
@@ -1106,6 +1106,8 @@ $(function(){
 // load shop front with products
 function loadShop(data, url, append) {
     
+    let loader, res;
+
     addLoader(append);
     
     $.ajax({
@@ -1116,8 +1118,11 @@ function loadShop(data, url, append) {
         type: 'HTML',
         success: function(data) {
 
-            var loader = append.find('loader').remove();
-            var res;
+            console.log(data);
+
+            loader = append.find('loader').remove(),
+            res;
+
             if(data === '0') {
                 res = 'Oh nein! Ein Fehler!';
                 showDialer(res);

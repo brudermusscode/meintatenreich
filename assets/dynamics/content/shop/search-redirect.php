@@ -1,8 +1,6 @@
 <?php
 
-// ERROR CODE :: 0
-
-include_once '../../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (
     isset($_REQUEST['action'], $_REQUEST['order'], $_REQUEST['q'])
@@ -34,21 +32,19 @@ if (
 
     $newq = "%$q%";
 
-    $select = $c->prepare("
-            SELECT products.*, products_images.url 
-            FROM products, products_images 
-            WHERE products.id = products_images.pid 
-            AND products_images.isgal = '1' 
-            AND products.available = '1' 
-            AND products.name LIKE ? 
-            ORDER BY $order  
-            LIMIT 10
-        ");
-    $select->bind_param('s', $newq);
-    $select->execute();
-    $select_r = $select->get_result();
+    $getProducts = $pdo->prepare("
+        SELECT products.*, products_images.url 
+        FROM products, products_images 
+        WHERE products.id = products_images.pid 
+        AND products_images.isgal = '1' 
+        AND products.available = '1' 
+        AND products.name LIKE ? 
+        ORDER BY $order  
+        LIMIT 10
+    ");
+    $getProducts->execute([$newq]);
 
-    if ($select_r->rowCount() < 1) {
+    if ($getProducts->rowCount() < 1) {
 
 ?>
 
@@ -63,25 +59,25 @@ if (
 
     } else {
 
-        while ($sel = $select_r->fetch_assoc()) {
+        foreach ($getProducts->fetchAll() as $sel) {
 
         ?>
 
-            <a href="/product/<?php echo $sel['artnr']; ?>" class="tran-all">
+            <a href="/product/<?php echo $sel->artnr; ?>" class="tran-all">
                 <product-card class="mshd-1">
                     <div class="pr-inr">
                         <div class="pr-img-outer">
-                            <div class="img vishid opa0 tran-all" style="background:url(<?php echo $imgurl; ?>/products/<?php echo $sel['url']; ?>) center no-repeat;background-size:cover;">
-                                <img class="vishid opa0 hw1 tran-all" onload="fadeInVisOpaBg($(this).parent())" src="<?php echo $imgurl; ?>/products/<?php echo $sel['url']; ?>">
+                            <div class="img vishid opa0 tran-all" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $sel->url; ?>) center no-repeat;background-size:cover;">
+                                <img class="vishid opa0 hw1 tran-all" onload="fadeInVisOpaBg($(this).parent())" src="<?php echo $url["img"]; ?>/products/<?php echo $sel->url; ?>">
                             </div>
                         </div>
 
                         <div class="pr-info">
                             <p class="pr-name trimfull">
-                                <?php echo $sel['name']; ?>
+                                <?php echo $sel->name; ?>
                             </p>
                             <p class="pr-price">
-                                <?php echo number_format($sel['price'], 2, ',', '.') . ' €'; ?>
+                                <?php echo number_format($sel->price, 2, ',', '.') . ' €'; ?>
                             </p>
                         </div>
                     </div>
@@ -90,11 +86,9 @@ if (
 <?php
 
         }
-        $select->close();
-    } // END ELSE: NO PRODUCTS FOUND
-
+    }
 } else {
-    exit;
+    exit("0");
 }
 
 ?>
