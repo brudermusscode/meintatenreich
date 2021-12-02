@@ -1,29 +1,25 @@
 <?php
 
-require_once "../../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
 $ptit = 'Manage: Bewertungen';
 $pid = "manage:ratings";
 
-include_once "../assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "../assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
-<main-content>
+<main-content class="overview">
 
-    <!-- MC: HEADER -->
-    <?php include_once "../assets/templates/header.php"; ?>
+    <!-- MAIN HEADER -->
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
@@ -64,17 +60,16 @@ include_once "../assets/templates/head.php";
                 <?php
 
                 $sel = $pdo->prepare("
-                        SELECT *, products_comments.timestamp AS pcts, products.artnr FROM products_comments, products_rating, customer, products 
-                        WHERE products_comments.id = products_rating.cid 
-                        AND products_comments.uid = customer.id 
-                        AND products_comments.pid = products.id 
-                        ORDER BY products_comments.timestamp 
-                        DESC
-                    ");
+                    SELECT *, products_comments.timestamp AS pcts, products.artnr FROM products_comments, products_rating, customer, products 
+                    WHERE products_comments.id = products_rating.cid 
+                    AND products_comments.uid = customer.id 
+                    AND products_comments.pid = products.id 
+                    ORDER BY products_comments.timestamp 
+                    DESC
+                ");
                 $sel->execute();
-                $sel_r = $sel->get_result();
 
-                if ($sel_r->rowCount() < 1) {
+                if ($sel->rowCount() < 1) {
 
                 ?>
 
@@ -91,11 +86,11 @@ include_once "../assets/templates/head.php";
 
                 } // END IF EMPTY
 
-                while ($s = $sel_r->fetch_assoc()) {
+                foreach ($sel->fetchAll() as $s) {
 
                     // CONVERT TIMESTAMP
                     $timeAgoObject = new convertToAgo;
-                    $ts = $s['pcts'];
+                    $ts = $s->pcts;
                     $convertedTime = ($timeAgoObject->convert_datetime($ts));
                     $when = ($timeAgoObject->makeAgo($convertedTime));
 
@@ -122,10 +117,10 @@ include_once "../assets/templates/head.php";
                                             <?php
 
                                             // CHECK CUSTOMER NAME
-                                            if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                                echo $s['firstname'] . ' ' . $s['secondname'];
+                                            if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                                echo $s->firstname . ' ' . $s->secondname;
                                             } else {
-                                                echo $s['displayname'];
+                                                echo $s->displayname;
                                             }
 
                                             ?>
@@ -137,7 +132,7 @@ include_once "../assets/templates/head.php";
                                     </div>
 
                                     <div class="tools rt">
-                                        <a href="/product/<?php echo $s['artnr']; ?>" target="_blank">
+                                        <a href="/product/<?php echo $s->artnr; ?>" target="_blank">
                                             <div class="btn-outline" style="color:#FF7E8A;border-color:#FF7E8A;">
                                                 <p>Zum Produkt</p>
                                             </div>
@@ -153,7 +148,7 @@ include_once "../assets/templates/head.php";
 
                                         <?php
 
-                                        for ($i = 1; $i <= $s['rate']; $i++) {
+                                        for ($i = 1; $i <= $s->rate; $i++) {
                                             echo '<div class="one"><i class="material-icons md-18">star</i></div>';
                                         }
 
@@ -172,13 +167,13 @@ include_once "../assets/templates/head.php";
                                         <p class="icon lt">
                                             <i class="material-icons md-18">mail</i>
                                         </p>
-                                        <p class="act rt trimfull"><?php echo $s['mail']; ?></p>
+                                        <p class="act rt trimfull"><?php echo $s->mail; ?></p>
 
                                         <div class="cl"></div>
                                     </div>
 
                                     <div class="actual">
-                                        <p class="trimfull"><?php echo $s['text']; ?></p>
+                                        <p class="trimfull"><?php echo $s->text; ?></p>
                                     </div>
                                 </div>
 
@@ -191,8 +186,7 @@ include_once "../assets/templates/head.php";
 
 
 
-                <?php } // END WHILE: ORDERS 
-                ?>
+                <?php } ?>
 
             </div>
 
@@ -200,3 +194,5 @@ include_once "../assets/templates/head.php";
 
     </div>
 </main-content>
+
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

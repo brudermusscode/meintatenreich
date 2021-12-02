@@ -1,29 +1,25 @@
 <?php
 
-require_once "../../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
 $ptit = 'Funktionen: Mailer';
 $pid = "func:mailer";
 
-include_once "../assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "../assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
-<main-content>
+<main-content class="overview">
 
-    <!-- MC: HEADER -->
-    <?php include_once "../assets/templates/header.php"; ?>
+    <!-- MAIN HEADER -->
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
@@ -79,3 +75,5 @@ include_once "../assets/templates/head.php";
 
     </div>
 </main-content>
+
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

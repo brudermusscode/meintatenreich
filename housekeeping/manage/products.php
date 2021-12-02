@@ -1,36 +1,25 @@
 <?php
 
-require_once "../../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
 $ptit = 'Manage: Produkte';
 $pid = "manage:products";
 
-include_once "../assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "../assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
-<script>
+<main-content class="overview">
 
-
-
-</script>
-
-<main-content>
-
-    <!-- MC: HEADER -->
-    <?php include_once "../assets/templates/header.php"; ?>
-
+    <!-- MAIN HEADER -->
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
@@ -47,26 +36,22 @@ include_once "../assets/templates/head.php";
 
                 <?php
 
-                $sel = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
-                $sel->execute();
-                $sel_r = $sel->get_result();
-                $sel->close();
+                $getProductsCategories = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
+                $getProductsCategories->execute();
 
-                while ($s = $sel_r->fetch_assoc()) {
+                foreach ($getProductsCategories->fetchAll() as $s) {
 
                 ?>
 
                     <content-card class="lt mr8 mb8">
-                        <div class="normal-box adjust curpo" data-action="manage:products,category,edit" data-json='[{"id":"<?php echo $s['id']; ?>"}]'>
+                        <div class="normal-box adjust curpo" data-action="manage:products,category,edit" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
                             <div class="ph24 lh36">
-                                <p class="fw4" style="white-space:nowrap;"><?php echo $s['name']; ?></p>
+                                <p class="fw4" style="white-space:nowrap;"><?php echo $s->category_name; ?></p>
                             </div>
                         </div>
                     </content-card>
 
-                <?php }
-                $sel->close(); // END WHILE: PRODUCT CATEGORIES 
-                ?>
+                <?php } ?>
 
 
 
@@ -133,17 +118,15 @@ include_once "../assets/templates/head.php";
 
                 // GET ALL ORDERS & USER INFORMATION
                 $sel = $pdo->prepare("
-                        SELECT *, products.id AS pid 
-                        FROM products, products_images 
-                        WHERE products.id = products_images.pid
-                        AND products_images.isgal = '1'
-                        ORDER BY products.id DESC
-                    ");
+                    SELECT *, products.id AS pid 
+                    FROM products, products_images 
+                    WHERE products.id = products_images.pid
+                    AND products_images.isgal = '1'
+                    ORDER BY products.id DESC
+                ");
                 $sel->execute();
-                $sel_r = $sel->get_result();
-                $sel->close();
 
-                if ($sel_r->rowCount() < 1) {
+                if ($sel->rowCount() < 1) {
 
                 ?>
 
@@ -158,20 +141,17 @@ include_once "../assets/templates/head.php";
 
                 <?php
 
-                } // END IF EMPTY
+                }
 
-                while ($s = $sel_r->fetch_assoc()) {
+                foreach ($sel->fetchAll() as $s) {
 
-                    $id = $s['pid'];
+                    $id = $s->pid;
 
                     $res = false;
                     $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
-                    $selres->bind_param('s', $id);
-                    $selres->execute();
-                    $selres_r = $selres->get_result();
-                    $selres->close();
+                    $selres->execute([$id]);
 
-                    if ($selres_r->rowCount() > 0) {
+                    if ($selres->rowCount() > 0) {
                         $res = true;
                     }
 
@@ -183,7 +163,7 @@ include_once "../assets/templates/head.php";
                             <div class="image">
                                 <div class="image-outer">
                                     <div class="actual">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s['url']; ?>">
+                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s->url; ?>">
                                     </div>
                                 </div>
 
@@ -229,7 +209,7 @@ include_once "../assets/templates/head.php";
 
                                     <div class="bottom">
                                         <div class="price rt">
-                                            <p>EUR <?php echo number_format($s['price'], 2, ',', '.'); ?></p>
+                                            <p>EUR <?php echo number_format($s->price, 2, ',', '.'); ?></p>
                                         </div>
 
                                         <div class="cl"></div>
@@ -239,14 +219,14 @@ include_once "../assets/templates/head.php";
 
                             <div class="inr-content">
                                 <div class="name">
-                                    <p class="trimfull"><?php echo $s['name']; ?></p>
+                                    <p class="trimfull"><?php echo $s->name; ?></p>
                                 </div>
 
                                 <div class="artnr">
                                     <p class="ttup tac fw4 lt mr8">
                                         <i class="material-icons md-18 lh32">bookmark</i>
                                     </p>
-                                    <p class="ttup tac fw4 lh32 lt"><?php echo $s['artnr']; ?></p>
+                                    <p class="ttup tac fw4 lh32 lt"><?php echo $s->artnr; ?></p>
 
                                     <div class="cl"></div>
                                 </div>
@@ -261,7 +241,7 @@ include_once "../assets/templates/head.php";
 
                                     <?php } else { ?>
 
-                                        <?php if ($s['available'] === '1') { ?>
+                                        <?php if ($s->available === '1') { ?>
                                             <div class="av-outer g">
                                                 <p class="ttup">Verfügbar</p>
                                             </div>
@@ -281,8 +261,7 @@ include_once "../assets/templates/head.php";
                     </content-card>
 
 
-                <?php } // END WHILE: ORDERS 
-                ?>
+                <?php } ?>
 
                 <div class="cl"></div>
 
@@ -292,3 +271,5 @@ include_once "../assets/templates/head.php";
 
     </div>
 </main-content>
+
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

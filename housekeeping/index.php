@@ -124,9 +124,9 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 foreach ($getCustomers->fetchAll() as $c) {
 
                     $picname = false;
-                    if (strlen($pdo->firstname) > 0 && strlen($pdo->secondname) > 0) {
+                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
                         $picname = true;
-                        $pn = mb_substr($pdo->firstname, 0, 1) . mb_substr($pdo->secondname, 0, 1);
+                        $pn = mb_substr($c->firstname, 0, 1) . mb_substr($c->secondname, 0, 1);
                     }
 
                 ?>
@@ -155,10 +155,10 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <?php
 
                                     // CHECK NAME
-                                    if (strlen($pdo->firstname) > 0 && strlen($pdo->secondname) > 0) {
-                                        echo $pdo->firstname . ' ' . $pdo->secondname;
+                                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
+                                        echo $c->firstname . ' ' . $c->secondname;
                                     } else {
-                                        echo $pdo->displayname;
+                                        echo $c->displayname;
                                     }
 
                                     ?>
