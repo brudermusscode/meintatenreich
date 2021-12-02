@@ -57,6 +57,7 @@ RewriteRule ^product/(.*)$ productview.php?artnr=$1 [NC,L]
 # ADMIN PAGE
 RewriteRule ^_coffee_corner_/black(.*) housekeeping/index.php [NC,L]
 RewriteRule ^_coffee_corner_/(.*) housekeeping/$1 [NC,L]
+RewriteRule ^_magic_/ajax/(.*) housekeeping/assets/dynamics/$1 [NC,L]
 
 # ----------------------------------------------------------------------
 
@@ -68,9 +69,6 @@ RewriteRule ^verify(|/)$ verify.php
 RewriteRule ^newpassword(|/)$ verify.password.php
 RewriteRule ^search(|/)$ search.php
 RewriteRule ^maintenance(|/)$ maintenance.php
-
-
-
 
 
 # AP: JS GET => Elements #
@@ -148,9 +146,3 @@ RewriteRule ^hk/ajax/func/mailer(|/)$ housekeeping/assets/dynamics/functions/fun
 # AP: JS FUNC, MAILING #
 RewriteRule ^hk/ajax/mail/dc(|/)$ housekeeping/assets/dynamics/functions/mail/deliverycosts.php
 RewriteRule ^hk/ajax/mail/custom(|/)$ housekeeping/assets/dynamics/functions/mail/custom.php
-
-
-# AP: JS GET, FILTERING #
-RewriteRule ^hk/get/manage/filter/orders(|/)$ housekeeping/assets/dynamics/content/manage/orders/filter/index.php
-RewriteRule ^hk/get/manage/filter/products(|/)$ housekeeping/assets/dynamics/content/manage/products/filter/index.php
-RewriteRule ^hk/get/manage/filter/customers(|/)$ housekeeping/assets/dynamics/content/manage/customers/filter/index.php

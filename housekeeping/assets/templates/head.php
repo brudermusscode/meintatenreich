@@ -11,7 +11,7 @@
 
     <!-- STYLING -->
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/normalize.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/tooltip/tipr.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/tipr.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_gen.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_wide.container.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
@@ -22,8 +22,15 @@
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/de.jq.311.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/jquery/fileupload/vendor/jquery.ui.widget.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/jquery/fileupload/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/public.suffix.list.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/tooltip/tipr.min.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/_gen.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.core.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.elements.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.app.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.orders.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.products.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.customers.js"></script>
 
     <script>
         $(function() {

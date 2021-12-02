@@ -115,15 +115,6 @@
         }
     </style>
 
-    <script>
-        $(function(document, window) {
-
-            setTimeout(function() {
-                $("[data-element='dumper']").load(location.href + " [data-element='dumper']>*", "");
-            }, 600);
-        });
-    </script>
-
     <div data-element="dumper" class="mshd-4">
         <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">
             <p class="title"><strong>SESSION dump</strong></p>
