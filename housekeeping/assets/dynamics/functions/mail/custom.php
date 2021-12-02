@@ -5,7 +5,7 @@
 require_once "../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['id'], $_REQUEST['text']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id'], $_REQUEST['text']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
     $te = $pdo->real_escape_string(htmlspecialchars($_REQUEST['text']));
@@ -20,12 +20,12 @@ if (isset($_REQUEST['id'], $_REQUEST['text']) && $loggedIn && $user['admin'] ===
             ");
         $sel->bind_param('s', $id);
         $sel->execute();
-        $sel_r = $sel->get_result();
 
-        if ($sel_r->rowCount() > 0) {
+
+        if ($sel->rowCount() > 0) {
 
             // FETCH CUSTOMER
-            $s = $sel_r->fetch_assoc();
+            $s = $sel->fetch();
             $sel->close();
 
             // GET NEEDED DATA

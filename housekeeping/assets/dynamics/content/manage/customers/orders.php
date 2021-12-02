@@ -1,25 +1,20 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
+if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
-
-if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
-
-    $uid = htmlspecialchars($_REQUEST['id']);
+    $uid = $_REQUEST['id'];
 
     // CHECK IF ORDER EXISTS
     $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
-    $sel->bind_param('s', $uid);
-    $sel->execute();
-    $sel_r = $sel->get_result();
-    $sel->close();
+    $sel->execute([$uid]);
 
-    if ($sel_r->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // GET INFORMATION
-        $us = $sel_r->fetch_assoc();
+        $us = $sel->fetch();
 
 ?>
 
@@ -34,11 +29,9 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
             // GET ALL ORDERS & USER INFORMATION
             $selOrd = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ?");
-            $selOrd->bind_param('s', $uid);
-            $selOrd->execute();
-            $selOrdR = $selOrd->get_result();
+            $selOrd->execute([$uid]);
 
-            if ($selOrdR->rowCount() < 1) {
+            if ($selOrd->rowCount() < 1) {
 
             ?>
 
@@ -56,9 +49,9 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
             } else {
 
-                while ($so = $selOrdR->fetch_assoc()) {
+                foreach ($selOrd->fetchAll() as $so) {
 
-                    $oid = $so['id'];
+                    $oid = $so->id;
 
                 ?>
 
@@ -84,10 +77,10 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                             <?php
 
                                             // CHECK CUSTOMER NAME
-                                            if (strlen($us['firstname']) > 0 && strlen($us['secondname']) > 0) {
-                                                echo $us['firstname'] . ' ' . $us['secondname'];
+                                            if (strlen($us->firstname) > 0 && strlen($us->secondname) > 0) {
+                                                echo $us->firstname . ' ' . $us->secondname;
                                             } else {
-                                                echo $us['displayname'];
+                                                echo $us->displayname;
                                             }
 
                                             ?>
@@ -107,7 +100,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                                                 <datalist class="tran-all-cubic">
                                                     <ul>
-                                                        <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $so['orderid']; ?>"}]'>
+                                                        <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $so->orderid; ?>"}]'>
                                                             <p class="ic lt"><i class="material-icons md-18">build</i></p>
                                                             <p class="lt ne trimfull">Bestellung verwalten</p>
 
@@ -132,12 +125,9 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         SELECT * FROM customer_buys_products 
                                         WHERE bid = ?
                                     ");
-                                    $selProd->bind_param('s', $oid);
-                                    $selProd->execute();
-                                    $sPr_rr = $selProd->get_result();
-                                    $selProd->close();
+                                    $selProd->execute([$oid]);
 
-                                    if ($sPr_rr->rowCount() > 3) {
+                                    if ($selProd->rowCount() > 3) {
 
                                         // GET PRODUCT INFORMATION
                                         $selProd = $pdo->prepare("
@@ -148,16 +138,14 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                             AND isgal = '1'
                                             LIMIT 3
                                         ");
-                                        $selProd->bind_param('s', $oid);
-                                        $selProd->execute();
-                                        $sPr_r = $selProd->get_result();
+                                        $selProd->execute([$oid]);
 
-                                        while ($p = $sPr_r->fetch_assoc()) {
+                                        foreach ($selProd->fetchAll() as $p) {
 
                                     ?>
 
                                             <div class="prod mshd-1">
-                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                             </div>
 
                                         <?php
@@ -167,7 +155,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         ?>
 
                                         <div class="prod noprod">
-                                            <p>+ <?php echo $sPr_rr->rowCount() - 3; ?></p>
+                                            <p>+ <?php echo $selProd->rowCount() - 3; ?></p>
                                         </div>
 
                                         <?php
@@ -183,22 +171,20 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                             AND isgal = '1'
                                             LIMIT 3
                                         ");
-                                        $selProd->bind_param('s', $oid);
-                                        $selProd->execute();
-                                        $sPr_r = $selProd->get_result();
+                                        $selProd->execute([$oid]);
 
-                                        while ($p = $sPr_r->fetch_assoc()) {
+                                        foreach ($selProd->fetchAll() as $p) {
 
                                         ?>
 
                                             <div class="prod hd-shd">
-                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                             </div>
 
                                     <?php
 
-                                        } // END WHILE: PRODUCTS 
-                                    } // END IF
+                                        }
+                                    }
 
                                     ?>
                                 </div>
@@ -210,7 +196,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         <p>
                                             <?php
 
-                                            if ($so['delivery'] === 'combi') {
+                                            if ($so->delivery === 'combi') {
                                                 echo 'Kombi-Versand';
                                             } else {
                                                 echo 'Einzelversand';
@@ -221,7 +207,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                     </div>
 
                                     <div class="btn-outline">
-                                        <p>EUR <?php echo number_format($so['price'], 2, ',', '.'); ?></p>
+                                        <p>EUR <?php echo number_format($so->price, 2, ',', '.'); ?></p>
                                     </div>
 
                                     <div class="cl"></div>
@@ -236,9 +222,8 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
             <?php
 
-                } // END WHILE: ORDERS 
-
-            } // END IF
+                }
+            }
 
             ?>
 
@@ -247,10 +232,10 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 <?php
 
     } else {
-        exit;
+        exit(0);
     }
 } else {
-    exit;
+    exit(0);
 }
 
 ?>

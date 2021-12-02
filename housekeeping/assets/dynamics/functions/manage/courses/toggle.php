@@ -24,7 +24,7 @@ if (
     if ($sr->rowCount() > 0) {
 
         // COURSE QUERY
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
         // SET CASES FOR INSERTION
         if ($s['active'] === '0') {

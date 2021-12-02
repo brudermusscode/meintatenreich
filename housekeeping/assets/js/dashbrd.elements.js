@@ -114,7 +114,7 @@
 
     })
 
-    // selector
+    // chooser element > open ~ manage
     .on('click', '[data-element="admin-select"]', function () {
 
         var $t = $(this);
@@ -149,7 +149,8 @@
 
     })
 
-    .delegate('click', 'datalist ul li', function () {
+    // chooser element > click ~ manage
+    .on('click', 'datalist ul li', function () {
 
         var $t = $(this);
         var $el = $t.closest('[data-element="admin-select"]');
@@ -158,13 +159,6 @@
         var ch = $t.html();
 
         if ($el.hasClass('open')) {
-            $dl.css({
-                opacity:'',
-                top:'',
-                height:'',
-                width:'',
-                borderRadius:''
-            });
             $ch.text(ch);
             setTimeout(function () {
                 $el.removeClass('open');

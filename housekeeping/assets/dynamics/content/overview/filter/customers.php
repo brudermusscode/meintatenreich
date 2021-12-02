@@ -15,9 +15,9 @@ if ($loggedIn) {
 // GET ALL ORDERS & USER INFORMATION
 $sel = $pdo->prepare("SELECT * FROM customer ORDER BY timestamp DESC LIMIT 10");
 $sel->execute();
-$sel_r = $sel->get_result();
 
-while ($s = $sel_r->fetch_assoc()) {
+
+foreach ($s = $sel->fetchAll() as ) {
 
 ?>
 

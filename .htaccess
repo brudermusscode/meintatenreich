@@ -120,9 +120,6 @@ RewriteRule ^hk/ajax/overview/messages/check(|/)$ housekeeping/assets/dynamics/f
 RewriteRule ^hk/ajax/manage/orders/changestatus(|/)$ housekeeping/assets/dynamics/functions/manage/orders/change.status.php
 RewriteRule ^hk/ajax/manage/orders/paid(|/)$ housekeeping/assets/dynamics/functions/manage/orders/change.paid.php
 
-# AP: JS FUNC, MANAGE => App #
-RewriteRule ^hk/ajax/manage/app(|/)$ housekeeping/assets/dynamics/functions/manage/app/save.php
-
 # AP: JS FUNC, MANAGE => Products #
 RewriteRule ^hk/ajax/manage/product/edit(|/)$ housekeeping/assets/dynamics/functions/manage/products/edit.php
 RewriteRule ^hk/ajax/manage/product/add/save(|/)$ housekeeping/assets/dynamics/functions/manage/products/add.php

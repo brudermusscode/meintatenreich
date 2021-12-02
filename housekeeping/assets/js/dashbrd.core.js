@@ -14,64 +14,11 @@ if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
 
 $(function() {
 
-    var $doc = $(document);
-    var $bod = $('body');
+    let $body = $('body');
 
     // no auto submission on enter
     $(document).on('submit', 'form', function(){
         return false;
-    })
-
-    // filter index page by specific order
-    .on('click', '[data-action="manage:filter"] datalist ul li', function(){
-
-        let $t = $(this);
-        let or = $t.data('json')[0].order;
-        let pg = $t.closest('div[data-page]').data('page');
-        let react = $bod.find('div[data-react="manage:filter"]');
-        let loader = $bod.find('color-loader');
-        let url = false;
-        let dS = { order: or };
-    
-        switch(pg) {
-            case 'orders':
-                url = dynamicHost + '/_magic_/ajax/content/manage/orders/filter/index';
-                break;
-            case 'products':
-                url = dynamicHost + '/_magic_/ajax/content/manage/orders/filter/index';
-                break;
-            case 'customers':
-                url = dynamicHost + '/_magic_/ajax/content/manage/orders/filter/index';
-                break;
-            default:
-                url = false;
-        }
-    
-        if(url !== false) {
-    
-            react.empty();
-            loader.show();
-    
-            let ajax = $.ajax({
-                url: url,
-                data: dS,
-                method: 'POST',
-                type: 'HTML',
-                success: function(data){
-    
-                    loader.hide();
-                    react.prepend(data);
-    
-                },
-                error: function(data){
-                    console.log(data);
-                }
-            });
-    
-        } else {
-            showDialer('Ein fehler ist aufgetreten...');
-        }
-    
     })
 
     // basic visibility change of menu elements when being clicked,
@@ -102,25 +49,33 @@ $(function() {
             $t.addClass('open');
         }
 
+    })
+
+    // close datalist when clicked on
+    .on("click", "datalist li", function() {
+
+        $(this).closest("datalist").removeAttr("style");
+
     });
 
     // close datalists on mouseup, if current target is not that list
     $(window).on('mouseup', this, function (e) {
 
-        let selectList = $('[data-element="admin-select"]').find('datalist');
-        if (!$(e.target).closest(selectList).is(selectList)) {
-            selectList.css({
-                opacity:'',
-                top:'',
-                height:'',
-                width:'',
-                borderRadius:''
-            }).closest('[data-element="admin-select"]').removeClass('open');
+        let datalist = $('[data-element="admin-select"]').find('datalist');
+
+        // toggle manage filter
+        if (!$(e.target).closest(datalist).is(datalist)) {
+
+            datalist
+            .removeAttr("style")
+            .closest('[data-element="admin-select"]')
+            .removeClass('open');
             
         }
         
         let mainMenu = $(document).find('[data-react="open:menu,main"]');
         let mainMenuBtn = $(document).find('[data-action="open:menu,main"]');
+
         if (!($(e.target).closest(mainMenu).is(mainMenu) || $(e.target).closest(mainMenuBtn).is(mainMenuBtn))) {
             mainMenu.removeClass('open');
             mainMenuBtn.removeClass('open');
@@ -134,6 +89,20 @@ $(function() {
     }, function() {
         var rd = $('response-dialer');
         dialerTimeout = setTimeout(function(){ rd.removeAttr('style'); }, 3000);
+    });
+
+    // close overlay
+    $(document).on("click", "[data-action='close-overlay']", function(){
+
+        let closeOverlay, $overlay;
+        
+        // find overlay and close it
+        $overlay = $('body').find('page-overlay');
+        closeOverlay = Overlay.close($overlay);
+
+        // remove hidden overflow of body
+        $("body").removeClass("ovhid");
+
     });
 
     // contantly check for messages, play sound if there are new ones
@@ -150,20 +119,21 @@ $(function() {
                         return false;
                         break;
                     case '1':
-                        if(!$bod.hasClass('has-new-msgs')) {
+                        if(!$body.hasClass('has-new-msgs')) {
                             msgSound.play();
                         }
                         $('[data-action="overview:messages,check"]').find('.pulse').addClass('active');
-                        $bod.addClass('has-new-msgs');
+                        $body.addClass('has-new-msgs');
                 }
             }
         });
     }
+
     requestMsg();
     
     // set the interval for message checking request
     setInterval(function(){
-        requestMsg();
+        //requestMsg();
     }, 4000);
 
 });
@@ -188,72 +158,90 @@ let loadContent = function(content, url, data) {
                 $co.append(data);
             }, 100);
             
-            $bod.removeClass('loading');
+            $body.removeClass('loading');
 
         }
     });
 
 }
 
-let addOverlay = function(color, append, view = 'v', close = true) { 
+let handleOverlay = function(color, append, ) {
+    addOverlay('255,255,255', $body);
+    let $ov = $body.find('page-overlay');
+    addLoader('color', $ov);
+    let $lo = $ov.find('color-loader');
+}
 
-    let col, app, clo, vee;
 
-    col = color,
-    app = append,
-    clo = close,
-    vee = view;
+class Overlay {
+
+    static add(append, floatingLoader = true) {
+
+        let $overlay, $loader, array;
+
+        array = {
+            overlay : null,
+            loader  : null
+        };
     
-    if(vee === 'v') {
+        // set body's overflow to hidden
         $('body').addClass('ovhid');
-        app.append('<page-overlay class="tran-all opa0 posfix" style="height:100vh;width:100vw;background:rgba(' + col + ',.92);"></page-overlay>');
-    } else {
-        app.append('<page-overlay class="tran-all opa0 posabs" style="height:100%;width:100%;background:rgba(' + col + ',.92);"></page-overlay>');
+    
+        // append the page overlay to passed param append
+        append.append('<page-overlay class="tran-all opa0 posfix" style="height:100vh;width:100vw;background:rgba(255,255,255,.92);"></page-overlay>');
+
+        // store added page overlay
+        $overlay = $('body').find('page-overlay');
+
+        // add overlay to array
+        array.overlay = $overlay;
+
+        // append closing area to the overlay
+        $overlay.append('<close data-action="close-overlay"><div class="closer"><p>Klicke hier, um das Overlay zu schließen</p></div></close>');
+    
+        // set timeout function to get full fade in transition
+        setTimeout(function(){
+    
+            // make overlay visible
+            $overlay.css({ "opacity" : "1" });
+        }, 10);
+
+        // at the end, add the loader
+        $loader = this.addLoader($overlay, true);
+        
+        // add loader to array
+        array.loader = $loader;
+
+        return array;
+    }
+    
+    static addLoader(append, floatingLoader) {
+        
+        let float, $loader;
+
+        if(floatingLoader) {
+            float = "almid";
+        } else {
+            float = "almid-h mt24 mb42";
+        }
+
+        append.append('<color-loader class="' + float + '"><inr><circl3 class="color-loader1"></circl3><circl3 class="color-loader2"></circl3></inr></color-loader>');
+        return $loader = append.find("color-loader");
     }
 
-    setTimeout(function(){
-        let $ov = $('body').find('page-overlay');
-        $ov.css({ opacity:'1' });
-        if(close === true) {
-            $ov.append('<close onclick="closeOverlay($(\'body\').find(\'page-overlay\'), true)"><div class="closer"><p>Klicke hier, um das Overlay zu schließen</p></div></close>');
-        }
-    }, 10);
+    static close(overlay) {
+        
+        overlay.css('opacity', '0');
     
-}
+        setTimeout(function(){
+            overlay.remove();
+            overlay.closest('body').removeClass('ovhid');
+        }, 400);
 
-let closeOverlay = function(overlay, body = false) {
-    
-    let $ov;
-
-    $ov = overlay;
-    
-    if(body === true) {
-        $('body').removeClass('ovhid');
-    }
-    
-    $ov.css('opacity', '0');
-    setTimeout(function(){
-        $ov.remove();
-    }, 400);
-
-}
-
-let addLoader = function(type, append, floating = true) {
-
-    let tp = type;
-    let ap = append;
-    let fl = floating;
-    
-    if(fl === false) {
-        if(tp === 'color') {
-            ap.append('<color-loader class="almid-h mt24 mb42"><inr><circl3 class="color-loader1"></circl3><circl3 class="color-loader2"></circl3></inr></color-loader>');
-        }
-    } else {
-        if(tp === 'color') {
-            ap.append('<color-loader class="almid"><inr><circl3 class="color-loader1"></circl3><circl3 class="color-loader2"></circl3></inr></color-loader>');
-        }
+        return true;
     }
 }
+
 
 var dialerTimeout;
 function showDialer(text) {

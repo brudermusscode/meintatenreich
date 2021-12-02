@@ -2,7 +2,7 @@
 
 require_once "../../../../../mysql/_.session.php";
 
-if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = htmlspecialchars($_REQUEST['id']);
     $validId = ['all', 'single'];

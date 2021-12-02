@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['rel']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['rel']) && $admin->isAdmin()) {
 
     $rel = $_REQUEST['rel'];
 
@@ -15,12 +15,12 @@ if (isset($_REQUEST['rel']) && $loggedIn && $user['admin'] === '1') {
         $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
         $sel->bind_param('s', $rel);
         $sel->execute();
-        $sel_r = $sel->get_result();
 
-        if ($sel_r->rowCount() > 0) {
+
+        if ($sel->rowCount() > 0) {
 
             // FETCH ORDER
-            $s = $sel_r->fetch_assoc();
+            $s = $sel->fetch();
             $sel->close();
 
             $mail = $s['mail'];

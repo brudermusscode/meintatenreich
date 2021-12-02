@@ -44,7 +44,7 @@ if ($selOverview_r->rowCount() < 1) {
 
 } // END IF EMPTY
 
-while ($ov = $selOverview_r->fetch_assoc()) {
+foreach ($ov = $selOverview_r->fetchAll() as ) {
 
     $tt = $ov['ttype'];
     $rid = $ov['rid'];
@@ -67,10 +67,10 @@ while ($ov = $selOverview_r->fetch_assoc()) {
         ");
         $sel->bind_param('s', $rid);
         $sel->execute();
-        $sel_r = $sel->get_result();
+        
         $sel->close();
 
-        while ($s = $sel_r->fetch_assoc()) {
+        foreach ($s = $sel->fetchAll() as ) {
 
             // GET BILL PDF ID
             $sel = $pdo->prepare("
@@ -80,7 +80,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
             $sel->bind_param('s', $s['oid']);
             $sel->execute();
             $sr = $sel->get_result();
-            $pdf = $sr->fetch_assoc();
+            $pdf = $sr->fetch();
             $sel->close();
 
     ?>
@@ -194,7 +194,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
                                 $selProd->execute();
                                 $sPr_r = $selProd->get_result();
 
-                                while ($p = $sPr_r->fetch_assoc()) {
+                                foreach ($p = $sPr_r->fetchAll() as ) {
 
                             ?>
 
@@ -229,7 +229,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
                                 $selProd->execute();
                                 $sPr_r = $selProd->get_result();
 
-                                while ($p = $sPr_r->fetch_assoc()) {
+                                foreach ($p = $sPr_r->fetchAll() as ) {
 
                                 ?>
 
@@ -329,9 +329,9 @@ while ($ov = $selOverview_r->fetch_assoc()) {
         $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
         $sel->bind_param('s', $rid);
         $sel->execute();
-        $sel_r = $sel->get_result();
+        
 
-        while ($s = $sel_r->fetch_assoc()) {
+        foreach ($s = $sel->fetchAll() as ) {
         ?>
 
             <content-card class="mb24">
@@ -406,9 +406,9 @@ while ($ov = $selOverview_r->fetch_assoc()) {
         ");
         $sel->bind_param('s', $rid);
         $sel->execute();
-        $sel_r = $sel->get_result();
+        
 
-        while ($s = $sel_r->fetch_assoc()) {
+        foreach ($s = $sel->fetchAll() as ) {
 
             // CONVERT TIMESTAMP
             $timeAgoObject = new convertToAgo;

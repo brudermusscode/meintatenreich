@@ -68,7 +68,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <p class="lt text">Schaltet das Error-Reporting durch PHP ein. Dies sollte nur zu Debugging-Zwecken aktiviert werden.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($main['displayerrors'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
+                                        <div class="boolean-great <?php if ($main['displayerrors'] == '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
                                             <div class="outer tran-all">
                                                 <div class="actual mshd-1 tran-all-cubic">
                                                     <div class="booler"></div>
@@ -95,7 +95,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <p class="lt text">Aktiviert den allgemeinen Wartungsmodus. Dieser sollte nur eingeschaltet werden, sofern Funktionen oder andere essenzielle Seiten-Bausteine getestet werden müssen.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($main['maintenance'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
+                                        <div class="boolean-great <?php if ($main['maintenance'] == '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
                                             <div class="outer tran-all">
                                                 <div class="actual mshd-1 tran-all-cubic">
                                                     <div class="booler"></div>

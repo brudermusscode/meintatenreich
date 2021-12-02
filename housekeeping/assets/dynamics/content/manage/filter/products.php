@@ -1,15 +1,14 @@
 <?php
 
-require_once "../../../../../../../mysql/_.session.php";
-require_once "../../../../../../../mysql/_.maintenance.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 $orderValid = ['all', 'available', 'unavailable', 'reserved', 'priceup', 'pricedown'];
 
 if (
     isset($_REQUEST['order'])
     && in_array($_REQUEST['order'], $orderValid)
-    && $loggedIn
-    && $user['admin'] === '1'
+    && $admin->isAdmin()
 ) {
 
     $o = htmlspecialchars($_REQUEST['order']);
@@ -79,9 +78,9 @@ if (
 
     $sel = $pdo->prepare($q);
     $sel->execute();
-    $sel_r = $sel->get_result();
 
-    if ($sel_r->rowCount() < 1) {
+
+    if ($sel->rowCount() < 1) {
 
 ?>
 
@@ -96,20 +95,18 @@ if (
 
     <?php
 
+        exit;
     }
 
-    while ($s = $sel_r->fetch_assoc()) {
+    foreach ($sel->fetchAll() as $s) {
 
-        $id = $s['pid'];
+        $id = $s->pid;
 
         $res = false;
         $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
-        $selres->bind_param('s', $id);
-        $selres->execute();
-        $selres_r = $selres->get_result();
-        $selres->close();
+        $selres->execute([$id]);
 
-        if ($selres_r->rowCount() > 0) {
+        if ($selres->rowCount() > 0) {
             $res = true;
         }
 
@@ -129,7 +126,7 @@ if (
                 <div class="image">
                     <div class="image-outer">
                         <div class="actual">
-                            <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s['url']; ?>">
+                            <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s->url; ?>">
                         </div>
                     </div>
 
@@ -175,7 +172,7 @@ if (
 
                         <div class="bottom">
                             <div class="price rt">
-                                <p>EUR <?php echo number_format($s['price'], 2, ',', '.'); ?></p>
+                                <p>EUR <?php echo number_format($s->price, 2, ',', '.'); ?></p>
                             </div>
 
                             <div class="cl"></div>
@@ -185,14 +182,14 @@ if (
 
                 <div class="inr-content">
                     <div class="name">
-                        <p class="trimfull"><?php echo $s['name']; ?></p>
+                        <p class="trimfull"><?php echo $s->name; ?></p>
                     </div>
 
                     <div class="artnr">
                         <p class="ttup tac fw4 lt mr8">
                             <i class="material-icons md-18 lh32">bookmark</i>
                         </p>
-                        <p class="ttup tac fw4 lh32 lt"><?php echo $s['artnr']; ?></p>
+                        <p class="ttup tac fw4 lh32 lt"><?php echo $s->artnr; ?></p>
 
                         <div class="cl"></div>
                     </div>
@@ -207,7 +204,7 @@ if (
 
                         <?php } else { ?>
 
-                            <?php if ($s['available'] === '1') { ?>
+                            <?php if ($s->available === '1') { ?>
                                 <div class="av-outer g">
                                     <p class="ttup">Verfügbar</p>
                                 </div>
@@ -226,18 +223,14 @@ if (
             </div>
         </content-card>
 
-    <?php
-
-    } // END WHILE
-
-    ?>
+    <?php } ?>
 
     <div class="cl"></div>
 
 <?php
 
 } else {
-    exit;
+    exit(0);
 }
 
 

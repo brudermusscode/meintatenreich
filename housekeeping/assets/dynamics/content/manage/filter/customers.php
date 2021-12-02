@@ -1,15 +1,14 @@
 <?php
 
-require_once "../../../../../../../mysql/_.session.php";
-require_once "../../../../../../../mysql/_.maintenance.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 $orderValid = ['verified', 'unverified', 'all', 'done', 'canceled'];
 
 if (
     isset($_REQUEST['order'])
     && in_array($_REQUEST['order'], $orderValid)
-    && $loggedIn
-    && $user['admin'] === '1'
+    && $admin->isAdmin()
 ) {
 
     $o = htmlspecialchars($_REQUEST['order']);
@@ -28,9 +27,9 @@ if (
 
     $sel = $pdo->prepare($q);
     $sel->execute();
-    $sel_r = $sel->get_result();
 
-    if ($sel_r->rowCount() < 1) {
+
+    if ($sel->rowCount() < 1) {
 
 ?>
 
@@ -46,22 +45,19 @@ if (
 
     }
 
-    while ($s = $sel_r->fetch_assoc()) {
+    foreach ($sel->fetchAll() as $s) {
 
-        $id = $s['id'];
-        $pn = mb_substr($s['firstname'], 0, 1) . mb_substr($s['secondname'], 0, 1);
+        $id = $s->id;
+        $pn = mb_substr($s->firstname, 0, 1) . mb_substr($s->secondname, 0, 1);
 
         // GET USERS ORDERS
         $selOC = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ?");
-        $selOC->bind_param('s', $id);
-        $selOC->execute();
-        $selOC_r = $selOC->get_result();
-        $selOC->close();
-        $ordersCount = $selOC_r->rowCount();
+        $selOC->execute([$id]);
+        $ordersCount = $selOC->rowCount();
 
         // CONVERT TIMESTAMP
         $timeAgoObject = new convertToAgo;
-        $ts = $s['timestamp'];
+        $ts = $s->timestamp;
         $convertedTime = ($timeAgoObject->convert_datetime($ts));
         $when = ($timeAgoObject->makeAgo($convertedTime));
 
@@ -72,7 +68,7 @@ if (
                 <div class="user-icon">
                     <div class="image-outer">
                         <div class="actual">
-                            <?php if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) { ?>
+                            <?php if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) { ?>
                                 <div class="name-letters">
                                     <p><?php echo $pn; ?></p>
                                 </div>
@@ -88,8 +84,8 @@ if (
                         <p class="trimfull">
                             <?php
 
-                            if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                echo $s['firstname'] . ' ' . $s['secondname'];
+                            if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                echo $s->firstname . ' ' . $s->secondname;
                             } else {
                                 echo 'Kein Name';
                             }
@@ -99,7 +95,7 @@ if (
                     </div>
                     <div class="extra">
                         <p class="trimfull">
-                            <?php echo '@' . $s['displayname']; ?>
+                            <?php echo '@' . $s->displayname; ?>
                         </p>
                     </div>
                 </div>
@@ -108,21 +104,21 @@ if (
 
                     <div class="tools-outer disfl fldirrow jstfycc">
 
-                        <?php if ($s['admin'] === '1') { ?>
+                        <?php if ($s->admin === '1') { ?>
                             <div class="nopoint posrel">
                                 <p style="color:#3EAF5C;" class="alt" data-tip="Administrator"><i class="material-icons md32">security</i></p>
                             </div>
                         <?php } ?>
 
                         <div class="nopoint posrel">
-                            <?php if ($s['verified'] === '1') { ?>
+                            <?php if ($s->verified === '1') { ?>
                                 <p style="color:#3EAF5C;" class="alt" data-tip="Verifizierter Kunde"><i class="material-icons md32">done</i></p>
                             <?php } else { ?>
                                 <p style="color:#EA363A;" class="alt" data-tip="Nicht verifiziert"><i class="material-icons md32">clear</i></p>
                             <?php } ?>
                         </div>
                         <div class="point" data-action="mail:custom" data-json='[{"rel":"<?php echo $id; ?>", "which":"customer"}]'>
-                            <p class="alt pin" data-tip="E-Mail an: <?php echo $s['mail']; ?>"><i class="material-icons md32">mail</i></p>
+                            <p class="alt pin" data-tip="E-Mail an: <?php echo $s->mail; ?>"><i class="material-icons md32">mail</i></p>
                         </div>
                         <div class="point posrel" data-element="admin-select" data-list-size="234" data-list-align="right">
                             <p class="alt pin" data-tip="Mehr..."><i class="material-icons md32">more_vert</i></p>
@@ -180,18 +176,14 @@ if (
             </div>
         </content-card>
 
-    <?php
-
-    } // END WHILE
-
-    ?>
+    <?php } ?>
 
     <div class="cl"></div>
 
 <?php
 
 } else {
-    exit;
+    exit(0);
 }
 
 

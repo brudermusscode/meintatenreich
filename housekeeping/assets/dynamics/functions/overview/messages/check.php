@@ -2,7 +2,7 @@
 
 require_once "../../../../../../mysql/_.session.php";
 
-if ($loggedIn && $user['admin'] === '1') {
+if ($admin->isAdmin()) {
 
     $id = $config["mails_set_id"];
 
@@ -15,7 +15,7 @@ if ($loggedIn && $user['admin'] === '1') {
 
     if ($sr->rowCount()) {
 
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
         if ($s['mails_checked'] === '0') {
 

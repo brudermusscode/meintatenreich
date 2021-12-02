@@ -56,7 +56,7 @@ if (
     if ($sr->rowCount() > 0) {
 
         // GET CURRENT INFORMATION
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
 
         // CHECK GALLERY IMAGE
@@ -76,7 +76,7 @@ if (
             $selGalNew->execute();
             $selGalNew_r = $selGalNew->get_result();
 
-            while ($g = $selGalNew_r->fetch_assoc()) {
+            foreach ($g = $selGalNew_r->fetchAll() as ) {
                 $imgarray[] = $g['id'];
             }
             $selGalNew->close();
@@ -100,7 +100,7 @@ if (
         $selD->execute();
         $selD_r = $selD->get_result();
         $selD->close();
-        $sdesc = $selD_r->fetch_assoc();
+        $sdesc = $selD_r->fetch();
 
         $curdesc = $sdesc['text'];
 

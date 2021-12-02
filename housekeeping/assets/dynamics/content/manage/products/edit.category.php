@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
 
@@ -19,7 +19,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
 
     if ($sr->rowCount() > 0) {
 
-        $sc = $sr->fetch_assoc();
+        $sc = $sr->fetch();
 
 ?>
 
@@ -89,10 +89,10 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                 ");
                 $sel->bind_param('s', $id);
                 $sel->execute();
-                $sel_r = $sel->get_result();
+                
                 $sel->close();
 
-                if ($sel_r->rowCount() < 1) {
+                if ($sel->rowCount() < 1) {
 
                 ?>
                     <content-card class="mb42 posrel">
@@ -122,7 +122,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
 
                     <?php
 
-                    while ($s = $sel_r->fetch_assoc()) {
+                    foreach ($s = $sel->fetchAll() as ) {
 
                         $pid = $s['pid'];
 

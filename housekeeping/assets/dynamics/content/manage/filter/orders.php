@@ -1,19 +1,20 @@
 <?php
 
-require_once "../../../../../../../mysql/_.session.php";
-require_once "../../../../../../../mysql/_.maintenance.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
+// valid orders
 $orderValid = ['all', 'got', 'sent', 'done', 'canceled', 'unpaid', 'paid', 'paidmarked'];
 
 if (
     isset($_REQUEST['order'])
     && in_array($_REQUEST['order'], $orderValid)
-    && $loggedIn
-    && $user['admin'] === '1'
+    && $admin->isAdmin()
 ) {
 
     $o = htmlspecialchars($_REQUEST['order']);
 
+    // switch through filters
     switch ($o) {
         case 'all':
         default:
@@ -101,10 +102,8 @@ if (
 
     $sel = $pdo->prepare($q);
     $sel->execute();
-    $sel_r = $sel->get_result();
-    $sel->close();
 
-    if ($sel_r->rowCount() < 1) {
+    if ($sel->rowCount() < 1) {
 
 ?>
 
@@ -119,20 +118,15 @@ if (
 
     <?php
 
+        exit;
     }
 
-    while ($s = $sel_r->fetch_assoc()) {
+    foreach ($sel->fetchAll() as $s) {
 
         // GET BILL PDF ID
-        $sel = $pdo->prepare("
-                SELECT * FROM customer_buys_pdf
-                WHERE bid = ?
-            ");
-        $sel->bind_param('s', $s['oid']);
-        $sel->execute();
-        $sr = $sel->get_result();
-        $pdf = $sr->fetch_assoc();
-        $sel->close();
+        $sel = $pdo->prepare("SELECT * FROM customer_buys_pdf WHERE bid = ?");
+        $sel->execute([$s->oid]);
+        $pdf = $sel->fetch();
 
     ?>
 
@@ -158,10 +152,10 @@ if (
                                 <?php
 
                                 // CHECK CUSTOMER NAME
-                                if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                    echo $s['firstname'] . ' ' . $s['secondname'];
+                                if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                    echo $s->firstname . ' ' . $s->secondname;
                                 } else {
-                                    echo $s['displayname'];
+                                    echo $s->displayname;
                                 }
 
                                 ?>
@@ -181,21 +175,21 @@ if (
 
                                     <datalist class="tran-all-cubic">
                                         <ul>
-                                            <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $s['orderid']; ?>"}]'>
+                                            <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $s->orderid; ?>"}]'>
                                                 <p class="ic lt"><i class="material-icons md-18">build</i></p>
                                                 <p class="lt ne trimfull">Bestellung verwalten</p>
 
                                                 <div class="cl"></div>
                                             </li>
 
-                                            <li class="wic" data-action="manage:customers,orders" data-json='[{"id":"<?php echo $s['uid']; ?>"}]'>
+                                            <li class="wic" data-action="manage:customers,orders" data-json='[{"id":"<?php echo $s->uid; ?>"}]'>
                                                 <p class="ic lt"><i class="material-icons md-18">widgets</i></p>
                                                 <p class="lt ne trimfull">Alle Bestellungen des Kunden</p>
 
                                                 <div class="cl"></div>
                                             </li>
 
-                                            <a href="/a/bill/<?php echo $pdf['id']; ?>" target="_blank" style="color:rgb(80, 104, 161);">
+                                            <a href="/a/bill/<?php echo $pdf->id; ?>" target="_blank" style="color:rgb(80, 104, 161);">
                                                 <li class="wic">
                                                     <p class="ic lt"><i class="material-icons md-18">description</i></p>
                                                     <p class="lt ne trimfull">Rechnung anzeigen</p>
@@ -219,46 +213,34 @@ if (
                         <?php
 
                         // GET PRODUCT INFORMATION
-                        $selProd = $pdo->prepare("
-                                    SELECT * FROM customer_buys_products 
-                                    WHERE bid = ?
-                                ");
-                        $selProd->bind_param('s', $s['oid']);
-                        $selProd->execute();
-                        $sPr_rr = $selProd->get_result();
-                        $selProd->close();
+                        $selProd = $pdo->prepare("SELECT * FROM customer_buys_products WHERE bid = ?");
+                        $selProd->execute([$s->oid]);
 
-                        if ($sPr_rr->rowCount() > 3) {
+                        if ($selProd->rowCount() > 3) {
 
                             // GET PRODUCT INFORMATION
                             $selProd = $pdo->prepare("
-                                        SELECT * FROM customer_buys_products, products, products_images 
-                                        WHERE customer_buys_products.pid = products.id 
-                                        AND products.id = products_images.pid 
-                                        AND bid = ? 
-                                        AND isgal = '1'
-                                        LIMIT 3
-                                    ");
-                            $selProd->bind_param('s', $s['oid']);
-                            $selProd->execute();
-                            $sPr_r = $selProd->get_result();
+                                SELECT * FROM customer_buys_products, products, products_images 
+                                WHERE customer_buys_products.pid = products.id 
+                                AND products.id = products_images.pid 
+                                AND bid = ? 
+                                AND isgal = '1'
+                                LIMIT 3
+                            ");
+                            $selProd->execute([$s->oid]);
 
-                            while ($p = $sPr_r->fetch_assoc()) {
+                            foreach ($selProd->fetchAll() as $p) {
 
                         ?>
 
                                 <div class="prod mshd-1">
-                                    <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                    <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                 </div>
 
-                            <?php
-
-                            } // END WHILE: PRODUCTS 
-
-                            ?>
+                            <?php } ?>
 
                             <div class="prod noprod">
-                                <p>+ <?php echo $sPr_rr->rowCount() - 3; ?></p>
+                                <p>+ <?php echo $selProd->rowCount() - 3; ?></p>
                             </div>
 
                             <?php
@@ -267,29 +249,27 @@ if (
 
                             // GET PRODUCT INFORMATION
                             $selProd = $pdo->prepare("
-                                        SELECT * FROM customer_buys_products, products, products_images 
-                                        WHERE customer_buys_products.pid = products.id 
-                                        AND products.id = products_images.pid 
-                                        AND bid = ? 
-                                        AND isgal = '1'
-                                        LIMIT 3
-                                    ");
-                            $selProd->bind_param('s', $s['oid']);
-                            $selProd->execute();
-                            $sPr_r = $selProd->get_result();
+                                SELECT * FROM customer_buys_products, products, products_images 
+                                WHERE customer_buys_products.pid = products.id 
+                                AND products.id = products_images.pid 
+                                AND bid = ? 
+                                AND isgal = '1'
+                                LIMIT 3
+                            ");
+                            $selProd->execute([$s->oid]);
 
-                            while ($p = $sPr_r->fetch_assoc()) {
+                            foreach ($selProd->fetchAll() as $p) {
 
                             ?>
 
                                 <div class="prod hd-shd">
-                                    <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                    <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                 </div>
 
                         <?php
 
-                            } // END WHILE: PRODUCTS 
-                        } // END IF
+                            }
+                        }
 
                         ?>
                     </div>
@@ -300,31 +280,31 @@ if (
                         <div class="lt disfl fldirrow ph32">
 
 
-                            <?php if ($s['status'] === 'got') { ?>
+                            <?php if ($s->status === 'got') { ?>
                                 <div class="btn-outline delivery" style="border:1px solid orange;background:orange;">
                                     <p style="color:white;">NEU</p>
                                 </div>
-                            <?php } else if ($s['status'] === 'sent') { ?>
+                            <?php } else if ($s->status === 'sent') { ?>
                                 <div class="btn-outline delivery" style="border:1px solid grey;">
                                     <p style="color:grey;">Versandt</p>
                                 </div>
-                            <?php } else if ($s['status'] === 'done') { ?>
+                            <?php } else if ($s->status === 'done') { ?>
                                 <div class="btn-outline delivery" style="border:1px solid green;">
                                     <p style="color:green;">Abgeschlossen</p>
                                 </div>
-                            <?php } else if ($s['status'] === 'canceled') { ?>
+                            <?php } else if ($s->status === 'canceled') { ?>
                                 <div class="btn-outline delivery" style="border:1px solid red;background:red;">
                                     <p style="color:white;">Storniert</p>
                                 </div>
                             <?php } ?>
 
                             <!-- PAYMENT MADE -->
-                            <?php if ($s['status'] !== 'canceled') { ?>
-                                <?php if ($s['paid'] === '1') { ?>
+                            <?php if ($s->status !== 'canceled') { ?>
+                                <?php if ($s->paid === '1') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid rgba(0,0,0,.24);">
                                         <p style="color:rgba(0,0,0,.24);">Als bezahlt markiert</p>
                                     </div>
-                                <?php } else if ($s['paid'] === '2') { ?>
+                                <?php } else if ($s->paid === '2') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid green;">
                                         <p style="color:green;">Bezahlt</p>
                                     </div>
@@ -342,7 +322,7 @@ if (
                                 <p>
                                     <?php
 
-                                    if ($s['delivery'] === 'combi') {
+                                    if ($s->delivery === 'combi') {
                                         echo 'Kombi-Versand';
                                     } else {
                                         echo 'Einzelversand';
@@ -353,7 +333,7 @@ if (
                             </div>
 
                             <div class="btn-outline">
-                                <p>EUR <?php echo number_format($s['price'], 2, ',', '.'); ?></p>
+                                <p>EUR <?php echo number_format($s->price, 2, ',', '.'); ?></p>
                             </div>
                         </div>
 
@@ -368,10 +348,9 @@ if (
 
 <?php
 
-    } // END WHILE
-
+    }
 } else {
-    exit;
+    exit(0);
 }
 
 

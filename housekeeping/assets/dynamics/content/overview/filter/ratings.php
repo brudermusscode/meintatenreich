@@ -25,9 +25,9 @@ $sel = $pdo->prepare("
         DESC
     ");
 $sel->execute();
-$sel_r = $sel->get_result();
 
-while ($s = $sel_r->fetch_assoc()) {
+
+foreach ($s = $sel->fetchAll() as ) {
 
     // CONVERT TIMESTAMP
     $timeAgoObject = new convertToAgo;

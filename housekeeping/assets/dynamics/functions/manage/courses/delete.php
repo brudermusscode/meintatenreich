@@ -24,7 +24,7 @@ if (
     if ($sr->rowCount() > 0) {
 
         // COURSE QUERY
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
         // INSERTION
         $upd = $pdo->prepare("UPDATE courses SET deleted = '1', updated = ? WHERE id = ?");

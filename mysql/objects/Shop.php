@@ -46,6 +46,7 @@ class Shop
             // store error information
             $return = [
                 "status" => true,
+                "commit" => $commit,
                 "lastInsertId" => $connection->lastInsertId()
             ];
 

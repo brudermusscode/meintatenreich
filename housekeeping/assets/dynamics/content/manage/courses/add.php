@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if ($loggedIn && $user['admin'] === '1') {
+if ($admin->isAdmin()) {
 
 ?>
 

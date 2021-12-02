@@ -5,7 +5,7 @@
 require_once "../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
     $dca = $_REQUEST['deliverycosts'];
@@ -20,13 +20,13 @@ if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $loggedIn && $user['ad
         ");
     $sel->bind_param('s', $id);
     $sel->execute();
-    $sel_r = $sel->get_result();
+
     $sel->close();
 
-    if ($sel_r->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // GET NEEDED INFO
-        $s = $sel_r->fetch_assoc();
+        $s = $sel->fetch();
         $to = $s['mail'];
         $oi = $s['orderid'];
         $dc = number_format($dca, 2, ',', '.');

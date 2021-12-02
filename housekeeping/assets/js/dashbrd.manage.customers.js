@@ -1,66 +1,72 @@
 $(function(){
 
+    let $body = $("body");
+
     // get customer overview
     $(document).on('click', '[data-action="manage:customers,overview"]', function(){
 
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
-        
-        let $t = $(this);
-        let id = $t.data('json')[0].id;
-        let url = '/hk/get/manage/customers/overview';
-        
-        let ajax = $.ajax({
-            
-            url: url,
-            data: { id: id },
-            method: 'POST',
-            type: 'HTML',
-            success: function(data, status) {
-                
-                $lo.remove();
-                $ov.append(data);
-                
-            }
-            
-        });
+        let id, url, $t;
 
-    });
-    
-    // get customer orders
-    $(document).on('click', '[data-action="manage:customers,orders"]', function(){
-
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
+        // add new overlay
+        overlay = Overlay.add($body, true);
         
-        let $t = $(this);
-        let id = $t.data('json')[0].id;
-        let url = '/hk/get/manage/customers/orders';
+        $t = $(this);
+        id = $t.data('json')[0].id;
+        url = '/_magic_/ajax/content/manage/customers/overview';
         
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             data: { id: id },
             method: 'POST',
             type: 'HTML',
             success: function(data) {
-                
-                $lo.remove();
-                $ov.append(data);
+
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+
+                    showDialer("OppsieWoopsieLoopsie");
+                }
+            }
+        });
+    });
+    
+    // get customer orders
+    $(document).on('click', '[data-action="manage:customers,orders"]', function(){
+
+        let $t, formData, url;
+
+        // add new overlay
+        overlay = Overlay.add($body, true);
+        
+        $t = $(this);
+        formData = new FormData();
+        formData.append("id", $t.data('json')[0].id);
+        url = dynamicHost + '/_magic_/ajax/content/manage/customers/orders';
+        
+        $.ajax({
+            
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'HTML',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("Oopsie");
+                }
                 
             },
             error: function(data) {
-                // SET ERROR TEXT
+                console.error(data);
             }
-            
         });
-
     });
-
 });

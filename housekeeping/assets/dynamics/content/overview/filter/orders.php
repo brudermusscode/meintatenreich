@@ -25,10 +25,10 @@ $sel = $pdo->prepare("
             DESC
         ");
 $sel->execute();
-$sel_r = $sel->get_result();
+
 $sel->close();
 
-while ($s = $sel_r->fetch_assoc()) {
+foreach ($s = $sel->fetchAll() as ) {
 
     // GET BILL PDF ID
     $sel = $pdo->prepare("
@@ -38,7 +38,7 @@ while ($s = $sel_r->fetch_assoc()) {
     $sel->bind_param('s', $s['oid']);
     $sel->execute();
     $sr = $sel->get_result();
-    $pdf = $sr->fetch_assoc();
+    $pdf = $sr->fetch();
     $sel->close();
 
 ?>
@@ -151,7 +151,7 @@ while ($s = $sel_r->fetch_assoc()) {
                         $selProd->execute();
                         $sPr_r = $selProd->get_result();
 
-                        while ($p = $sPr_r->fetch_assoc()) {
+                        foreach ($p = $sPr_r->fetchAll() as ) {
 
                     ?>
 
@@ -186,7 +186,7 @@ while ($s = $sel_r->fetch_assoc()) {
                         $selProd->execute();
                         $sPr_r = $selProd->get_result();
 
-                        while ($p = $sPr_r->fetch_assoc()) {
+                        foreach ($p = $sPr_r->fetchAll() as ) {
 
                         ?>
 

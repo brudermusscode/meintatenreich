@@ -3,6 +3,63 @@ $(function() {
     var $doc = $(document);
     var $bod = $('body');
 
+    // filter index page by specific order ~ works
+    $(document).on('click', '[data-action="manage:filter"] datalist ul li', function(){
+
+        let $t, manage, react, loader, url, order;
+
+        $t = $(this);
+        manage = $t.closest('div[data-page]').data('page');
+        react = $bod.find('div[data-react="manage:filter"]');
+        loader = $bod.find('color-loader');
+        url = false;
+        order = $t.data('json')[0].order;
+
+        switch(manage) {
+            case 'orders':
+                url = dynamicHost + '/_magic_/ajax/content/manage/filter/orders';
+                break;
+            case 'products':
+                url = dynamicHost + '/_magic_/ajax/content/manage/filter/products';
+                break;
+            case 'customers':
+                url = dynamicHost + '/_magic_/ajax/content/manage/filter/customers';
+                break;
+            default:
+                url = false;
+        }
+    
+        if(url !== false) {
+    
+            react.empty();
+            loader.show();
+    
+            $.ajax({
+
+                url: url,
+                data: { order: order },
+                method: 'POST',
+                type: "HTML",
+                success: function(data){
+    
+                    if(data !== 0) {
+                        loader.hide();
+                        react.prepend(data);
+                    } else {
+                        showDialer("WrongoOo");
+                    }
+                },
+                error: function(data){
+                    console.error(data);
+                }
+            });
+    
+        } else {
+            showDialer('Ein fehler ist aufgetreten...');
+        }
+    
+    })
+
     // manage: products
     // >> add images
     $(document).on("click", '[data-action="manage:products,add,addImage"]', function(){

@@ -1,35 +1,27 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
 
-
-if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
 
     // CHECK IF ORDER EXISTS
-    $sel = $pdo->prepare("
-            SELECT *
-            FROM customer
-            WHERE id = ?
-        ");
-    $sel->bind_param('s', $id);
-    $sel->execute();
-    $sel_r = $sel->get_result();
-    $sel->close();
+    $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
+    $sel->execute([$id]);
 
-    if ($sel_r->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // GET INFORMATION
-        $s = $sel_r->fetch_assoc();
+        $s = $sel->fetch();
 
-        $pn = mb_substr($s['firstname'], 0, 1) . mb_substr($s['secondname'], 0, 1);
+        $pn = mb_substr($s->firstname, 0, 1) . mb_substr($s->secondname, 0, 1);
 
 ?>
 
-        <wide-container style="padding-top:122px;" data-json='[{"to":"<?php echo $s['mail']; ?>"}]'>
+        <wide-container style="padding-top:122px;" data-json='[{"to":"<?php echo $s->mail; ?>"}]'>
 
             <!-- GENERAL -->
             <content-card class="mb42 posrel">
@@ -39,7 +31,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                         <div class="posabs" style="top:12px;right:24px;">
 
                             <div class="rt" style="border-radius:50%;height:48px;width:48px;background:rgba(0,0,0,.04);cursor:pointer;">
-                                <?php if ($s['verified'] === '1') { ?>
+                                <?php if ($s->verified === '1') { ?>
                                     <p style="color:#3EAF5C;" class="alt tac" data-tip="Verifizierter Kunde">
                                         <i class="material-icons md32 lh48">done</i>
                                     </p>
@@ -50,7 +42,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                 <?php } ?>
                             </div>
 
-                            <?php if ($s['admin'] === '1') { ?>
+                            <?php if ($s->admin === '1') { ?>
                                 <div class="rt mr12" style="border-radius:50%;height:48px;width:48px;background:rgba(0,0,0,.04);cursor:pointer;">
                                     <p style="color:#3EAF5C;" class="alt tac" data-tip="Administrator">
                                         <i class="material-icons md32 lh48">security</i>
@@ -62,7 +54,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                         <div class="posabs almid-h" style="height:84px;width:84px;top:-42px;">
                             <div class="mshd-2" style="height:100%;width:100%;border-radius:50%;background:white;">
-                                <?php if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) { ?>
+                                <?php if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) { ?>
                                     <div style="border-radius:50%;background: rgb(66,83,127);background: linear-gradient(20deg, rgba(66,83,127,1) 0%, rgba(93,31,66,1) 100%);line-height:84px;">
                                         <p class="cf fw4 tac ttup" style="font-size:1.4em;"><?php echo $pn; ?></p>
                                     </div>
@@ -76,8 +68,8 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                             <p class="fw6 tac trimfull w100" style="color:#383838;font-size:1.6em;line-height:1.2;">
                                 <?php
 
-                                if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                    echo $s['firstname'] . ' ' . $s['secondname'];
+                                if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                    echo $s->firstname . ' ' . $s->secondname;
                                 } else {
                                     echo 'Kein Name';
                                 }
@@ -90,7 +82,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                             <p class="fw6 tac trimfull w100" style="color:#999;font-size:1em;">
                                 <?php
 
-                                echo '@' . $s['displayname'];
+                                echo '@' . $s->displayname;
 
                                 ?>
                             </p>
@@ -101,7 +93,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                 <i class="material-icons md-18 lh36">mail</i>
                             </p>
                             <p class="lt cf fw4 trimfull lh36" style="width:calc(100% - 32px);font-size:1em;">
-                                <?php echo $s['mail']; ?>
+                                <?php echo $s->mail; ?>
                             </p>
 
                             <div class="cl"></div>
@@ -127,12 +119,9 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                     <?php
 
                     $selAdr = $pdo->prepare("SELECT * FROM customer_addresses WHERE uid = ?");
-                    $selAdr->bind_param('s', $id);
-                    $selAdr->execute();
-                    $sAr = $selAdr->get_result();
-                    $selAdr->close();
+                    $selAdr->execute([$id]);
 
-                    if ($sAr->rowCount() < 1) {
+                    if ($selAdr->rowCount() < 1) {
 
                     ?>
 
@@ -150,7 +139,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                     }
 
-                    while ($adr = $sAr->fetch_assoc()) {
+                    foreach ($selAdr->fetchAll() as $adr) {
 
                     ?>
 
@@ -169,7 +158,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         </div>
 
                                         <div class="normal-field">
-                                            <p><?php echo $adr['fullname']; ?></p>
+                                            <p><?php echo $adr->fullname; ?></p>
                                         </div>
 
 
@@ -180,26 +169,26 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         <div class="normal-field">
                                             <p>
                                                 <?php
-                                                if ($adr['additional'] !== 'none') {
-                                                    echo $adr['address'] . ', ' . $adr['additional'];
+                                                if ($adr->additional !== 'none') {
+                                                    echo $adr->address . ', ' . $adr->additional;
                                                 } else {
-                                                    echo $adr['address'];
+                                                    echo $adr->address;
                                                 }
                                                 ?>
                                             </p>
                                         </div>
 
                                         <div class="normal-field">
-                                            <p><?php echo $adr['city'] . ', ' . $adr['postcode']; ?></p>
+                                            <p><?php echo $adr->city . ', ' . $adr->postcode; ?></p>
                                         </div>
 
-                                        <?php if (strlen($adr['tel']) > 0) { ?>
+                                        <?php if (strlen($adr->tel) > 0) { ?>
                                             <div class="type mt12">
                                                 <p>Kontakt</p>
                                             </div>
 
                                             <div class="normal-field">
-                                                <p><?php echo $adr['tel']; ?></p>
+                                                <p><?php echo $adr->tel; ?></p>
                                             </div>
                                         <?php } ?>
 
@@ -210,8 +199,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                             </div>
                         </content-card>
 
-                    <?php } // END WHILE: ADDRESSES 
-                    ?>
+                    <?php } ?>
 
                 </div>
             </div>
@@ -230,12 +218,9 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                     <?php
 
                     $selAdr = $pdo->prepare("SELECT * FROM customer_billings WHERE uid = ?");
-                    $selAdr->bind_param('s', $id);
-                    $selAdr->execute();
-                    $sAr = $selAdr->get_result();
-                    $selAdr->close();
+                    $selAdr->execute([$id]);
 
-                    if ($sAr->rowCount() < 1) {
+                    if ($selAdr->rowCount() < 1) {
 
                     ?>
 
@@ -253,7 +238,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                     }
 
-                    while ($pmm = $sAr->fetch_assoc()) {
+                    foreach ($selAdr->fetchAll() as $pmm) {
 
                     ?>
 
@@ -272,7 +257,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         </div>
 
                                         <div class="normal-field">
-                                            <p><?php echo $pmm['account']; ?></p>
+                                            <p><?php echo $pmm->account; ?></p>
                                         </div>
 
 
@@ -281,7 +266,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         </div>
 
                                         <div class="normal-field">
-                                            <p><?php echo $pmm['bic']; ?></p>
+                                            <p><?php echo $pmm->bic; ?></p>
                                         </div>
 
                                         <div class="type mt12">
@@ -289,7 +274,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         </div>
 
                                         <div class="normal-field">
-                                            <p>DE-<?php echo $pmm['iban']; ?></p>
+                                            <p>DE-<?php echo $pmm->iban; ?></p>
                                         </div>
 
                                     </div>
@@ -299,8 +284,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                             </div>
                         </content-card>
 
-                    <?php } // END WHILE: ADDRESSES 
-                    ?>
+                    <?php } ?>
 
                 </div>
             </div>
@@ -310,10 +294,10 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 <?php
 
     } else {
-        exit;
+        exit(0);
     }
 } else {
-    exit;
+    exit(0);
 }
 
 ?>

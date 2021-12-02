@@ -10,7 +10,12 @@ if (!isset($_SESSION) && isset($_COOKIE['cookies']) && $_COOKIE['cookies'] == 't
 require_once "_.prepare.php";
 
 // get system settings
-$get_system_settings = $pdo->prepare("SELECT * FROM system_settings, system_urls WHERE system_urls.id = ?");
+$get_system_settings = $pdo->prepare("
+    SELECT *, system_settings.maintenance AS isMaintenance  
+    FROM system_settings, system_urls 
+    WHERE system_settings.id = system_urls.sid 
+    AND system_urls.id = ?
+");
 $get_system_settings->execute([$conf["environment"]]);
 $system_settings = $get_system_settings->fetch();
 
@@ -22,7 +27,7 @@ $main = [
     "name" => $system_settings->name,
     "year" => $system_settings->year,
     "version" => $system_settings->version,
-    "maintenance" => $system_settings->maintenance,
+    "maintenance" => $system_settings->isMaintenance,
     "displayerrors" => $system_settings->display_errors,
     "mwstr" => $system_settings->mwstr,
     "fulldate" => date("Y-m-d H:i:s"),
@@ -58,16 +63,6 @@ require_once "objects/Login.php";
 require_once "objects/Shop.php";
 require_once "objects/Admin.php";
 
-// check for maintenance
-if ($main["maintenance"] == '1') {
-    if ($login->isAuthed($pdo)) {
-        if ($user['admin'] !== '1') {
-            header('location: ./maintenance');
-        }
-    } else if ($isauthedAdmin === false) {
-        header('location: ./maintenance');
-    }
-}
 
 // get information about logged in customer
 $loggedIn = $login->isAuthed();

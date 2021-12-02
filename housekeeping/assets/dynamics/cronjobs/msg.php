@@ -4,12 +4,12 @@
 // ERROR CODE :: 0
 require_once "../../../../mysql/_.session.php";
 
-if ($loggedIn && $user['admin'] === '1') {
+if ($admin->isAdmin()) {
 
     $sel = $pdo->prepare("SELECT * FROM admin_mails_settings WHERE id = '1'");
     $sel->execute();
     $sr = $sel->get_result();
-    $lastChecked = $sr->fetch_assoc();
+    $lastChecked = $sr->fetch();
     $sel->close();
 
     $last = strtotime($lastChecked['timestamp']);
@@ -19,7 +19,7 @@ if ($loggedIn && $user['admin'] === '1') {
     $sel->execute();
     $sr = $sel->get_result();
     $sel->close();
-    while ($abc = $sr->fetch_assoc()) {
+    foreach ($abc = $sr->fetchAll() as ) {
         $ts[] = $abc['timestamp'];
     }
 

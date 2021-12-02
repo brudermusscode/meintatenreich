@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
 
@@ -20,7 +20,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
     if ($sr->rowCount() > 0) {
 
         // GET PRODUCT INFO
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
         // GET PRODUCT DESCRIPTION
         $sel = $pdo->prepare("
@@ -30,8 +30,8 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
             ");
         $sel->bind_param('s', $id);
         $sel->execute();
-        $sel_r = $sel->get_result();
-        $sdesc = $sel_r->fetch_assoc();
+        
+        $sdesc = $sel->fetch();
         $desc = $sdesc['text'];
 
         // GET CURRENT CATEGORY
@@ -41,7 +41,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
         $srr = $selCatCur->get_result();
         $selCatCur->close();
 
-        $catCur = $srr->fetch_assoc();
+        $catCur = $srr->fetch();
 
 ?>
 
@@ -68,9 +68,9 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                 ");
                 $sel->bind_param('s', $id);
                 $sel->execute();
-                $sel_r = $sel->get_result();
+                
 
-                while ($prdimg = $sel_r->fetch_assoc()) {
+                foreach ($prdimg = $sel->fetchAll() as ) {
 
                 ?>
 
@@ -135,7 +135,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                             $selGal->execute();
                             $selGal_r = $selGal->get_result();
                             $selGal->close();
-                            $sg = $selGal_r->fetch_assoc();
+                            $sg = $selGal_r->fetch();
 
                             ?>
 
@@ -250,7 +250,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                                                 $selCat->execute();
                                                 $selCat_r = $selCat->get_result();
 
-                                                while ($cat = $selCat_r->fetch_assoc()) {
+                                                foreach ($cat = $selCat_r->fetchAll() as ) {
 
                                                 ?>
                                                     <li class="trimfull" data-json='[{"id":"<?php echo $cat['id']; ?>"}]'>

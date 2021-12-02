@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $oid = $_REQUEST['id'];
 
@@ -18,12 +18,12 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
         ");
     $sel->bind_param('s', $oid);
     $sel->execute();
-    $sel_r = $sel->get_result();
+    
 
-    if ($sel_r->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // FETCH COURSE
-        $o = $sel_r->fetch_assoc();
+        $o = $sel->fetch();
         $sel->close();
 
 
@@ -211,7 +211,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                 }
 
-                while ($sda = $selr->fetch_assoc()) {
+                foreach ($sda = $selr->fetchAll() as ) {
 
                 ?>
 

@@ -5,7 +5,7 @@
 require_once "../../../../../mysql/_.session.php";
 
 
-if (isset($_REQUEST['mail']) && $loggedIn && $user['admin'] === '1') {
+if (isset($_REQUEST['mail']) && $admin->isAdmin()) {
 
     $te = $pdo->real_escape_string(htmlspecialchars($_REQUEST['mail']));
 
@@ -19,7 +19,7 @@ if (isset($_REQUEST['mail']) && $loggedIn && $user['admin'] === '1') {
     $sr = $sel->get_result();
     $sel->close();
 
-    $s = $sr->fetch_assoc();
+    $s = $sr->fetch();
 
     foreach ($s as $mail) {
 

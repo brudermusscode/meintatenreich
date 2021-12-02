@@ -28,7 +28,7 @@ if (
     $sr = $sel->get_result();
     $sel->close();
 
-    while ($s = $sr->fetch_assoc()) {
+    foreach ($s = $sr->fetchAll() as ) {
 
         $id = $s['id'];
 
@@ -40,7 +40,7 @@ if (
             $selCat->bind_param('s', $cid);
             $selCat->execute();
             $scr = $selCat->get_result();
-            $sc = $scr->fetch_assoc();
+            $sc = $scr->fetch();
             $selCat->close();
 
             $fullname = $s['fullname'];
@@ -61,7 +61,7 @@ if (
             $selUs->bind_param('s', $sid);
             $selUs->execute();
             $sus = $selUs->get_result();
-            $su = $sus->fetch_assoc();
+            $su = $sus->fetch();
             $selUs->close();
 
             // GET USER INFORMATION: Got
@@ -70,7 +70,7 @@ if (
                 $selUsGot->bind_param('s', $uid);
                 $selUsGot->execute();
                 $susg = $selUsGot->get_result();
-                $sug = $susg->fetch_assoc();
+                $sug = $susg->fetch();
                 $selUsGot->close();
 
                 $mailto = $sug['mail'];

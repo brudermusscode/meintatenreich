@@ -5,7 +5,7 @@
 require_once "../../../../../../mysql/_.session.php";
 
 
-if ($loggedIn && $user['admin'] === '1') {
+if ($admin->isAdmin()) {
 
 ?>
 
@@ -123,7 +123,7 @@ if ($loggedIn && $user['admin'] === '1') {
                                             $selCat->execute();
                                             $selCat_r = $selCat->get_result();
 
-                                            while ($cat = $selCat_r->fetch_assoc()) {
+                                            foreach ($cat = $selCat_r->fetchAll() as ) {
 
                                             ?>
                                                 <li class="trimfull" data-json='[{"id":"<?php echo $cat['id']; ?>"}]'>

@@ -49,7 +49,7 @@ if (
     if ($sr->rowCount() > 0) {
 
         // COURSE QUERY
-        $s = $sr->fetch_assoc();
+        $s = $sr->fetch();
 
         // GET COURSE CONTENT
         $selD = $pdo->prepare("SELECT * FROM courses_content WHERE couid = ?");
@@ -59,7 +59,7 @@ if (
         $selD->close();
 
         // CONTENT QUERY
-        $sc = $selD_r->fetch_assoc();
+        $sc = $selD_r->fetch();
 
         $curcont = $sdesc['text'];
 
