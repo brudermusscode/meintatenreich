@@ -17,7 +17,7 @@ if ($loggedIn) {
 <?php
 
 // GET ALL ORDERS & USER INFORMATION
-$sel = $c->prepare("
+$sel = $pdo->prepare("
             SELECT *, customer_buys.id AS oid 
             FROM customer_buys, customer 
             WHERE customer_buys.uid = customer.id 
@@ -31,7 +31,7 @@ $sel->close();
 while ($s = $sel_r->fetch_assoc()) {
 
     // GET BILL PDF ID
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
                 SELECT * FROM customer_buys_pdf
                 WHERE bid = ?
             ");
@@ -127,7 +127,7 @@ while ($s = $sel_r->fetch_assoc()) {
                     <?php
 
                     // GET PRODUCT INFORMATION
-                    $selProd = $c->prepare("
+                    $selProd = $pdo->prepare("
                         SELECT * FROM customer_buys_products 
                         WHERE bid = ?
                     ");
@@ -139,7 +139,7 @@ while ($s = $sel_r->fetch_assoc()) {
                     if ($sPr_rr->rowCount() > 3) {
 
                         // GET PRODUCT INFORMATION
-                        $selProd = $c->prepare("
+                        $selProd = $pdo->prepare("
                             SELECT * FROM customer_buys_products, products, products_images 
                             WHERE customer_buys_products.pid = products.id 
                             AND products.id = products_images.pid 
@@ -174,7 +174,7 @@ while ($s = $sel_r->fetch_assoc()) {
                     } else {
 
                         // GET PRODUCT INFORMATION
-                        $selProd = $c->prepare("
+                        $selProd = $pdo->prepare("
                             SELECT * FROM customer_buys_products, products, products_images 
                             WHERE customer_buys_products.pid = products.id 
                             AND products.id = products_images.pid 

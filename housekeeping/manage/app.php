@@ -1,49 +1,30 @@
 <?php
 
-require_once "../../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
 $ptit = 'Manage: Shop';
 $pid = "manage:app";
 
-include_once "../assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "../assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
-<main-content>
+<main-content class="overview">
 
-    <!-- MC: HEADER -->
-    <?php include_once "../assets/templates/header.php"; ?>
+    <!-- MAIN HEADER -->
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
         <div class="wide">
-
-            <?php
-
-            // GET WEB SETTINGS
-            $sel = $c->prepare("SELECT * FROM web_settings WHERE id = ?");
-            $sel->bind_param('s', $config["sys_set_id"]);
-            $sel->execute();
-            $sel_r = $sel->get_result();
-            $sel->close();
-
-            $s = $sel_r->fetch_assoc();
-
-            ?>
-
-
 
             <!-- ATTENTION -->
             <div class="mm-heading mb12">
@@ -52,18 +33,11 @@ include_once "../assets/templates/head.php";
 
             <content-card>
                 <div class="adjust apps hd-shd">
-
                     <div class="inr">
-
                         <p class="fw4">Nehme verschiedenste Einstellungen zu der Applikation vor. Diese Einstellungen sollten einem administrierenden Entwickler vorbehalten werden, da sie Sektionen der gesamten Webpräsenz verändern und bei falscher Bearbeitung Probleme erzeugen können.</p>
-
                     </div>
                 </div>
-
             </content-card>
-
-
-
 
             <style>
                 input:focus {
@@ -71,7 +45,6 @@ include_once "../assets/templates/head.php";
                     border-bottom: 1px solid #D30C42 !important;
                 }
             </style>
-
 
             <!-- DISPLAY -->
             <div class="mm-heading mb12 mt32">
@@ -82,9 +55,7 @@ include_once "../assets/templates/head.php";
 
                 <content-card class="mb42">
                     <div class="adjust apps hd-shd">
-
                         <div class="inr">
-
 
                             <div class="boolean-input">
 
@@ -97,14 +68,14 @@ include_once "../assets/templates/head.php";
                                     <p class="lt text">Schaltet das Error-Reporting durch PHP ein. Dies sollte nur zu Debugging-Zwecken aktiviert werden.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($s['displayerrors'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
+                                        <div class="boolean-great <?php if ($main['displayerrors'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
                                             <div class="outer tran-all">
                                                 <div class="actual mshd-1 tran-all-cubic">
                                                     <div class="booler"></div>
                                                 </div>
                                             </div>
 
-                                            <input type="hidden" name="displayerrors" value="<?php echo $s['displayerrors']; ?>">
+                                            <input type="hidden" name="displayerrors" value="<?php echo $main['displayerrors']; ?>">
                                         </div>
                                     </div>
 
@@ -124,14 +95,14 @@ include_once "../assets/templates/head.php";
                                     <p class="lt text">Aktiviert den allgemeinen Wartungsmodus. Dieser sollte nur eingeschaltet werden, sofern Funktionen oder andere essenzielle Seiten-Bausteine getestet werden müssen.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($s['maintenance'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
+                                        <div class="boolean-great <?php if ($main['maintenance'] === '1') echo 'on'; ?>" data-element="boolean-great" data-action="manage:app,display">
                                             <div class="outer tran-all">
                                                 <div class="actual mshd-1 tran-all-cubic">
                                                     <div class="booler"></div>
                                                 </div>
                                             </div>
 
-                                            <input type="hidden" name="maintenance" value="<?php echo $s['maintenance']; ?>">
+                                            <input type="hidden" name="maintenance" value="<?php echo $main['maintenance']; ?>">
                                         </div>
                                     </div>
 
@@ -149,12 +120,12 @@ include_once "../assets/templates/head.php";
 
                                     <div data-element="boolean" class="boolean" data-action="manage:app,display" data-display="errors">
                                         <div class="boolean-outer">
-                                            <div data-json='[{"turn":"1"}]' class="lt bool tran-all <?php if ($s['displayerrors'] === '1') {
+                                            <div data-json='[{"turn":"1"}]' class="lt bool tran-all <?php if ($main['displayerrors'] === '1') {
                                                                                                         echo 'active';
                                                                                                     } ?>">
                                                 <p class="tac ttup">Ein</p>
                                             </div>
-                                            <div data-json='[{"turn":"0"}]' class="lt tran-all bool <?php if ($s['displayerrors'] === '0') {
+                                            <div data-json='[{"turn":"0"}]' class="lt tran-all bool <?php if ($main['displayerrors'] === '0') {
                                                                                                         echo 'active';
                                                                                                     } ?>">
                                                 <p class="tac ttup">Aus</p>
@@ -174,12 +145,12 @@ include_once "../assets/templates/head.php";
 
                                     <div data-element="boolean" class="boolean" data-action="manage:app,display" data-display="maintenance">
                                         <div class="boolean-outer">
-                                            <div data-json='[{"turn":"1"}]' class="lt tran-all bool <?php if ($s['maintenance'] === '1') {
+                                            <div data-json='[{"turn":"1"}]' class="lt tran-all bool <?php if ($main['maintenance'] === '1') {
                                                                                                         echo 'active';
                                                                                                     } ?>">
                                                 <p class="ttup tac">Aktiv</p>
                                             </div>
-                                            <div data-json='[{"turn":"0"}]' class="lt tran-all bool <?php if ($s['maintenance'] === '0') {
+                                            <div data-json='[{"turn":"0"}]' class="lt tran-all bool <?php if ($main['maintenance'] === '0') {
                                                                                                         echo 'active';
                                                                                                     } ?>">
                                                 <p class="tac ttup">Inaktiv</p>
@@ -221,7 +192,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['name']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $main['name']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +207,7 @@ include_once "../assets/templates/head.php";
 
                                     <div class="input">
                                         <div class="input-outer">
-                                            <input style="border-radius:0px;" class="tran-all" name="date" type="text" placeholder="<?php echo $s['date']; ?>">
+                                            <input style="border-radius:0px;" class="tran-all" name="date" type="text" placeholder="<?php echo $main['year']; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +221,7 @@ include_once "../assets/templates/head.php";
 
                                     <div class="input">
                                         <div class="input-outer">
-                                            <input style="border-radius:0px;" class="tran-all" name="version" type="text" placeholder="<?php echo $s['version']; ?>">
+                                            <input style="border-radius:0px;" class="tran-all" name="version" type="text" placeholder="<?php echo $main['version']; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -273,7 +244,7 @@ include_once "../assets/templates/head.php";
                                                 <p>%</p>
                                             </div>
 
-                                            <input style="border-radius:0px;" class="tran-all" name="mwstr" type="text" placeholder="<?php echo $s['mwstr']; ?>">
+                                            <input style="border-radius:0px;" class="tran-all" name="mwstr" type="text" placeholder="<?php echo $main['mwstr']; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -307,7 +278,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['main']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -320,7 +291,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_intern']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['intern']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -333,7 +304,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_mobile']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['mobile']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -346,7 +317,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_hk']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['dashbrd']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -359,7 +330,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_error']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['error']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -372,7 +343,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_css']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['css']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -385,7 +356,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_js']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['js']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -398,7 +369,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_img']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['img']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -411,7 +382,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['url_icons']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['icons']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -424,7 +395,7 @@ include_once "../assets/templates/head.php";
 
                                 <div class="input">
                                     <div class="input-outer">
-                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $s['dir_uploads']; ?>">
+                                        <input style="border-radius:0px;" class="tran-all" name="name" type="text" placeholder="<?php echo $url['upload']; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -442,3 +413,5 @@ include_once "../assets/templates/head.php";
         </div>
     </div>
 </main-content>
+
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

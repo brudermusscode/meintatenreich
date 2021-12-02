@@ -99,7 +99,7 @@ if (
                 ";
     }
 
-    $sel = $c->prepare($q);
+    $sel = $pdo->prepare($q);
     $sel->execute();
     $sel_r = $sel->get_result();
     $sel->close();
@@ -124,7 +124,7 @@ if (
     while ($s = $sel_r->fetch_assoc()) {
 
         // GET BILL PDF ID
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
                 SELECT * FROM customer_buys_pdf
                 WHERE bid = ?
             ");
@@ -219,7 +219,7 @@ if (
                         <?php
 
                         // GET PRODUCT INFORMATION
-                        $selProd = $c->prepare("
+                        $selProd = $pdo->prepare("
                                     SELECT * FROM customer_buys_products 
                                     WHERE bid = ?
                                 ");
@@ -231,7 +231,7 @@ if (
                         if ($sPr_rr->rowCount() > 3) {
 
                             // GET PRODUCT INFORMATION
-                            $selProd = $c->prepare("
+                            $selProd = $pdo->prepare("
                                         SELECT * FROM customer_buys_products, products, products_images 
                                         WHERE customer_buys_products.pid = products.id 
                                         AND products.id = products_images.pid 
@@ -266,7 +266,7 @@ if (
                         } else {
 
                             // GET PRODUCT INFORMATION
-                            $selProd = $c->prepare("
+                            $selProd = $pdo->prepare("
                                         SELECT * FROM customer_buys_products, products, products_images 
                                         WHERE customer_buys_products.pid = products.id 
                                         AND products.id = products_images.pid 

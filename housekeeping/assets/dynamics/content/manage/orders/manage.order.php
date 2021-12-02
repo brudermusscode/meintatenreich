@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
     $oid = $_REQUEST['id'];
 
     // CHECK IF ORDER EXISTS
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
             SELECT *, customer_buys.id AS oid, customer_buys.timestamp AS ots  
             FROM customer_buys, customer  
             WHERE customer_buys.orderid = ? 
@@ -27,7 +27,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
         $sel->close();
 
         // GET ADDRESS
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
                 SELECT * 
                 FROM customer_addresses
                 WHERE id = ?
@@ -39,7 +39,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
         $adr = $sel_r->fetch_assoc();
 
         // GET PAYMENT METHOD
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
                 SELECT * 
                 FROM customer_billings
                 WHERE id = ?
@@ -297,7 +297,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                 // MAKE ARRAY OF PRODUCT IDS
                 $pids = [];
-                $sel = $c->prepare("
+                $sel = $pdo->prepare("
                 SELECT * 
                 FROM customer_buys_products
                 WHERE bid = ?
@@ -315,7 +315,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                 // LOOP ALL PRODUCTS
                 foreach ($pids as $pid) {
 
-                    $sel = $c->prepare("
+                    $sel = $pdo->prepare("
                     SELECT * 
                     FROM products, products_images
                     WHERE products.id = ?

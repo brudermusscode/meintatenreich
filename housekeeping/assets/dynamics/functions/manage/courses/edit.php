@@ -40,7 +40,7 @@ if (
     $size = htmlspecialchars($_REQUEST['size']);
 
     // CHECK IF COURSE EXISTS
-    $sel = $c->prepare("SELECT * FROM courses WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
     $sr = $sel->get_result();
@@ -52,7 +52,7 @@ if (
         $s = $sr->fetch_assoc();
 
         // GET COURSE CONTENT
-        $selD = $c->prepare("SELECT * FROM courses_content WHERE couid = ?");
+        $selD = $pdo->prepare("SELECT * FROM courses_content WHERE couid = ?");
         $selD->bind_param('s', $id);
         $selD->execute();
         $selD_r = $selD->get_result();
@@ -83,7 +83,7 @@ if (
             $size = $s['size'];
         }
 
-        $upd = $c->prepare("
+        $upd = $pdo->prepare("
                 UPDATE courses INNER JOIN courses_content 
                 ON (courses.id = courses_content.couid)
                 SET courses.name = ?, 
@@ -99,12 +99,12 @@ if (
 
 
         if ($upd) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

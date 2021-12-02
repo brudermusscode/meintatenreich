@@ -23,7 +23,7 @@ if (
         $query = "SELECT * FROM admin_mails_got WHERE fav = '1' ORDER BY isread ASC, timestamp DESC";
     }
 
-    $sel = $c->prepare($query);
+    $sel = $pdo->prepare($query);
     $sel->execute();
     $sr = $sel->get_result();
     $sel->close();
@@ -36,7 +36,7 @@ if (
         if ($order === 'got' || $order === 'fav') {
 
             $cid = $s['cid'];
-            $selCat = $c->prepare("SELECT * FROM admin_mails_categories WHERE id = ?");
+            $selCat = $pdo->prepare("SELECT * FROM admin_mails_categories WHERE id = ?");
             $selCat->bind_param('s', $cid);
             $selCat->execute();
             $scr = $selCat->get_result();
@@ -57,7 +57,7 @@ if (
             }
 
             // GET USER INFORMATION: Sent
-            $selUs = $c->prepare("SELECT * FROM customer WHERE id = ?");
+            $selUs = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
             $selUs->bind_param('s', $sid);
             $selUs->execute();
             $sus = $selUs->get_result();
@@ -66,7 +66,7 @@ if (
 
             // GET USER INFORMATION: Got
             if (is_numeric($uid)) {
-                $selUsGot = $c->prepare("SELECT * FROM customer WHERE id = ?");
+                $selUsGot = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
                 $selUsGot->bind_param('s', $uid);
                 $selUsGot->execute();
                 $susg = $selUsGot->get_result();

@@ -33,7 +33,7 @@ if (
     $end   = htmlspecialchars($_REQUEST['end']);
 
     // CHECK IF COURSE EXISTS
-    $sel = $c->prepare("SELECT * FROM courses WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
     $sel->bind_param('s', $couid);
     $sel->execute();
     $sr = $sel->get_result();
@@ -45,7 +45,7 @@ if (
 
             if (validateDate($start, $format = 'H:i') && validateDate($end, $format = 'H:i')) {
 
-                $ins = $c->prepare("
+                $ins = $pdo->prepare("
                         INSERT INTO courses_dates (couid, date, start, end, timestamp) VALUES (?,?,?,?,?)
                     ");
                 $ins->bind_param('sssss', $couid, $date, $start, $end, $timestamp);
@@ -53,12 +53,12 @@ if (
 
 
                 if ($ins) {
-                    $c->commit();
-                    $c->close();
+                    $pdo->commit();
+                    $pdo->close();
                     exit('success');
                 } else {
-                    $c->rollback();
-                    $c->close();
+                    $pdo->rollback();
+                    $pdo->close();
                     exit('0');
                 }
             } else {

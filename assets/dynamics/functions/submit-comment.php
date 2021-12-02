@@ -19,7 +19,7 @@ if (
     $rate = htmlspecialchars($_REQUEST['rate']);
 
     // CHECK IF PRODUCT EXISTS
-    $select = $c->prepare("SELECT * FROM products WHERE id = ?");
+    $select = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $select->bind_param('s', $id);
     $select->execute();
     $s_r = $select->get_result();
@@ -30,7 +30,7 @@ if (
         $select->close();
 
         // CHECK IF BOUGHT
-        $select = $c->prepare("
+        $select = $pdo->prepare("
                 SELECT customer_buys.uid, customer_buys_products.pid 
                 FROM customer_buys, customer_buys_products 
                 WHERE customer_buys.id = customer_buys_products.bid 
@@ -50,7 +50,7 @@ if (
 
 
                     // CHECK IF RATED ALREADY
-                    $select = $c->prepare("SELECT * FROM products_comments WHERE uid = ? AND pid = ?");
+                    $select = $pdo->prepare("SELECT * FROM products_comments WHERE uid = ? AND pid = ?");
                     $select->bind_param('ss', $uid, $id);
                     $select->execute();
                     $s_r = $select->get_result();
@@ -59,34 +59,34 @@ if (
 
                         $select->close();
 
-                        $ins = $c->prepare("INSERT INTO products_comments (uid,pid,text,timestamp) VALUES (?,?,?,?)");
+                        $ins = $pdo->prepare("INSERT INTO products_comments (uid,pid,text,timestamp) VALUES (?,?,?,?)");
                         $ins->bind_param('ssss', $uid, $id, $comment, $timestamp);
                         $ins->execute();
 
                         $newid = $ins->insert_id;
 
-                        $insRating = $c->prepare("INSERT INTO products_rating (uid,cid,rate,timestamp) VALUES (?,?,?,?)");
+                        $insRating = $pdo->prepare("INSERT INTO products_rating (uid,cid,rate,timestamp) VALUES (?,?,?,?)");
                         $insRating->bind_param('ssss', $uid, $newid, $rate, $timestamp);
                         $insRating->execute();
 
                         // INSERT ADMIN LOG
-                        $insAOv = $c->prepare("INSERT INTO admin_overview (rid,ttype,timestamp) VALUES (?,'comment',?)");
+                        $insAOv = $pdo->prepare("INSERT INTO admin_overview (rid,ttype,timestamp) VALUES (?,'comment',?)");
                         $insAOv->bind_param('ss', $newid, $timestamp);
                         $insAOv->execute();
 
                         if ($ins && $insRating && $insAOv) {
 
-                            $c->commit();
+                            $pdo->commit();
                             $ins->close();
                             $insRating->close();
-                            $c->close();
+                            $pdo->close();
                             exit('6');
                         } else {
 
-                            $c->rollback();
+                            $pdo->rollback();
                             $ins->close();
                             $insRating->close();
-                            $c->close();
+                            $pdo->close();
                             exit('0');
                         }
                     } else {

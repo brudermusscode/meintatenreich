@@ -77,7 +77,7 @@ if (
                 ";
     }
 
-    $sel = $c->prepare($q);
+    $sel = $pdo->prepare($q);
     $sel->execute();
     $sel_r = $sel->get_result();
 
@@ -103,7 +103,7 @@ if (
         $id = $s['pid'];
 
         $res = false;
-        $selres = $c->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
+        $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
         $selres->bind_param('s', $id);
         $selres->execute();
         $selres_r = $selres->get_result();

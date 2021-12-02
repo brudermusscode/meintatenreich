@@ -6,7 +6,7 @@ require_once "../../../../mysql/_.session.php";
 
 if ($loggedIn && $user['admin'] === '1') {
 
-    $sel = $c->prepare("SELECT * FROM admin_mails_settings WHERE id = '1'");
+    $sel = $pdo->prepare("SELECT * FROM admin_mails_settings WHERE id = '1'");
     $sel->execute();
     $sr = $sel->get_result();
     $lastChecked = $sr->fetch_assoc();
@@ -14,7 +14,7 @@ if ($loggedIn && $user['admin'] === '1') {
 
     $last = strtotime($lastChecked['timestamp']);
     $ts = [];
-    $sel = $c->prepare("SELECT * FROM admin_mails_got");
+    $sel = $pdo->prepare("SELECT * FROM admin_mails_got");
     $sel->bind_param('s', $last);
     $sel->execute();
     $sr = $sel->get_result();
@@ -33,16 +33,16 @@ if ($loggedIn && $user['admin'] === '1') {
     if ($hasNew) {
 
         // UPDATE
-        $upd = $c->prepare("UPDATE admin_mails_settings SET mails_checked = '0' WHERE id = '1'");
+        $upd = $pdo->prepare("UPDATE admin_mails_settings SET mails_checked = '0' WHERE id = '1'");
         $upd->execute();
 
         if ($upd) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('1');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

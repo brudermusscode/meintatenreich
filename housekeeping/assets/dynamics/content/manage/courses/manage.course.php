@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
     $oid = $_REQUEST['id'];
 
     // CHECK IF ORDER EXISTS
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
             SELECT *
             FROM courses 
             WHERE courses.id = ?
@@ -35,7 +35,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
 
         // SELECT COURSE CONTENT
-        $selGal = $c->prepare("SELECT * FROM courses_content WHERE couid = ?");
+        $selGal = $pdo->prepare("SELECT * FROM courses_content WHERE couid = ?");
         $selGal->bind_param('s', $oid);
         $selGal->execute();
         $selGal_r = $selGal->get_result();

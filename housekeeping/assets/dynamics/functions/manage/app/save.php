@@ -23,17 +23,17 @@ if (
     }
 
     // UPDATE
-    $upd = $c->prepare("UPDATE web_settings SET maintenance = ?, displayerrors = ? WHERE id = ?");
+    $upd = $pdo->prepare("UPDATE web_settings SET maintenance = ?, displayerrors = ? WHERE id = ?");
     $upd->bind_param('sss', $mn, $de, $config["sys_set_id"]);
     $upd->execute();
 
     if ($upd) {
-        $c->commit();
-        $c->close();
+        $pdo->commit();
+        $pdo->close();
         exit('success');
     } else {
-        $c->rollback();
-        $c->close();
+        $pdo->rollback();
+        $pdo->close();
         exit('0');
     }
 } else {

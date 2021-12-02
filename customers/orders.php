@@ -30,7 +30,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                 // get orders
                 $getOrders = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ? ORDER BY timestamp DESC");
-                $getOrders->execute([$sessionid]);
+                $getOrders->execute([$my->id]);
 
                 if ($getOrders->rowCount() < 1) {
 

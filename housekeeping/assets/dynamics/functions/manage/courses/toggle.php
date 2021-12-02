@@ -15,7 +15,7 @@ if (
     $id = htmlspecialchars($_REQUEST['id']);
 
     // CHECK IF COURSE EXISTS
-    $sel = $c->prepare("SELECT * FROM courses WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
     $sr = $sel->get_result();
@@ -36,17 +36,17 @@ if (
         }
 
         // INSERTION
-        $upd = $c->prepare("UPDATE courses SET active = ?, updated = ? WHERE id = ?");
+        $upd = $pdo->prepare("UPDATE courses SET active = ?, updated = ? WHERE id = ?");
         $upd->bind_param('sss', $active, $timestamp, $id);
         $upd->execute();
 
         if ($upd) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit($exit);
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

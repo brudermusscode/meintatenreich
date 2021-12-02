@@ -21,6 +21,7 @@ $my = (object) $_SESSION;
 $main = [
     "name" => $system_settings->name,
     "year" => $system_settings->year,
+    "version" => $system_settings->version,
     "maintenance" => $system_settings->maintenance,
     "displayerrors" => $system_settings->display_errors,
     "mwstr" => $system_settings->mwstr,
@@ -68,11 +69,13 @@ if ($main["maintenance"] == '1') {
     }
 }
 
-
 // get information about logged in customer
-$loggedIn = $login->isAuthed($pdo);
+$loggedIn = $login->isAuthed();
 
 if ($loggedIn) {
+
+    // reset session array
+    $login->resetSession();
 
     // check customers billing preference
     $my->billingPreference = false;

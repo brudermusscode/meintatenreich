@@ -10,7 +10,7 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
     $uid = htmlspecialchars($my->id);
 
     // CHECK IF PRODUCT EXISTS
-    $select = $c->prepare("SELECT * FROM products WHERE id = ?");
+    $select = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $select->bind_param('s', $id);
     $select->execute();
     $s_r = $select->get_result();
@@ -21,7 +21,7 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
         $select->close();
 
         // CHECK IF BOUGHT
-        $select = $c->prepare("
+        $select = $pdo->prepare("
                 SELECT * FROM customer_buys, customer_buys_products 
                 WHERE customer_buys.id = customer_buys_products.bid 
                 AND customer_buys.uid = ? 

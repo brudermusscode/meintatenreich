@@ -13,7 +13,7 @@ if ($loggedIn) {
 
 
 // GET ALL ORDERS & USER INFORMATION
-$sel = $c->prepare("SELECT * FROM customer ORDER BY timestamp DESC LIMIT 10");
+$sel = $pdo->prepare("SELECT * FROM customer ORDER BY timestamp DESC LIMIT 10");
 $sel->execute();
 $sel_r = $sel->get_result();
 

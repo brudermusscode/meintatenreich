@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
     $uid = htmlspecialchars($_REQUEST['id']);
 
     // CHECK IF ORDER EXISTS
-    $sel = $c->prepare("SELECT * FROM customer WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
     $sel->bind_param('s', $uid);
     $sel->execute();
     $sel_r = $sel->get_result();
@@ -33,7 +33,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
             <?php
 
             // GET ALL ORDERS & USER INFORMATION
-            $selOrd = $c->prepare("SELECT * FROM customer_buys WHERE uid = ?");
+            $selOrd = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ?");
             $selOrd->bind_param('s', $uid);
             $selOrd->execute();
             $selOrdR = $selOrd->get_result();
@@ -128,7 +128,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                     <?php
 
                                     // GET PRODUCT INFORMATION
-                                    $selProd = $c->prepare("
+                                    $selProd = $pdo->prepare("
                                         SELECT * FROM customer_buys_products 
                                         WHERE bid = ?
                                     ");
@@ -140,7 +140,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                     if ($sPr_rr->rowCount() > 3) {
 
                                         // GET PRODUCT INFORMATION
-                                        $selProd = $c->prepare("
+                                        $selProd = $pdo->prepare("
                                             SELECT * FROM customer_buys_products, products, products_images 
                                             WHERE customer_buys_products.pid = products.id 
                                             AND products.id = products_images.pid 
@@ -175,7 +175,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                     } else {
 
                                         // GET PRODUCT INFORMATION
-                                        $selProd = $c->prepare("
+                                        $selProd = $pdo->prepare("
                                             SELECT * FROM customer_buys_products, products, products_images 
                                             WHERE customer_buys_products.pid = products.id 
                                             AND products.id = products_images.pid 

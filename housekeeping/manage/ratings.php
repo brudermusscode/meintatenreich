@@ -63,7 +63,7 @@ include_once "../assets/templates/head.php";
 
                 <?php
 
-                $sel = $c->prepare("
+                $sel = $pdo->prepare("
                         SELECT *, products_comments.timestamp AS pcts, products.artnr FROM products_comments, products_rating, customer, products 
                         WHERE products_comments.id = products_rating.cid 
                         AND products_comments.uid = customer.id 

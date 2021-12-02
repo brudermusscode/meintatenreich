@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
     $id = $_REQUEST['id'];
 
     // CHECK CATEGORY EXISTENCE
-    $sel = $c->prepare("SELECT * FROM products_categories WHERE id = ? AND id != '0'");
+    $sel = $pdo->prepare("SELECT * FROM products_categories WHERE id = ? AND id != '0'");
     $sel->bind_param('s', $id);
     $sel->execute();
     $sr = $sel->get_result();
@@ -19,22 +19,22 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
     if ($sr->rowCount() > 0) {
 
         // UPDATE PRODUCT CATEGORY
-        $upd = $c->prepare("UPDATE products SET cid = '0' WHERE cid = ?");
+        $upd = $pdo->prepare("UPDATE products SET cid = '0' WHERE cid = ?");
         $upd->bind_param('s', $id);
         $upd->execute();
 
         // DELETE
-        $del = $c->prepare("DELETE FROM products_categories WHERE id = ?");
+        $del = $pdo->prepare("DELETE FROM products_categories WHERE id = ?");
         $del->bind_param('s', $id);
         $del->execute();
 
         if ($upd && $del) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

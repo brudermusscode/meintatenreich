@@ -119,7 +119,7 @@ if ($loggedIn && $user['admin'] === '1') {
                                         <ul>
                                             <?php
 
-                                            $selCat = $c->prepare("SELECT * FROM products_categories ORDER BY id DESC");
+                                            $selCat = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
                                             $selCat->execute();
                                             $selCat_r = $selCat->get_result();
 

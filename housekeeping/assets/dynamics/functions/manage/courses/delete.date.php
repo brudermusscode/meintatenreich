@@ -17,7 +17,7 @@ if (
     $couid = htmlspecialchars($_REQUEST['couid']);
 
     // CHECK IF COURSE EXISTS
-    $sel = $c->prepare("SELECT * FROM courses WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
     $sel->bind_param('s', $couid);
     $sel->execute();
     $sr = $sel->get_result();
@@ -26,7 +26,7 @@ if (
     if ($sr->rowCount() > 0) {
 
         // CHECK IF DATE EXISTS
-        $sel = $c->prepare("SELECT * FROM courses_dates WHERE id = ?");
+        $sel = $pdo->prepare("SELECT * FROM courses_dates WHERE id = ?");
         $sel->bind_param('s', $id);
         $sel->execute();
         $sr = $sel->get_result();
@@ -35,17 +35,17 @@ if (
         if ($sr->rowCount() > 0) {
 
             // INSERTION
-            $upd = $c->prepare("UPDATE courses_dates SET deleted = '1', updated = ? WHERE id = ?");
+            $upd = $pdo->prepare("UPDATE courses_dates SET deleted = '1', updated = ? WHERE id = ?");
             $upd->bind_param('ss', $timestamp, $id);
             $upd->execute();
 
             if ($upd) {
-                $c->commit();
-                $c->close();
+                $pdo->commit();
+                $pdo->close();
                 exit('success');
             } else {
-                $c->rollback();
-                $c->close();
+                $pdo->rollback();
+                $pdo->close();
                 exit('0');
             }
         } else {

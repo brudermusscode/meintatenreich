@@ -11,7 +11,7 @@ if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $loggedIn && $user['ad
     $dca = $_REQUEST['deliverycosts'];
 
     // CHECK ORDER EXISTENCE
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
             SELECT * 
             FROM customer_buys, customer
             WHERE customer_buys.uid = customer.id
@@ -33,7 +33,7 @@ if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $loggedIn && $user['ad
         $dcdezimal = preg_replace('/[,]/', '.', $dca);
 
         // SET DELIVERY COSTS
-        $updOrder = $c->prepare("UPDATE customer_buys SET price_delivery = ? WHERE id = ?");
+        $updOrder = $pdo->prepare("UPDATE customer_buys SET price_delivery = ? WHERE id = ?");
         $updOrder->bind_param('ss', $dcdezimal, $id);
         $updOrder->execute();
 
@@ -46,12 +46,12 @@ if (isset($_REQUEST['deliverycosts'], $_REQUEST['id']) && $loggedIn && $user['ad
         $mailheader  = $config['mail_header'];
 
         if ($updOrder && mail($to, $mailsubject, $mailbody, $mailheader)) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

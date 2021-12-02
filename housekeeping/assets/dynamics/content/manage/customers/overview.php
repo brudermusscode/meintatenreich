@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
     $id = $_REQUEST['id'];
 
     // CHECK IF ORDER EXISTS
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
             SELECT *
             FROM customer
             WHERE id = ?
@@ -126,7 +126,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                     <?php
 
-                    $selAdr = $c->prepare("SELECT * FROM customer_addresses WHERE uid = ?");
+                    $selAdr = $pdo->prepare("SELECT * FROM customer_addresses WHERE uid = ?");
                     $selAdr->bind_param('s', $id);
                     $selAdr->execute();
                     $sAr = $selAdr->get_result();
@@ -229,7 +229,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
 
                     <?php
 
-                    $selAdr = $c->prepare("SELECT * FROM customer_billings WHERE uid = ?");
+                    $selAdr = $pdo->prepare("SELECT * FROM customer_billings WHERE uid = ?");
                     $selAdr->bind_param('s', $id);
                     $selAdr->execute();
                     $sAr = $selAdr->get_result();

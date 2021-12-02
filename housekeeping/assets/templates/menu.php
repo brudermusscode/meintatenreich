@@ -16,7 +16,7 @@
         <div class="menu">
             <ul>
 
-                <a href="/hk/admin/v1/secret/overview">
+                <a href="<?php echo $url["dashbrd"]; ?>/black">
                     <li class="point tran-all <?php if ($pid === 'aindex') {
                                                     echo 'active';
                                                 } ?>">
@@ -57,7 +57,7 @@
         <div class="menu">
             <ul>
 
-                <a href="/hk/admin/v1/secret/manage/app">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/app">
                     <li class="point tran-all <?php if ($pid === 'manage:app') {
                                                     echo 'active';
                                                 } ?>">
@@ -68,7 +68,7 @@
                     </li>
                 </a>
 
-                <a href="/hk/admin/v1/secret/manage/orders">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/orders">
                     <li class="point tran-all <?php if ($pid === 'manage:orders') {
                                                     echo 'active';
                                                 } ?>">
@@ -79,7 +79,7 @@
                     </li>
                 </a>
 
-                <a href="/hk/admin/v1/secret/manage/customers">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/customers">
                     <li class="point tran-all <?php if ($pid === 'manage:customers') {
                                                     echo 'active';
                                                 } ?>">
@@ -90,7 +90,7 @@
                     </li>
                 </a>
 
-                <a href="/hk/admin/v1/secret/manage/products">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/products">
                     <li class="point tran-all <?php if ($pid === 'manage:products') {
                                                     echo 'active';
                                                 } ?>">
@@ -101,7 +101,7 @@
                     </li>
                 </a>
 
-                <a href="/hk/admin/v1/secret/manage/ratings">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/ratings">
                     <li class="point tran-all <?php if ($pid === 'manage:ratings') {
                                                     echo 'active';
                                                 } ?>">
@@ -112,7 +112,7 @@
                     </li>
                 </a>
 
-                <a href="/hk/admin/v1/secret/manage/courses">
+                <a href="<?php echo $url["dashbrd"]; ?>/manage/courses">
                     <li class="point tran-all <?php if ($pid === 'manage:courses') {
                                                     echo 'active';
                                                 } ?>">
@@ -142,7 +142,7 @@
         <div class="menu">
             <ul>
 
-                <a href="/hk/admin/v1/secret/functions/mailer">
+                <a href="<?php echo $url["dashbrd"]; ?>/functions/mailer">
                     <li class="point tran-all <?php if ($pid === 'func:mailer') {
                                                     echo 'active';
                                                 } ?>">

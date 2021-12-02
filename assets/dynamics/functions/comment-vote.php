@@ -27,7 +27,7 @@ if (
     }
 
     // CHECK IF COMMENT EXISTS
-    $sel = $c->prepare("SELECT * FROM products_comments WHERE id = ? AND uid = ? AND pid = ?");
+    $sel = $pdo->prepare("SELECT * FROM products_comments WHERE id = ? AND uid = ? AND pid = ?");
     $sel->bind_param('sss', $cid, $cuid, $cpid);
     $sel->execute();
     $sel_r = $sel->get_result();
@@ -41,7 +41,7 @@ if (
         $dwvotes = $cex['down'];
 
         // CHECK IF VOTED ALREADY
-        $sel = $c->prepare("SELECT * FROM products_comments_votes WHERE uid = ? AND cid = ?");
+        $sel = $pdo->prepare("SELECT * FROM products_comments_votes WHERE uid = ? AND cid = ?");
         $sel->bind_param('ss', $cuid, $cid);
         $sel->execute();
         $sel_r = $sel->get_result();
@@ -64,26 +64,26 @@ if (
                 }
 
                 // UPDATE COMMENT
-                $updCom = $c->prepare($sql);
+                $updCom = $pdo->prepare($sql);
                 $updCom->bind_param('s', $votes);
                 $updCom->execute();
 
                 // UPDATE VOTE
-                $upd = $c->prepare("UPDATE products_comments_votes SET vote = 'none', active = '0' WHERE uid = ? AND cid = ?");
+                $upd = $pdo->prepare("UPDATE products_comments_votes SET vote = 'none', active = '0' WHERE uid = ? AND cid = ?");
                 $upd->bind_param('ss', $cuid, $cid);
                 $upd->execute();
 
                 if ($upd && $updCom) {
-                    $c->commit();
+                    $pdo->commit();
                     $updCom->close();
                     $upd->close();
-                    $c->close();
+                    $pdo->close();
                     exit('inactive');
                 } else {
-                    $c->rollback();
+                    $pdo->rollback();
                     $updCom->close();
                     $upd->close();
-                    $c->close();
+                    $pdo->close();
                     exit('0');
                 }
             } else {
@@ -112,45 +112,45 @@ if (
 
 
                 // UPDATE COMMENT
-                $updCom = $c->prepare($sql);
+                $updCom = $pdo->prepare($sql);
                 $updCom->bind_param('ssss', $up, $dw, $cuid, $cpid);
                 $updCom->execute();
 
                 // UPDATE VOTE
-                $upd = $c->prepare("UPDATE products_comments_votes SET vote = ?, timestamp = ?, active = '1' WHERE uid = ? AND cid = ?");
+                $upd = $pdo->prepare("UPDATE products_comments_votes SET vote = ?, timestamp = ?, active = '1' WHERE uid = ? AND cid = ?");
                 $upd->bind_param('ssss', $vote, $timestamp, $cuid, $cid);
                 $upd->execute();
 
                 if ($upd && $updCom) {
-                    $c->commit();
+                    $pdo->commit();
                     $upd->close();
                     $updCom->close();
-                    $c->close();
+                    $pdo->close();
                     exit($exit);
                 } else {
-                    $c->rollback();
+                    $pdo->rollback();
                     $upd->close();
                     $updCom->close();
-                    $c->close();
+                    $pdo->close();
                     exit('0');
                 }
             }
         } else {
 
             // UPDATE VOTE
-            $ins = $c->prepare("INSERT INTO products_comments_votes (uid, cid, vote, timestamp, active) VALUES (?,?,?,?,'1')");
+            $ins = $pdo->prepare("INSERT INTO products_comments_votes (uid, cid, vote, timestamp, active) VALUES (?,?,?,?,'1')");
             $ins->bind_param('ssss', $cuid, $cid, $vote, $timestamp);
             $ins->execute();
 
             if ($ins) {
-                $c->commit();
+                $pdo->commit();
                 $ins->close();
-                $c->close();
+                $pdo->close();
                 exit($exit);
             } else {
-                $c->rollback();
+                $pdo->rollback();
                 $ins->close();
-                $c->close();
+                $pdo->close();
                 exit('0');
             }
         }

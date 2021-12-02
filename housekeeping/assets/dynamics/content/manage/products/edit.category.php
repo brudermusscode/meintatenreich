@@ -11,7 +11,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
 
 
     // SELECT: PARAMS, FETCH, CHECK NUM ROWS
-    $sel = $c->prepare("SELECT * FROM products_categories WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
     $sr = $sel->get_result();
@@ -79,7 +79,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $sel = $c->prepare("
+                $sel = $pdo->prepare("
                     SELECT *, products.id AS pid 
                     FROM products, products_images 
                     WHERE products.id = products_images.pid
@@ -127,7 +127,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                         $pid = $s['pid'];
 
                         $res = false;
-                        $selres = $c->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
+                        $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
                         $selres->bind_param('s', $pid);
                         $selres->execute();
                         $selres_r = $selres->get_result();

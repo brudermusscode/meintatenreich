@@ -9,7 +9,7 @@
 
 
     // DELETE RESERVATION
-    $delIntv = $c->prepare("
+    $delIntv = $pdo->prepare("
         DELETE FROM products_reserved 
         WHERE (? - unix_timestamp(timestamp)) >= 21600 
         AND active = '1' 
@@ -20,7 +20,7 @@
 
 
     // UPDATE SCARD
-    $delScard = $c->prepare("
+    $delScard = $pdo->prepare("
         UPDATE scard SET active = '0'
         WHERE (? - unix_timestamp(timestamp)) >= 21600 
         AND active = '1' 
@@ -30,17 +30,15 @@
 
 
     if($delIntv && $delScard) {
-        $c->commit();
+        $pdo->commit();
         $delIntv->close();
         $delScard->close();
-        $c->close();
+        $pdo->close();
         exit('ake');
     } else {
-        $c->rollback();
+        $pdo->rollback();
         $delIntv->close();
         $delScard->close();
-        $c->close();
+        $pdo->close();
         exit('oops');
     }
-
-?>

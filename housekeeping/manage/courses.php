@@ -1,29 +1,24 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-require_once "../../mysql/_.session.php";
-
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
 $ptit = 'Manage: Kurse';
 $pid = "manage:courses";
 
-include_once "../assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "../assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
-<main-content>
+<main-content class="overview">
 
-    <!-- MC: HEADER -->
-    <?php include_once "../assets/templates/header.php"; ?>
+    <!-- MAIN HEADER -->
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
 
     <!-- MC: CONTENT -->
@@ -48,29 +43,15 @@ include_once "../assets/templates/head.php";
                 <div class="cl"></div>
             </div>
 
-
-            <style>
-                .green-gradient {}
-            </style>
-
-
             <div data-react="manage:filter">
 
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $sel = $c->prepare("
-                            SELECT *
-                            FROM courses 
-                            WHERE deleted != '1' 
-                            ORDER BY id
-                            DESC
-                        ");
-                $sel->execute();
-                $sel_r = $sel->get_result();
-                $sel->close();
+                $getCourses = $pdo->prepare("SELECT * FROM courses WHERE deleted != '1' ORDER BY id DESC");
+                $getCourses->execute();
 
-                if ($sel_r->rowCount() < 1) {
+                if ($getCourses->rowCount() < 1) {
 
                 ?>
 
@@ -87,32 +68,29 @@ include_once "../assets/templates/head.php";
 
                 } // END IF EMPTY
 
-                while ($s = $sel_r->fetch_assoc()) {
+                foreach ($getCourses->fetchAll() as $s) {
 
                     // CONVERT TIMESTAMP
                     $timeAgoObject = new convertToAgo;
-                    $ts = $s['timestamp'];
+                    $ts = $s->timestamp;
                     $convertedTime = ($timeAgoObject->convert_datetime($ts));
                     $when = ($timeAgoObject->makeAgo($convertedTime));
 
                     // GET DATES
-                    $sel = $c->prepare("
-                                SELECT *
-                                FROM courses_dates 
-                                WHERE couid = ? 
-                                AND archived != '1' 
-                                AND deleted != '1' 
-                                AND CONCAT(date, ' ', start, ':00') >= ? 
-                                ORDER BY CONCAT(date, ' ', start, ':00') 
-                                DESC
-                            ");
-                    $sel->bind_param('ss', $s['id'], $timestamp);
-                    $sel->execute();
-                    $selr = $sel->get_result();
-                    $sel->close();
+                    $getCoursesDates = $pdo->prepare("
+                        SELECT *
+                        FROM courses_dates 
+                        WHERE cid = ? 
+                        AND archived != '1' 
+                        AND deleted != '1' 
+                        AND CONCAT(date, ' ', start, ':00') >= ? 
+                        ORDER BY CONCAT(date, ' ', start, ':00') 
+                        DESC
+                    ");
+                    $getCoursesDates->execute([$s->id, $s->timestamp]);
 
-                    $sdacount = $selr->rowCount();
-                    $sda = $selr->fetch_assoc();
+                    $sdacount = $getCoursesDates->rowCount();
+                    $sda = $getCoursesDates->fetch();
 
                 ?>
 
@@ -133,14 +111,14 @@ include_once "../assets/templates/head.php";
 
                                             <datalist class="tran-all-cubic">
                                                 <ul>
-                                                    <li class="wic" data-action="manage:course" data-json='[{"id":"<?php echo $s['id']; ?>"}]'>
+                                                    <li class="wic" data-action="manage:course" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
                                                         <p class="ic lt"><i class="material-icons md-18">build</i></p>
                                                         <p class="lt ne trimfull">Kurs verwalten</p>
 
                                                         <div class="cl"></div>
                                                     </li>
 
-                                                    <li class="wic" data-action="manage:course,dates" data-json='[{"id":"<?php echo $s['id']; ?>"}]'>
+                                                    <li class="wic" data-action="manage:course,dates" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
                                                         <p class="ic lt"><i class="material-icons md-18">event_note</i></p>
                                                         <p class="lt ne trimfull">Termine verwalten</p>
 
@@ -149,9 +127,9 @@ include_once "../assets/templates/head.php";
 
                                                     <div style="border-bottom:1px solid rgba(0,0,0,.08);margin-top:12px;margin-bottom:12px;"></div>
 
-                                                    <li class="wic" data-action="manage:course,toggle" data-json='[{"id":"<?php echo $s['id']; ?>"}]'>
+                                                    <li class="wic" data-action="manage:course,toggle" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
 
-                                                        <?php if ($s['active'] === '0') { ?>
+                                                        <?php if ($s->active === '0') { ?>
                                                             <p class="ic lt"><i class="material-icons md-18">blur_on</i></p>
                                                             <p class="lt ne trimfull">Aktivieren</p>
                                                         <?php } else { ?>
@@ -162,7 +140,7 @@ include_once "../assets/templates/head.php";
                                                         <div class="cl"></div>
                                                     </li>
 
-                                                    <li class="wic" data-action="manage:course,delete" data-json='[{"id":"<?php echo $s['id']; ?>"}]'>
+                                                    <li class="wic" data-action="manage:course,delete" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
                                                         <p class="ic lt"><i class="material-icons md-18">close</i></p>
                                                         <p class="lt ne trimfull">Löschen</p>
 
@@ -184,14 +162,14 @@ include_once "../assets/templates/head.php";
                                 <div style="padding:32px 54px;">
                                     <div>
                                         <p class="trimfull cf" style="width:calc(100% - 42px);font-size:1.4em;line-height:1.2em;text-shadow:1px 1px 1px rgba(0,0,0,.32);">
-                                            <?php echo $s['name']; ?>
+                                            <?php echo $s->name; ?>
                                         </p>
                                     </div>
 
                                     <div class="mt24">
                                         <div class="lt mr32" style="color:rgba(0,0,0,.24);background:rgba(255,255,255,.82);height:32px;width:32px;border-radius:50%;">
                                             <p class="tac course-status" style="line-height:44px;">
-                                                <?php if ($s['active'] === '1') { ?>
+                                                <?php if ($s->active === '1') { ?>
                                                     <i class="material-icons md-21 cgreen">trip_origin</i>
                                                 <?php } else { ?>
                                                     <i class="material-icons md-21 cred">trip_origin</i>
@@ -214,7 +192,7 @@ include_once "../assets/templates/head.php";
                                             <p class="lt mr4">
                                                 <i class="material-icons md-21 lh32">person</i>
                                             </p>
-                                            <p class="lt fs21"><?php echo $s['size']; ?></p>
+                                            <p class="lt fs21"><?php echo $s->size; ?></p>
 
                                             <div class="cl"></div>
                                         </div>
@@ -223,7 +201,7 @@ include_once "../assets/templates/head.php";
                                             <p class="lt mr4">
                                                 <i class="material-icons md-21 lh32">euro_symbol</i>
                                             </p>
-                                            <p class="lt fs21"><?php echo number_format($s['price'], 2, ',', '.'); ?></p>
+                                            <p class="lt fs21"><?php echo number_format($s->price, 2, ',', '.'); ?></p>
 
                                             <div class="cl"></div>
                                         </div>
@@ -232,14 +210,14 @@ include_once "../assets/templates/head.php";
                                     </div>
 
                                     <!-- NEXT DATE -->
-                                    <div class="next-date <?php if ($s['active'] === '0') echo 'disn'; ?>">
+                                    <div class="next-date <?php if ($s->active === '0') echo 'disn'; ?>">
                                         <?php
 
                                         // GET DATES
-                                        $sel = $c->prepare("
+                                        $getCoursesDates = $pdo->prepare("
                                             SELECT *
                                             FROM courses_dates 
-                                            WHERE couid = ? 
+                                            WHERE cid = ? 
                                             AND archived != '1' 
                                             AND deleted != '1' 
                                             AND CONCAT(date, ' ', start, ':00') >= ? 
@@ -247,12 +225,9 @@ include_once "../assets/templates/head.php";
                                             ASC
                                             LIMIT 1
                                         ");
-                                        $sel->bind_param('ss', $s['id'], $timestamp);
-                                        $sel->execute();
-                                        $selr = $sel->get_result();
-                                        $sel->close();
+                                        $getCoursesDates->execute([$s->id, $s->timestamp]);
 
-                                        if ($selr->rowCount() < 1) {
+                                        if ($getCoursesDates->rowCount() < 1) {
 
                                         ?>
 
@@ -274,12 +249,12 @@ include_once "../assets/templates/head.php";
 
                                         }
 
-                                        while ($sda = $selr->fetch_assoc()) {
+                                        foreach ($getCoursesDates->fetchAll() as $sda) {
 
                                         ?>
 
 
-                                            <p style="" class="cf fw4 mt24">Nächster Termin</p>
+                                            <p class="cf fw4 mt24">Nächster Termin</p>
 
                                             <content-card class="mt8 posrel">
                                                 <div class="mshd-1 normal-box">
@@ -293,7 +268,7 @@ include_once "../assets/templates/head.php";
                                                                     <?php
 
                                                                     //$newLocale = setlocale(LC_TIME, 'de_DE', 'de_DE.UTF-8');
-                                                                    $newdate = date_create($sda['date']);
+                                                                    $newdate = date_create($sda->date);
                                                                     echo $newdate->format('d. M y');
 
                                                                     ?>
@@ -309,8 +284,8 @@ include_once "../assets/templates/head.php";
                                                                     <?php
 
                                                                     //$newLocale = setlocale(LC_TIME, 'de_DE', 'de_DE.UTF-8');
-                                                                    $newdate = date_create($sda['date']);
-                                                                    echo $sda['start'] . ' - ' . $sda['end'];
+                                                                    $newdate = date_create($sda->date);
+                                                                    echo $sda->start . ' - ' . $sda->end;
 
                                                                     ?>
                                                                 </p>
@@ -337,14 +312,12 @@ include_once "../assets/templates/head.php";
 
 
 
-                <?php
-
-                }
-
-                ?>
+                <?php } ?>
 
             </div>
 
         </div>
     </div>
 </main-content>
+
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

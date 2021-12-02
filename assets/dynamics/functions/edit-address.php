@@ -23,7 +23,7 @@ if (
     $tel = $_REQUEST['tel'];
 
     // CHECK PMID AUTHENTICITY
-    $select = $c->prepare("SELECT * FROM customer_addresses WHERE id = ? AND uid = ?");
+    $select = $pdo->prepare("SELECT * FROM customer_addresses WHERE id = ? AND uid = ?");
     $select->bind_param('ss', $adid, $uid);
     $select->execute();
     $sel_r = $select->get_result();
@@ -83,7 +83,7 @@ if (
 
                             if (preg_match('/^[a-zA-Z äöüÄÖÜß]+$/', $fname)) {
 
-                                $update = $c->prepare("
+                                $update = $pdo->prepare("
                                         UPDATE customer_addresses 
                                         SET fullname = ?, address = ?, postcode = ?, city = ?, additional = ?, tel = ?, updated = ?  
                                         WHERE id = ? AND uid = ?");
@@ -91,11 +91,11 @@ if (
                                 $update->execute();
 
                                 if ($update) {
-                                    $c->commit();
+                                    $pdo->commit();
                                     $update->close();
                                     exit('success');
                                 } else {
-                                    $c->rollback();
+                                    $pdo->rollback();
                                     $update->close();
                                     exit('0');
                                 }
@@ -124,4 +124,4 @@ if (
     exit;
 }
 
-$c->close();
+$pdo->close();

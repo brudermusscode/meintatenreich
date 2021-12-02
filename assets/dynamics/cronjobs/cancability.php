@@ -9,7 +9,7 @@
 
 
     // UPDATE ORDERS
-    $updOrders = $c->prepare("
+    $updOrders = $pdo->prepare("
         UPDATE customer_buys SET cancability = '0'
         WHERE (? - unix_timestamp(timestamp)) >= 7200 
         AND delivery = 'single' 
@@ -20,7 +20,7 @@
 
 
     // UPDATE ORDERS
-    $updOrdersPaid = $c->prepare("
+    $updOrdersPaid = $pdo->prepare("
         UPDATE customer_buys SET cancability = '0'
         WHERE delivery = 'combi' 
         AND price_delivery > '0' 
@@ -32,15 +32,13 @@
 
 
     if($updOrders && $updOrdersPaid) {
-        $c->commit();
+        $pdo->commit();
         $updOrders->close();
-        $c->close();
+        $pdo->close();
         exit('ake');
     } else {
-        $c->rollback();
+        $pdo->rollback();
         $updOrders->close();
-        $c->close();
+        $pdo->close();
         exit('oops');
     }
-
-?>

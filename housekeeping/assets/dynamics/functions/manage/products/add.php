@@ -44,7 +44,7 @@ if (
     }
 
     // CHECK CATEGORY
-    $selCat = $c->prepare("SELECT * FROM products_categories WHERE id = ?");
+    $selCat = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
     $selCat->bind_param('s', $cid);
     $selCat->execute();
     $selCat_r = $selCat->get_result();
@@ -76,7 +76,7 @@ if (
 
         // ADD PRODUCT
         $artnr = 'MTR-' . $login->createString(4);
-        $insPr = $c->prepare("
+        $insPr = $pdo->prepare("
                 INSERT INTO products (name, artnr, price, mwstr, cid, available, timestamp)
                 VALUES (?,?,?,?,?,?,?)
             ");
@@ -91,7 +91,7 @@ if (
         // INSERT GALLERY IMAGE AND REMOVE FROM ARRAY
         if (file_exists($filepath . '/' . $gal) && ($key = array_search($gal, $imgarray)) !== false) {
 
-            $insPrImgGal = $c->prepare("
+            $insPrImgGal = $pdo->prepare("
                     INSERT INTO products_images (isgal, pid, url, timestamp)
                     VALUES ('1',?,?,?)
                 ");
@@ -109,7 +109,7 @@ if (
 
 
         // ADD PRODUCT DESCRIPTION
-        $insPrDesc = $c->prepare("
+        $insPrDesc = $pdo->prepare("
                 INSERT INTO products_desc (pid, text)
                 VALUES (?,?)
             ");
@@ -120,7 +120,7 @@ if (
         // ADD IMAGES
         $insPrImg = true;
         foreach ($imgarray as $url) {
-            $insPrImg = $c->prepare("
+            $insPrImg = $pdo->prepare("
                     INSERT INTO products_images (pid, url, timestamp)
                     VALUES (?,?,?)
                 ");
@@ -129,12 +129,12 @@ if (
         }
 
         if ($insPr && $insPrImg && $insPrDesc && $insPrImgGal) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0 - ass fuck');
         }
     } else {

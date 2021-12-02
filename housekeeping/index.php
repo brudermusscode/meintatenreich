@@ -2,7 +2,7 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if (!$loggedIn && $my->admin !== "1") {
+if (!$admin->isAdmin()) {
     header('location: /oops');
 }
 
@@ -124,9 +124,9 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 foreach ($getCustomers->fetchAll() as $c) {
 
                     $picname = false;
-                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
+                    if (strlen($pdo->firstname) > 0 && strlen($pdo->secondname) > 0) {
                         $picname = true;
-                        $pn = mb_substr($c->firstname, 0, 1) . mb_substr($c->secondname, 0, 1);
+                        $pn = mb_substr($pdo->firstname, 0, 1) . mb_substr($pdo->secondname, 0, 1);
                     }
 
                 ?>
@@ -155,10 +155,10 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <?php
 
                                     // CHECK NAME
-                                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
-                                        echo $c->firstname . ' ' . $c->secondname;
+                                    if (strlen($pdo->firstname) > 0 && strlen($pdo->secondname) > 0) {
+                                        echo $pdo->firstname . ' ' . $pdo->secondname;
                                     } else {
-                                        echo $c->displayname;
+                                        echo $pdo->displayname;
                                     }
 
                                     ?>
@@ -168,7 +168,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <p class="icon lt">
                                         <i class="material-icons md-18">mail</i>
                                     </p>
-                                    <p class="act rt trimfull"><?php echo $c->mail; ?></p>
+                                    <p class="act rt trimfull"><?php echo $pdo->mail; ?></p>
 
                                     <div class="cl"></div>
                                 </div>
@@ -188,4 +188,4 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 </main-content>
 
 
-<?php include_once $sroot . "/assets/templates/footer.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/footer.php"; ?>

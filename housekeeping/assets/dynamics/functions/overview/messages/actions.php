@@ -21,7 +21,7 @@ if (
     }
 
     // SELECT: PARAMS, NO FETCH, CHECK nUM ROWS
-    $sel = $c->prepare("SELECT * FROM admin_mails_got WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM admin_mails_got WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
     $sr = $sel->get_result();
@@ -30,17 +30,17 @@ if (
     if ($sr->rowCount() > 0) {
 
         // UPDATE
-        $upd = $c->prepare("UPDATE admin_mails_got SET isread = ?, fav = ? WHERE id = ?");
+        $upd = $pdo->prepare("UPDATE admin_mails_got SET isread = ?, fav = ? WHERE id = ?");
         $upd->bind_param('sss', $isread, $fav, $id);
         $upd->execute();
 
         if ($upd) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

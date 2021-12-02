@@ -60,7 +60,7 @@
                                 </a>
 
                                 <?php if ($admin->isAdmin()) { ?>
-                                    <a href="<?php echo $url["dashbrd"]; ?>">
+                                    <a href="<?php echo $url["dashbrd"]; ?>/black">
                                         <p class="um-icon">
                                             <i class="icon-lock"></i>
                                         </p>

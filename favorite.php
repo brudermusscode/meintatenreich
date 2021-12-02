@@ -20,7 +20,7 @@ include_once "./assets/templates/global/header.php";
                 <?php
 
                 // GET FAVORITE PRODUCTS
-                $sel = $c->prepare("SELECT * FROM scard_remember WHERE uid = ?");
+                $sel = $pdo->prepare("SELECT * FROM scard_remember WHERE uid = ?");
                 $sel->bind_param('s', $my->id);
                 $sel->execute();
                 $sel_r = $sel->get_result();
@@ -44,7 +44,7 @@ include_once "./assets/templates/global/header.php";
                     while ($s = $sel_r->fetch_assoc()) {
 
                         // GET PRODUCT INFORMATION
-                        $selProd = $c->prepare("
+                        $selProd = $pdo->prepare("
                                     SELECT products.*, products.id AS pid, products_images.url 
                                     FROM products, products_images 
                                     WHERE products.id = products_images.pid 
@@ -62,7 +62,7 @@ include_once "./assets/templates/global/header.php";
                         $pid = $prd['pid'];
 
                         // CHECK RESERVATED
-                        $checkRes = $c->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = '1'");
+                        $checkRes = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = '1'");
                         $checkRes->bind_param('s', $pid);
                         $checkRes->execute();
                         $checkRes_r = $checkRes->get_result();

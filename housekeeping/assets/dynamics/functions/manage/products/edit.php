@@ -35,7 +35,7 @@ if (
     $av = $_REQUEST['available'];
 
     // CHECK IF CATEGORY EXISTS
-    $sel = $c->prepare("SELECT * FROM products_categories WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
     $sel->bind_param('s', $cid);
     $sel->execute();
     $sr = $sel->get_result();
@@ -46,7 +46,7 @@ if (
     }
 
     // SELECT PRODUCT
-    $sel = $c->prepare("SELECT * FROM products WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
 
@@ -60,7 +60,7 @@ if (
 
 
         // CHECK GALLERY IMAGE
-        $selGal = $c->prepare("SELECT * FROM products_images WHERE id = ? AND isgal = '1' AND pid = ?");
+        $selGal = $pdo->prepare("SELECT * FROM products_images WHERE id = ? AND isgal = '1' AND pid = ?");
         $selGal->bind_param('ss', $id, $gal);
         $selGal->execute();
         $selGal_r = $selGal->get_result();
@@ -71,7 +71,7 @@ if (
         if ($selGal->rowCount() < 1) {
 
             $imgarray = [];
-            $selGalNew = $c->prepare("SELECT * FROM products_images WHERE pid = ?");
+            $selGalNew = $pdo->prepare("SELECT * FROM products_images WHERE pid = ?");
             $selGalNew->bind_param('s', $id);
             $selGalNew->execute();
             $selGalNew_r = $selGalNew->get_result();
@@ -82,20 +82,20 @@ if (
             $selGalNew->close();
 
             foreach ($imgarray as $i) {
-                $updPrdImg = $c->prepare("UPDATE products_images SET isgal = '0' WHERE id = ?");
+                $updPrdImg = $pdo->prepare("UPDATE products_images SET isgal = '0' WHERE id = ?");
                 $updPrdImg->bind_param('s', $i);
                 $updPrdImg->execute();
             }
 
             if ($updPrdImg) {
-                $updPrdImgNew = $c->prepare("UPDATE products_images SET isgal = '1' WHERE id = ? AND pid = ?");
+                $updPrdImgNew = $pdo->prepare("UPDATE products_images SET isgal = '1' WHERE id = ? AND pid = ?");
                 $updPrdImgNew->bind_param('ss', $gal, $id);
                 $updPrdImgNew->execute();
             }
         }
 
         // GET PRODUCT DESCRIPTION
-        $selD = $c->prepare("SELECT * FROM products_desc WHERE pid = ?");
+        $selD = $pdo->prepare("SELECT * FROM products_desc WHERE pid = ?");
         $selD->bind_param('s', $id);
         $selD->execute();
         $selD_r = $selD->get_result();
@@ -128,7 +128,7 @@ if (
             $av = $s['available'];
         }
 
-        $updProd = $c->prepare("
+        $updProd = $pdo->prepare("
                 UPDATE products INNER JOIN products_desc 
                 ON (products.id = products_desc.pid)
                 SET products.name = ?, 
@@ -147,24 +147,24 @@ if (
         $delRes = true;
         if ($av === '0' && $s['available'] !== '0') {
             // DELETE RESERVATIONS
-            $delRes = $c->prepare("DELETE FROM products_reserved WHERE pid = ?");
+            $delRes = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
             $delRes->bind_param('s', $id);
             $delRes->execute();
 
             // UPDATE SCARD
-            $updScard = $c->prepare("UPDATE scard SET active = '0' WHERE pid = ?");
+            $updScard = $pdo->prepare("UPDATE scard SET active = '0' WHERE pid = ?");
             $updScard->bind_param('s', $id);
             $updScard->execute();
         }
 
 
         if ($updProd && $delRes && $updScard && $updPrdImg && $updPrdImgNew) {
-            $c->commit();
-            $c->close();
+            $pdo->commit();
+            $pdo->close();
             exit('success');
         } else {
-            $c->rollback();
-            $c->close();
+            $pdo->rollback();
+            $pdo->close();
             exit('0');
         }
     } else {

@@ -11,7 +11,7 @@ if (isset($_REQUEST['status'], $_REQUEST['id']) && $loggedIn && $user['admin'] =
     $st = $_REQUEST['status'];
 
     // CHECK ORDER EXISTENCE
-    $sel = $c->prepare("
+    $sel = $pdo->prepare("
             SELECT * 
             FROM customer_buys, customer
             WHERE customer_buys.uid = customer.id
@@ -35,7 +35,7 @@ if (isset($_REQUEST['status'], $_REQUEST['id']) && $loggedIn && $user['admin'] =
             $oi = $s['orderid'];
 
             // SET DELIVERY COSTS
-            $updOrder = $c->prepare("UPDATE customer_buys SET status = ?, updated = ? WHERE id = ?");
+            $updOrder = $pdo->prepare("UPDATE customer_buys SET status = ?, updated = ? WHERE id = ?");
             $updOrder->bind_param('sss', $st, $timestamp, $id);
             $updOrder->execute();
 
@@ -53,7 +53,7 @@ if (isset($_REQUEST['status'], $_REQUEST['id']) && $loggedIn && $user['admin'] =
 
             // VARIOUS CASES
             $pids = [];
-            $selProducts = $c->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
+            $selProducts = $pdo->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
             $selProducts->bind_param('s', $id);
             $selProducts->execute();
             $selProducts_r = $selProducts->get_result();
@@ -69,12 +69,12 @@ if (isset($_REQUEST['status'], $_REQUEST['id']) && $loggedIn && $user['admin'] =
                 foreach ($pids as $pid) {
 
                     // MAKE PRODUCTS UNAVAILABLE
-                    $updProducts = $c->prepare("UPDATE products SET available = '0' WHERE id = ?");
+                    $updProducts = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
                     $updProducts->bind_param('s', $pid);
                     $updProducts->execute();
 
                     // REMOVE RESERVATIONS
-                    $delRes = $c->prepare("DELETE FROM products_reserved WHERE pid = ?");
+                    $delRes = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
                     $delRes->bind_param('s', $pid);
                     $delRes->execute();
                 }
@@ -83,19 +83,19 @@ if (isset($_REQUEST['status'], $_REQUEST['id']) && $loggedIn && $user['admin'] =
                 foreach ($pids as $pid) {
 
                     // REMOVE RESERVATIONS
-                    $delRes = $c->prepare("DELETE FROM products_reserved WHERE pid = ?");
+                    $delRes = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
                     $delRes->bind_param('s', $pid);
                     $delRes->execute();
                 }
             }
 
             if ($updOrder && $delRes && $updProducts && mail($to, $mailsubject, $mailbody, $mailheader)) {
-                $c->commit();
-                $c->close();
+                $pdo->commit();
+                $pdo->close();
                 exit('success');
             } else {
-                $c->rollback();
-                $c->close();
+                $pdo->rollback();
+                $pdo->close();
                 exit('0');
             }
         } else {

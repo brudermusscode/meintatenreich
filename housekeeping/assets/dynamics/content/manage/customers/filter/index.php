@@ -26,7 +26,7 @@ if (
             $q = "SELECT * FROM customer WHERE verified = '0' ORDER BY timestamp DESC";
     }
 
-    $sel = $c->prepare($q);
+    $sel = $pdo->prepare($q);
     $sel->execute();
     $sel_r = $sel->get_result();
 
@@ -52,7 +52,7 @@ if (
         $pn = mb_substr($s['firstname'], 0, 1) . mb_substr($s['secondname'], 0, 1);
 
         // GET USERS ORDERS
-        $selOC = $c->prepare("SELECT * FROM customer_buys WHERE uid = ?");
+        $selOC = $pdo->prepare("SELECT * FROM customer_buys WHERE uid = ?");
         $selOC->bind_param('s', $id);
         $selOC->execute();
         $selOC_r = $selOC->get_result();

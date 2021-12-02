@@ -7,14 +7,14 @@ require_once "../../../../../mysql/_.session.php";
 
 if (isset($_REQUEST['mail']) && $loggedIn && $user['admin'] === '1') {
 
-    $te = $c->real_escape_string(htmlspecialchars($_REQUEST['mail']));
+    $te = $pdo->real_escape_string(htmlspecialchars($_REQUEST['mail']));
 
     if (strlen($te) < 1) {
         exit;
     }
 
     // SELECT: PARAMS, FETCH
-    $sel = $c->prepare("SELECT mail FROM customer");
+    $sel = $pdo->prepare("SELECT mail FROM customer");
     $sel->execute();
     $sr = $sel->get_result();
     $sel->close();
@@ -35,7 +35,7 @@ if (isset($_REQUEST['mail']) && $loggedIn && $user['admin'] === '1') {
         $newbody = str_replace('\n', '<br>', $te);
 
         // INSERT MAIL DATA
-        $insMail = $c->prepare("INSERT INTO admin_mails_sent (uref,sid,type,msg,timestamp) VALUES ('none',?,'all',?,?)");
+        $insMail = $pdo->prepare("INSERT INTO admin_mails_sent (uref,sid,type,msg,timestamp) VALUES ('none',?,'all',?,?)");
         $insMail->bind_param('sss', $my->id, $newbody, $timestamp);
         $insMail->execute();
 
@@ -43,12 +43,12 @@ if (isset($_REQUEST['mail']) && $loggedIn && $user['admin'] === '1') {
     }
 
     if ($sendMail) {
-        $c->commit();
-        $c->close();
+        $pdo->commit();
+        $pdo->close();
         exit('success');
     } else {
-        $c->commit();
-        $c->close();
+        $pdo->commit();
+        $pdo->close();
         exit('0');
     }
 } else {

@@ -17,7 +17,7 @@ if ($loggedIn) {
 <?php
 
 // GET ORDERS, CUSTOMERS, RATINGS
-$selOverview = $c->prepare("
+$selOverview = $pdo->prepare("
         SELECT *
         FROM admin_overview 
         ORDER BY timestamp
@@ -59,7 +59,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
     if ($tt === 'order') {
 
         // GET ALL ORDERS & USER INFORMATION
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
             SELECT *, customer_buys.id AS oid 
             FROM customer_buys, customer 
             WHERE customer_buys.uid = customer.id 
@@ -73,7 +73,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
         while ($s = $sel_r->fetch_assoc()) {
 
             // GET BILL PDF ID
-            $sel = $c->prepare("
+            $sel = $pdo->prepare("
                 SELECT * FROM customer_buys_pdf
                 WHERE bid = ?
             ");
@@ -170,7 +170,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
                             <?php
 
                             // GET PRODUCT INFORMATION
-                            $selProd = $c->prepare("
+                            $selProd = $pdo->prepare("
                         SELECT * FROM customer_buys_products 
                         WHERE bid = ?
                     ");
@@ -182,7 +182,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
                             if ($sPr_rr->rowCount() > 3) {
 
                                 // GET PRODUCT INFORMATION
-                                $selProd = $c->prepare("
+                                $selProd = $pdo->prepare("
                             SELECT * FROM customer_buys_products, products, products_images 
                             WHERE customer_buys_products.pid = products.id 
                             AND products.id = products_images.pid 
@@ -217,7 +217,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
                             } else {
 
                                 // GET PRODUCT INFORMATION
-                                $selProd = $c->prepare("
+                                $selProd = $pdo->prepare("
                             SELECT * FROM customer_buys_products, products, products_images 
                             WHERE customer_buys_products.pid = products.id 
                             AND products.id = products_images.pid 
@@ -326,7 +326,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
     } else if ($tt === 'customer') {
 
         // GET ALL ORDERS & USER INFORMATION
-        $sel = $c->prepare("SELECT * FROM customer WHERE id = ?");
+        $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
         $sel->bind_param('s', $rid);
         $sel->execute();
         $sel_r = $sel->get_result();
@@ -396,7 +396,7 @@ while ($ov = $selOverview_r->fetch_assoc()) {
 
     } else if ($tt === 'comment') {
 
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
             SELECT *, products_comments.timestamp AS pcts, products.artnr FROM products_comments, products_rating, customer, products 
             WHERE products_comments.id = products_rating.cid 
             AND products_comments.uid = customer.id 

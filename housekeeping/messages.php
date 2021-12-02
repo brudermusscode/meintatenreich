@@ -226,4 +226,4 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 </main-content>
 
 
-<?php include_once  $sroot . "/assets/templates/footer.php"; ?>
+<?php include_once  $sroot . "/housekeeping/assets/templates/footer.php"; ?>

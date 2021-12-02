@@ -1,9 +1,18 @@
 <?php
 
-$login = new Login;
+$login = new Login($pdo, $my);
 
 class Login
 {
+
+    public object $pdo;
+
+    public function __construct(object $pdo, object $my)
+    {
+        $this->pdo = $pdo;
+        $this->my = $my;
+    }
+
     public static function get_client_ip()
     {
         if (!isset($_SERVER['REMOTE_ADDR'])) {
@@ -34,7 +43,7 @@ class Login
     }
 
     // check login state for user
-    public function isAuthed($pdo)
+    public function isAuthed()
     {
 
         if (isset($_COOKIE['TOK']) && isset($_COOKIE['SER']) && !empty($_SESSION)) {
@@ -52,7 +61,7 @@ class Login
             ) {
 
                 // get session from database
-                $getSession = $pdo->prepare("SELECT * FROM system_sessions WHERE uid = ? AND token = ? AND serial = ?");
+                $getSession = $this->pdo->prepare("SELECT * FROM system_sessions WHERE uid = ? AND token = ? AND serial = ?");
                 $getSession->execute([$sessionId, $sessionToken, $sessionSerial]);
 
                 if ($getSession->rowCount() > 0) {
@@ -79,18 +88,34 @@ class Login
     }
 
     // create session session
-    public static function createSession($array, $token, $serial, $amount)
+    public static function createSession($array, $token, $serial, $amount, $check = true)
     {
 
         foreach ($array as $k => $v) {
             $_SESSION[$k] = $v;
         }
 
-        $_SESSION["token"] = $token;
-        $_SESSION["serial"] = $serial;
-        $_SESSION["shoppingCardAmount"] = $amount;
+        if ($check) {
+            $_SESSION["token"] = $token;
+            $_SESSION["serial"] = $serial;
+            $_SESSION["shoppingCardAmount"] = $amount;
+        }
 
         return $_SESSION;
+    }
+
+    public function resetSession()
+    {
+        if ($this->isAuthed()) {
+
+            // get user data and compare
+            $getUserData = $this->pdo->prepare("SELECT * FROM customer WHERE id = ?");
+            if ($getUserData->execute([$this->my->id])) {
+
+                $u = $getUserData->fetch();
+                $this->createSession($u, NULL, NULL, NULL, false);
+            }
+        }
     }
 
     // create unique strings

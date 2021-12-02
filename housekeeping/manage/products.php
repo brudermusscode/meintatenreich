@@ -47,7 +47,7 @@ include_once "../assets/templates/head.php";
 
                 <?php
 
-                $sel = $c->prepare("SELECT * FROM products_categories ORDER BY id DESC");
+                $sel = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
                 $sel->execute();
                 $sel_r = $sel->get_result();
                 $sel->close();
@@ -132,7 +132,7 @@ include_once "../assets/templates/head.php";
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $sel = $c->prepare("
+                $sel = $pdo->prepare("
                         SELECT *, products.id AS pid 
                         FROM products, products_images 
                         WHERE products.id = products_images.pid
@@ -165,7 +165,7 @@ include_once "../assets/templates/head.php";
                     $id = $s['pid'];
 
                     $res = false;
-                    $selres = $c->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
+                    $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
                     $selres->bind_param('s', $id);
                     $selres->execute();
                     $selres_r = $selres->get_result();

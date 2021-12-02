@@ -8,12 +8,12 @@ require_once "../../../../../mysql/_.session.php";
 if (isset($_REQUEST['id'], $_REQUEST['text']) && $loggedIn && $user['admin'] === '1') {
 
     $id = $_REQUEST['id'];
-    $te = $c->real_escape_string(htmlspecialchars($_REQUEST['text']));
+    $te = $pdo->real_escape_string(htmlspecialchars($_REQUEST['text']));
 
     if (is_numeric($id)) {
 
         // CHECK IF CUSTOMER EXISTS
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
                 SELECT *
                 FROM customer
                 WHERE id = ?
@@ -53,20 +53,20 @@ if (isset($_REQUEST['id'], $_REQUEST['text']) && $loggedIn && $user['admin'] ===
     $newbody = str_replace('\n', '<br>', $te);
 
     // INSERT MAIL DATA
-    $insMail = $c->prepare("INSERT INTO admin_mails_sent (uref,sid,msg,timestamp) VALUES (?,?,?,?)");
+    $insMail = $pdo->prepare("INSERT INTO admin_mails_sent (uref,sid,msg,timestamp) VALUES (?,?,?,?)");
     $insMail->bind_param('ssss', $id, $my->id, $newbody, $timestamp);
     $insMail->execute();
 
 
     if ($insMail && mail($to, $mailsubject, $mailbody, $mailheader)) {
 
-        $c->commit();
-        $c->close();
+        $pdo->commit();
+        $pdo->close();
         exit('success');
     } else {
 
-        $c->commit();
-        $c->close();
+        $pdo->commit();
+        $pdo->close();
         exit('0');
     }
 } else {

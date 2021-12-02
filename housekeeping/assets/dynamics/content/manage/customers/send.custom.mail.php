@@ -12,7 +12,7 @@ if (isset($_REQUEST['rel']) && $loggedIn && $user['admin'] === '1') {
     if (is_numeric($rel)) {
 
         // CHECK IF CUSTOMER EXISTS
-        $sel = $c->prepare("SELECT * FROM customer WHERE id = ?");
+        $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
         $sel->bind_param('s', $rel);
         $sel->execute();
         $sel_r = $sel->get_result();

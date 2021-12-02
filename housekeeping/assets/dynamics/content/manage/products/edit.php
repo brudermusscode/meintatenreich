@@ -10,7 +10,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
     $id = $_REQUEST['id'];
 
     // SELECT PRODUCT
-    $sel = $c->prepare("SELECT * FROM products WHERE id = ?");
+    $sel = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $sel->bind_param('s', $id);
     $sel->execute();
 
@@ -23,7 +23,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
         $s = $sr->fetch_assoc();
 
         // GET PRODUCT DESCRIPTION
-        $sel = $c->prepare("
+        $sel = $pdo->prepare("
                 SELECT * 
                 FROM products_desc
                 WHERE pid = ?
@@ -35,7 +35,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
         $desc = $sdesc['text'];
 
         // GET CURRENT CATEGORY
-        $selCatCur = $c->prepare("SELECT * FROM products_categories WHERE id = ?");
+        $selCatCur = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
         $selCatCur->bind_param('s', $s['cid']);
         $selCatCur->execute();
         $srr = $selCatCur->get_result();
@@ -59,7 +59,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
 
                 <?php
 
-                $sel = $c->prepare("
+                $sel = $pdo->prepare("
                     SELECT * 
                     FROM products_images
                     WHERE pid = ?
@@ -130,7 +130,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                             <?php
 
                             // CHECK GALLERY IMAGE
-                            $selGal = $c->prepare("SELECT * FROM products_images WHERE isgal = '1' AND pid = ?");
+                            $selGal = $pdo->prepare("SELECT * FROM products_images WHERE isgal = '1' AND pid = ?");
                             $selGal->bind_param('s', $id);
                             $selGal->execute();
                             $selGal_r = $selGal->get_result();
@@ -246,7 +246,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                                             <ul>
                                                 <?php
 
-                                                $selCat = $c->prepare("SELECT * FROM products_categories ORDER BY id DESC");
+                                                $selCat = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
                                                 $selCat->execute();
                                                 $selCat_r = $selCat->get_result();
 
