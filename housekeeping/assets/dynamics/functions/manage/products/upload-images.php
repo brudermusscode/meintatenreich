@@ -1,46 +1,44 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/housekeeping/dynamics/libs/bulletproof/upload.php";
 
-    // ERROR CODE :: 0
-    require_once "../../../../../../mysql/_.session.php";
-    require_once '../../../libs/bulletproof/upload.php';
+// set JSON output format
+header('Content-Type: application/json; charset=utf-8');
 
-    
-    $image = new Bulletproof\Image($_FILES);
+// error output
+$return = [
+    "status" => false,
+    "message" => "Da ist wohl ein Oopsie passiert",
+    "fileName" => NULL
+];
 
-    if($image['pictures']) {
-        
-        // IMPORTANT
-        $strn = $login->createString(24);
-        
-        // SET NEW LOCATION
-        $image->setLocation('../../../../../../' . $uploaddir);
-        
-        // PASS TOGETHER VARS
-        $imgname = $image->setName('prod-' . $strn);
-        $mime = $image->getMime();  
-        $fullname = trim('prod-' . $strn . '.' . $mime);  
-        
-        // UPLOAD IT
-        $upload = $image->upload(); 
+// objectify return array
+$return = (object) $return;
 
-        if($upload){
-            
-            $res = ['status' => '1', 'url' => $fullname];
-            
-            exit(json_encode($res));
-            
-        } else {
-            
-            $res = ['status' => '0'];
-            
-            exit(json_encode($res));
-            
-        }
-        
+$image = new Bulletproof\Image($_FILES);
+
+if ($image['pictures']) {
+
+    $strn = $login->createString(24);
+
+    $image->setLocation($sroot . $uploaddir);
+
+    $imgname = $image->setName('prod-' . $strn);
+    $mime = $image->getMime();
+    $fullname = trim('prod-' . $strn . '.' . $mime);
+
+    $upload = $image->upload();
+
+    if ($upload) {
+
+        $return->message = "Upload erfolgreich";
+        exit(json_encode($return));
     } else {
-        exit;
+
+        exit(json_encode($return));
     }
-
-
-?>
+} else {
+    exit(json_encode($return));
+}

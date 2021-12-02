@@ -1,33 +1,16 @@
 <?php
 
-require_once "../../../../../mysql/_.session.php";
-require_once "../../../../../mysql/_.maintenance.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oopsie');
-    }
-} else {
+if (!$admin->isAdmin()) {
     header('location: /oopsie');
 }
 
-?>
-
-
-<?php
-
 // GET ORDERS, CUSTOMERS, RATINGS
-$selOverview = $pdo->prepare("
-        SELECT *
-        FROM admin_overview 
-        ORDER BY timestamp
-        DESC
-
-    ");
+$selOverview = $pdo->prepare("SELECT * FROM admin_overview ORDER BY timestamp DESC");
 $selOverview->execute();
-$selOverview_r = $selOverview->get_result();
 
-if ($selOverview_r->rowCount() < 1) {
+if ($selOverview->rowCount() < 1) {
 
 ?>
 
@@ -42,46 +25,33 @@ if ($selOverview_r->rowCount() < 1) {
 
 <?php
 
-} // END IF EMPTY
+}
 
-foreach ($ov = $selOverview_r->fetchAll() as ) {
+foreach ($selOverview->fetchAll() as $ov) {
 
-    $tt = $ov['ttype'];
-    $rid = $ov['rid'];
+    $tt = $ov->ttype;
+    $rid = $ov->rid;
 
 ?>
 
-    <!-- MAIN CONTENT -->
-
     <?php
 
-    // ORDER CARD
     if ($tt === 'order') {
 
-        // GET ALL ORDERS & USER INFORMATION
         $sel = $pdo->prepare("
             SELECT *, customer_buys.id AS oid 
             FROM customer_buys, customer 
             WHERE customer_buys.uid = customer.id 
             AND customer_buys.id = ?
         ");
-        $sel->bind_param('s', $rid);
-        $sel->execute();
-        
-        $sel->close();
+        $sel->execute([$rid]);
 
-        foreach ($s = $sel->fetchAll() as ) {
+        foreach ($sel->fetchAll() as $s) {
 
             // GET BILL PDF ID
-            $sel = $pdo->prepare("
-                SELECT * FROM customer_buys_pdf
-                WHERE bid = ?
-            ");
-            $sel->bind_param('s', $s['oid']);
-            $sel->execute();
-            $sr = $sel->get_result();
-            $pdf = $sr->fetch();
-            $sel->close();
+            $sel = $pdo->prepare("SELECT * FROM customer_buys_pdf WHERE bid = ?");
+            $sel->execute([$s->oid]);
+            $pdf = $sel->fetch();
 
     ?>
 
@@ -107,10 +77,10 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                     <?php
 
                                     // CHECK CUSTOMER NAME
-                                    if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                        echo $s['firstname'] . ' ' . $s['secondname'];
+                                    if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                        echo $s->firstname . ' ' . $s->secondname;
                                     } else {
-                                        echo $s['displayname'];
+                                        echo $s->displayname;
                                     }
 
                                     ?>
@@ -132,14 +102,14 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
 
                                         <datalist class="tran-all-cubic">
                                             <ul>
-                                                <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $s['orderid']; ?>"}]'>
+                                                <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $s->orderid; ?>"}]'>
                                                     <p class="ic lt"><i class="material-icons md-18">build</i></p>
                                                     <p class="lt ne trimfull">Bestellung verwalten</p>
 
                                                     <div class="cl"></div>
                                                 </li>
 
-                                                <li class="wic" data-action="manage:customers,orders" data-json='[{"id":"<?php echo $s['uid']; ?>"}]'>
+                                                <li class="wic" data-action="manage:customers,orders" data-json='[{"id":"<?php echo $s->uid; ?>"}]'>
                                                     <p class="ic lt"><i class="material-icons md-18">widgets</i></p>
                                                     <p class="lt ne trimfull">Alle Bestellungen des Kunden</p>
 
@@ -170,36 +140,28 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                             <?php
 
                             // GET PRODUCT INFORMATION
-                            $selProd = $pdo->prepare("
-                        SELECT * FROM customer_buys_products 
-                        WHERE bid = ?
-                    ");
-                            $selProd->bind_param('s', $s['oid']);
-                            $selProd->execute();
-                            $sPr_rr = $selProd->get_result();
-                            $selProd->close();
+                            $selProd = $pdo->prepare("SELECT * FROM customer_buys_products WHERE bid = ?");
+                            $selProd->execute([$s->oid]);
 
-                            if ($sPr_rr->rowCount() > 3) {
+                            if ($selProd->rowCount() > 3) {
 
                                 // GET PRODUCT INFORMATION
                                 $selProd = $pdo->prepare("
-                            SELECT * FROM customer_buys_products, products, products_images 
-                            WHERE customer_buys_products.pid = products.id 
-                            AND products.id = products_images.pid 
-                            AND bid = ? 
-                            AND isgal = '1'
-                            LIMIT 3
-                        ");
-                                $selProd->bind_param('s', $s['oid']);
-                                $selProd->execute();
-                                $sPr_r = $selProd->get_result();
+                                    SELECT * FROM customer_buys_products, products, products_images 
+                                    WHERE customer_buys_products.pid = products.id 
+                                    AND products.id = products_images.pid 
+                                    AND bid = ? 
+                                    AND isgal = '1'
+                                    LIMIT 3
+                                ");
+                                $selProd->execute([$s->oid]);
 
-                                foreach ($p = $sPr_r->fetchAll() as ) {
+                                foreach ($selProd->fetchAll() as $p) {
 
                             ?>
 
                                     <div class="prod mshd-1">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                     </div>
 
                                 <?php
@@ -209,7 +171,7 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                 ?>
 
                                 <div class="prod noprod">
-                                    <p>+ <?php echo $sPr_rr->rowCount() - 3; ?></p>
+                                    <p>+ <?php echo $selProd->rowCount() - 3; ?></p>
                                 </div>
 
                                 <?php
@@ -218,30 +180,27 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
 
                                 // GET PRODUCT INFORMATION
                                 $selProd = $pdo->prepare("
-                            SELECT * FROM customer_buys_products, products, products_images 
-                            WHERE customer_buys_products.pid = products.id 
-                            AND products.id = products_images.pid 
-                            AND bid = ? 
-                            AND isgal = '1'
-                            LIMIT 3
-                        ");
-                                $selProd->bind_param('s', $s['oid']);
-                                $selProd->execute();
-                                $sPr_r = $selProd->get_result();
+                                    SELECT * FROM customer_buys_products, products, products_images 
+                                    WHERE customer_buys_products.pid = products.id 
+                                    AND products.id = products_images.pid 
+                                    AND bid = ? 
+                                    AND isgal = '1'
+                                    LIMIT 3
+                                ");
+                                $selProd->execute([$s->oid]);
 
-                                foreach ($p = $sPr_r->fetchAll() as ) {
+                                foreach ($sPr_r->fetchAll() as $p) {
 
                                 ?>
 
                                     <div class="prod hd-shd">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
+                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                     </div>
 
                             <?php
 
-                                } // END WHILE: PRODUCTS 
-
-                            } // END IF
+                                }
+                            }
 
                             ?>
                         </div>
@@ -252,31 +211,31 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                             <div class="lt disfl fldirrow ph32">
 
 
-                                <?php if ($s['status'] === 'got') { ?>
+                                <?php if ($s->status === 'got') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid orange;background:orange;">
                                         <p style="color:white;">NEU</p>
                                     </div>
-                                <?php } else if ($s['status'] === 'sent') { ?>
+                                <?php } else if ($s->status === 'sent') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid grey;">
                                         <p style="color:grey;">Versandt</p>
                                     </div>
-                                <?php } else if ($s['status'] === 'done') { ?>
+                                <?php } else if ($s->status === 'done') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid green;">
                                         <p style="color:green;">Abgeschlossen</p>
                                     </div>
-                                <?php } else if ($s['status'] === 'canceled') { ?>
+                                <?php } else if ($s->status === 'canceled') { ?>
                                     <div class="btn-outline delivery" style="border:1px solid red;background:red;">
                                         <p style="color:white;">Storniert</p>
                                     </div>
                                 <?php } ?>
 
                                 <!-- PAYMENT MADE -->
-                                <?php if ($s['status'] !== 'canceled') { ?>
-                                    <?php if ($s['paid'] === '1') { ?>
+                                <?php if ($s->status !== 'canceled') { ?>
+                                    <?php if ($s->paid === '1') { ?>
                                         <div class="btn-outline delivery" style="border:1px solid rgba(0,0,0,.24);">
                                             <p style="color:rgba(0,0,0,.24);">Als bezahlt markiert</p>
                                         </div>
-                                    <?php } else if ($s['paid'] === '2') { ?>
+                                    <?php } else if ($s->paid === '2') { ?>
                                         <div class="btn-outline delivery" style="border:1px solid green;">
                                             <p style="color:green;">Bezahlt</p>
                                         </div>
@@ -294,7 +253,7 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                     <p>
                                         <?php
 
-                                        if ($s['delivery'] === 'combi') {
+                                        if ($s->delivery === 'combi') {
                                             echo 'Kombi-Versand';
                                         } else {
                                             echo 'Einzelversand';
@@ -305,7 +264,7 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                 </div>
 
                                 <div class="btn-outline">
-                                    <p>EUR <?php echo number_format($s['price'], 2, ',', '.'); ?></p>
+                                    <p>EUR <?php echo number_format($s->price, 2, ',', '.'); ?></p>
                                 </div>
                             </div>
 
@@ -321,17 +280,14 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
         <?php
 
         }
-        $sel->close(); // END WHILE: ORDERS
-
     } else if ($tt === 'customer') {
 
         // GET ALL ORDERS & USER INFORMATION
         $sel = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
-        $sel->bind_param('s', $rid);
-        $sel->execute();
-        
+        $sel->execute([$rid]);
 
-        foreach ($s = $sel->fetchAll() as ) {
+
+        foreach ($sel->fetchAll() as $s) {
         ?>
 
             <content-card class="mb24">
@@ -351,9 +307,9 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                             <div class="type lt">
                                 <p>neuer kunde</p>
                             </div>
-                            <div class="status rt" <?php if ($s['verified'] === '1') { ?> data-tooltip="Verifizierter Account" <?php } else { ?> data-tooltip="Nicht verifiziert" <?php } ?> data-tooltip-align="left">
+                            <div class="status rt" <?php if ($s->verified === '1') { ?> data-tooltip="Verifizierter Account" <?php } else { ?> data-tooltip="Nicht verifiziert" <?php } ?> data-tooltip-align="left">
                                 <p class="posrel z3">
-                                    <?php if ($s['verified'] === '1') { ?>
+                                    <?php if ($s->verified === '1') { ?>
                                         <i class="material-icons md-28 v">verified_user</i>
                                     <?php } else { ?>
                                         <i class="material-icons md-28 n">verified_user</i>
@@ -370,17 +326,17 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                     <?php
 
                                     // CHECK CUSTOMER NAME
-                                    if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                        echo $s['firstname'] . ' ' . $s['secondname'];
+                                    if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                        echo $s->firstname . ' ' . $s->secondname;
                                     } else {
-                                        echo $s['displayname'];
+                                        echo $s->displayname;
                                     }
 
                                     ?>
                                 </p>
                             </div>
                             <div class="extr">
-                                <p class="trimfull"><?php echo $s['mail']; ?></p>
+                                <p class="trimfull"><?php echo $s->mail; ?></p>
                             </div>
                         </div>
                     </div>
@@ -392,8 +348,6 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
         <?php
 
         }
-        $sel->close(); // END WHILE: CUSTOMER
-
     } else if ($tt === 'comment') {
 
         $sel = $pdo->prepare("
@@ -404,15 +358,14 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
             AND products_comments.id = ? 
             ORDER BY products_comments.timestamp
         ");
-        $sel->bind_param('s', $rid);
-        $sel->execute();
-        
+        $sel->execute([$rid]);
 
-        foreach ($s = $sel->fetchAll() as ) {
+
+        foreach ($sel->fetchAll() as $s) {
 
             // CONVERT TIMESTAMP
             $timeAgoObject = new convertToAgo;
-            $ts = $s['pcts'];
+            $ts = $s->pcts;
             $convertedTime = ($timeAgoObject->convert_datetime($ts));
             $when = ($timeAgoObject->makeAgo($convertedTime));
 
@@ -438,10 +391,10 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                     <?php
 
                                     // CHECK CUSTOMER NAME
-                                    if (strlen($s['firstname']) > 0 && strlen($s['secondname']) > 0) {
-                                        echo $s['firstname'] . ' ' . $s['secondname'];
+                                    if (strlen($s->firstname) > 0 && strlen($s->secondname) > 0) {
+                                        echo $s->firstname . ' ' . $s->secondname;
                                     } else {
-                                        echo $s['displayname'];
+                                        echo $s->displayname;
                                     }
 
                                     ?>
@@ -453,7 +406,7 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                             </div>
 
                             <div class="tools rt">
-                                <a href="/product/<?php echo $s['artnr']; ?>" target="_blank">
+                                <a href="/product/<?php echo $s->artnr; ?>" target="_blank">
                                     <div class="btn-outline" style="color:#FF7E8A;border-color:#FF7E8A;">
                                         <p>Zum Produkt</p>
                                     </div>
@@ -469,7 +422,7 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
 
                                 <?php
 
-                                for ($i = 1; $i <= $s['rate']; $i++) {
+                                for ($i = 1; $i <= $s->rate; $i++) {
                                     echo '<div class="one"><i class="material-icons md-18">star</i></div>';
                                 }
 
@@ -488,13 +441,13 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
                                 <p class="icon lt">
                                     <i class="material-icons md-18">mail</i>
                                 </p>
-                                <p class="act rt trimfull"><?php echo $s['mail']; ?></p>
+                                <p class="act rt trimfull"><?php echo $s->mail; ?></p>
 
                                 <div class="cl"></div>
                             </div>
 
                             <div class="actual">
-                                <p class="trimfull"><?php echo $s['text']; ?></p>
+                                <p class="trimfull"><?php echo $s->text; ?></p>
                             </div>
                         </div>
 
@@ -505,14 +458,10 @@ foreach ($ov = $selOverview_r->fetchAll() as ) {
 
             </content-card>
 
-    <?php
+<?php
 
         }
-        $sel->close(); // END WHILE: RATINGS
+    }
+}
 
-    } // END IF: QUERY 
-    ?>
-
-<?php }
-$selOverview->close(); // END WHILE: ORDERS, CUSTOMERS, RATINGS 
 ?>

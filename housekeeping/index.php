@@ -168,7 +168,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                     <p class="icon lt">
                                         <i class="material-icons md-18">mail</i>
                                     </p>
-                                    <p class="act rt trimfull"><?php echo $pdo->mail; ?></p>
+                                    <p class="act rt trimfull"><?php echo $c->mail; ?></p>
 
                                     <div class="cl"></div>
                                 </div>

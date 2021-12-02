@@ -25,6 +25,7 @@
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/public.suffix.list.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/tooltip/tipr.min.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.core.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/objects/Overlay.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.elements.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.app.js"></script>

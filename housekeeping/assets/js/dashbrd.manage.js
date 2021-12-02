@@ -127,7 +127,7 @@ $(function() {
     if($('main-content').hasClass('messages')) {
         loadContent('[data-load="overview:messages"]', '/hk/get/overview/messages', {order:'got'});
     } else if($('main-content').hasClass('overview')) {
-        loadContent('[data-react="get-content:overview,all"]', '/hk/get/overview/all', {});
+        loadContent('[data-react="get-content:overview,all"]', '/_magic_/ajax/content/overview/all', {});
     }
 
     $(document).on('click', '[data-action="overview:messages,open"]', function(){
