@@ -92,74 +92,62 @@ $(function() {
     })
 
     // sign >> in
-    .on('click', '[data-action="signin"]', function(){
+    .on('submit', 'form[data-form="login"]', function(e){
         
-        var mail = $('input[name="mail"]').val();
-        var pass = $('input[name="password"]').val();
-        var lc    = $('login-container');
-        let url = dynamicHost + "/ajax/functions/sign/in";
+        e.preventDefault();
         
-        if(mail === '' || pass === '') {
+        let $loginContainer, $loginContainerOverlay, formData, method, response, url, $overlay;
 
-            showDialer('Bitte fülle alle Felder aus!');
+        formData = new FormData(this),
+        method = $(this).attr("method"),
+        url = dynamicHost + "/ajax/functions/sign/in",
+        $loginContainer = $('login-container');
 
-        } else {
-
-            addOverlay(lc, dark = true);
-            var overlay   = body.find('page-overlay');
-            var lcOverlay = body.find('page-overlay login-container page-overlay');
-            lcOverlay.find('close-overlay').remove();
-            addLoader(lcOverlay, 'floating');
-            
-            var formData = $('[data-form="login"]').serialize();
-            
-            $.ajax({
-                
-                data: formData,
-                url: url,
-                method: 'POST',
-                type: 'TEXT',
-                success: function(data) {
-                    
-                    let resp;
-                    
-                    console.log(data);
-
-                    switch(data) {
-                        case '1':
-                            resp = 'Ein unbekannter Fehler ist aufgetreten und wurde umgehend gemeldet.';
-                            break;
-                        case '2':
-                            resp = 'Bitte akzeptieren Sie das Setzen von <a href="#">Cookies</a> unsererseits!';
-                            break;
-                        case '3':
-                            resp = 'Ihr Nutzername/E-Mail oder Passwort ist falsch!';
-                            break;
-                        case '4':
-                            resp = 'Ihr Nutzername/E-Mail oder Passwort ist falsch!';
-                            break;
-                        default:
-                            resp = 'Erfolgreich eingeloggt!';
-                            lc.remove();
-                            addTextDialogue(overlay, 'Hallo<br>'+mail);
-                            setTimeout(function(){
-                                window.location.reload();
-                            }, 1200);
-                            
-                    }
-
-                    showDialer(resp);
-                    lcOverlay.css('opacity', '0');
-                    setTimeout(function(){
-                        lcOverlay.remove();
-                    }, 200);
-                    
-                }
-                
-            });
-            
+        if(formData.get("mail") == "" || formData.get("password") == "") {
+            showDialer("Alle Felder müssen ausgefüllt sein");
+            return false;
         }
+
+        addOverlay($loginContainer, dark = true);
+        $overlay = body.find('page-overlay');
+        $loginContainerOverlay = body.find('page-overlay login-container page-overlay');
+        $loginContainerOverlay.find('close-overlay').remove();
+        addLoader($loginContainerOverlay, 'floating');
+
+        $.ajax({
+            
+            data: formData,
+            url: url,
+            method: method,
+            contentType: false,
+            processData: false,
+            type: 'JSON',
+            success: function(data) {
+
+                response = data.message;
+
+                if(data.status) {
+                    $loginContainer.remove();
+                    addTextDialogue($overlay, 'Hallo<br>' + formData.get("mail"));
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1200);
+                }
+
+                showDialer(response);
+
+                $loginContainerOverlay.css('opacity', '0');
+
+                setTimeout(function(){
+                    $loginContainerOverlay.remove();
+                }, 200);
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
         
+        return false;
     })
 
     // >> forgot password open popup

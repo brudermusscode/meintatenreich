@@ -93,12 +93,14 @@ $(function() {
     // add to shopping card
     .on('click', '[data-action="add-scard"]', function() {
         
-        let t = $(this);
-        let id = t.data('json')[0].id;
-        let action = 'add-scard';
-        let $shoppingCardAmount = $('[data-react="add-scard"] p');
-        let res;
-        let url = dynamicHost + "/ajax/functions/productview/add-shoppingcard";
+        let t, id, action, res, url, $shoppingCardAmount;
+
+        t = $(this),
+        id = t.data('json')[0].id,
+        action = 'add-scard',
+        res,
+        url = dynamicHost + "/ajax/functions/productview/add-shoppingcard",
+        $shoppingCardAmount = $('[data-react="add-scard"] p');
         
         t.attr('disabled', 'disabled');
         t.removeAttr('data-action');
@@ -108,40 +110,26 @@ $(function() {
             data: { action: action, id: id },
             url: url,
             method: 'POST',
-            type: 'TEXT',
+            type: 'JSON',
             success: function(data) {
 
-                switch(data) {
-                    case '':
-                        res = 'Bitte logge Dich ein, um forzufahren!';
-                        break;
-                    case '0':
-                        res = 'Ein unbekannter Fehler ist aufgetreten.';
-                        break;
-                    case '1':
-                        res = 'Das Produkt scheint nicht zu existieren.';
-                        break;
-                    case '2':
-                        res = 'Bitte verifiziere deinen Account!';
-                        break;
-                    case '3':
-                        res = 'Produkt ist im Moment reserviert!';
-                        break;
-                    case '4':
-                        res = 'Das produkt ist bereits in Deinem Warenkorb!';
-                        break;
-                    default:
+                let status, message, shoppingCardAmount;
 
-                        console.log(data);
+                status = data.status,
+                code = data.code,
+                message = data.message,
+                shoppingCardAmount = data.shoppingCardAmount;
 
-                        $shoppingCardAmount.html(data.shoppingCardAmount);
+                if(status) {
 
-                        res = 'Produkt wurde für 6 Stunden reserviert.';
-                        t.find('p:nth-of-type(2)').html('Im Warenkorb');
-                        t.find('p:first-of-type i').attr('class', 'icon-ok');
+                    $shoppingCardAmount.html(shoppingCardAmount + 1);
+
+                    res = 'Produkt wurde für 6 Stunden reserviert.';
+                    t.find('p:nth-of-type(2)').html('Im Warenkorb');
+                    t.find('p:first-of-type i').attr('class', 'icon-ok');
                 }
                 
-                showDialer(res);
+                showDialer(message);
                 
             },
             error: function(data) {

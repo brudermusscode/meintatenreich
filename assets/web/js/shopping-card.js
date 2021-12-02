@@ -22,38 +22,29 @@ $(function(document) {
             url: url,
             data: { action: action, id: id },
             method: 'POST',
-            type: 'TEXT',
+            type: 'JSON',
             success: function(data) {
 
-                switch(data) {
-                    case '':
-                    case '0':
-                        res = 'Oh nein! Ein Fehler!';
-                        break;
-                    case '1':
-                        res = 'Dieses Produkt scheint nicht mehr in deinem Warenkorb zu sein';
-                        break;
-                    default:
+                if(data.status) {
 
-                        res = 'Produkt wurde entfernt';
+                    $shoppingCardAmount.html(data.shoppingCardAmount - 1);
 
-                        $shoppingCardAmount.html(data.shoppingCardAmount);
+                    if(body.hasClass('calculated')) {
+                        pricing(formData, appendPricing);
+                    }
+                    
+                    t.parents().eq(1).css({ 'visibility':'hidden', 'opacity':'0' });
 
-                        if(body.hasClass('calculated')) {
-                            pricing(formData, appendPricing);
-                        }
-                        
-                        t.parents().eq(1).css({ 'visibility':'hidden', 'opacity':'0' });
+                    setTimeout(function(){
 
-                        setTimeout(function(){
-
-                            t.parents().eq(1).remove();
-                        }, 400);
+                        t.parents().eq(1).remove();
+                    }, 400);
                 }
                 
-                showDialer(res);
+                showDialer(data.message);
             },
             error: function(data) {
+                console.error(data);
             }
         });
     })

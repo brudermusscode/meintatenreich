@@ -12,12 +12,14 @@
     </script>
 
     <login-container class="almid posabs">
-        <div class="lc-inr mshd-2 rd5 zoom-in">
-            <div class="title mshd-1">
-                <p>Einloggen</p>
-            </div>
-            <div class="form-outer">
-                <form data-form="login">
+
+        <form id="form-login" data-form="login" method="POST" action="">
+
+            <div class="lc-inr mshd-2 rd5 zoom-in">
+                <div class="title mshd-1">
+                    <p>Einloggen</p>
+                </div>
+                <div class="form-outer">
                     <div class="input">
                         <div>
                             <p class="trimfull">Nutzername oder E-Mail</p>
@@ -40,24 +42,27 @@
                             </div>
                         </div>
                     </div>
-                </form>
 
-                <div class="rt trimfull">
-                    <a data-action="forgot-password" href="#">
-                        <p class="trimfull">Passwort vergessen?</p>
-                    </a>
+
+                    <div class="rt trimfull">
+                        <a data-action="forgot-password" href="#">
+                            <p class="trimfull">Passwort vergessen?</p>
+                        </a>
+                    </div>
+
+                    <div class="cl"></div>
+
                 </div>
 
-                <div class="cl"></div>
+                <div class="buttons">
+                    <button type="submit" class="rd3 hellofresh hlf-green trimfull rt">Einloggen!</button>
+                    <div class="cl"></div>
+                </div>
 
             </div>
 
-            <div class="buttons">
-                <button type="button" class="rd3 hellofresh hlf-green trimfull rt" data-action="signin">Einloggen!</button>
-                <div class="cl"></div>
-            </div>
+        </form>
 
-        </div>
     </login-container>
 
 <?php

@@ -201,28 +201,37 @@ class shop
             // try executing the statement
             $stmt->execute($params);
 
-            $errorInformation = [
+            // store error information
+            $return = [
                 "status" => true,
                 "lastInsertId" => $connection->lastInsertId()
             ];
 
+            // objectify error information array
+            $return = (object) $return;
+
+            // commit changes if true
             if ($commit) {
                 $connection->commit();
             }
 
-            return $errorInformation;
+            // return the object back to the script
+            return $return;
         } catch (PDOException $e) {
 
             // catch error information
-            $errorInformation = [
+            $return = [
                 "status" => false,
                 "message" => $e->getMessage(),
                 "code" => $e->getCode()
             ];
 
             // rollback data and return error information
-            $connection->rollback();
-            return $errorInformation;
+            if ($commit) {
+                $connection->rollback();
+            }
+
+            return $return;
         }
 
         return false;

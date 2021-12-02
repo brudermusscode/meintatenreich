@@ -1,8 +1,18 @@
 <?php
 
-header('Content-type: application/json');
-
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
+
+header('Content-Type: application/json; charset=utf-8');
+
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!",
+    "shoppingCardAmount" => NULL
+];
+
+// objectify response array
+$return = (object) $return;
 
 if (
     isset($_REQUEST['action'], $_REQUEST['id'])
@@ -10,7 +20,6 @@ if (
     && is_numeric($_REQUEST['id'])
     && $loggedIn
 ) {
-
 
     // variablize
     $id = htmlspecialchars($_REQUEST['id']);
@@ -37,52 +46,42 @@ if (
                 // begin transactions
                 $pdo->beginTransaction();
 
-                $insert = false;
-                $update = false;
-                $insertReservation = false;
+                // add to shopping card
+                $addShoppingCard = $pdo->prepare("INSERT INTO shopping_card (uid,pid) VALUES (?,?)");
+                $addShoppingCard = $shop->tryExecute($addShoppingCard, [$uid, $id], $pdo, false);
 
-                if ($getProductAdded->rowCount() < 1) {
+                if ($addShoppingCard->status) {
 
-                    // all fine, 
-                    // add to shopping card
-                    $insert = $pdo->prepare("INSERT INTO shopping_card (uid,pid) VALUES (?,?)");
-                    $insert->execute([$uid, $id]);
+                    // reservate product for 6 horas
+                    $insertReservation = $pdo->prepare("INSERT INTO products_reserved (uid,pid) VALUES (?,?)");
+                    $insertReservation = $shop->tryExecute($insertReservation, [$uid, $id], $pdo, true);
+
+                    if ($insertReservation->status) {
+
+                        // store error information
+                        $return->status = true;
+                        $return->message = "Produkt wurde hinzugefügt!";
+                        $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]++;
+
+                        exit(json_encode($return));
+                    } else {
+                        exit(json_encode($insertReservation));
+                    }
                 } else {
-
-                    // update
-                    $update = $pdo->prepare("UPDATE shopping_card SET active = '1', timestamp = CURRENT_TIMESTAMP WHERE uid = ? AND pid = ?");
-                    $update->execute([$uid, $id]);
-                }
-
-                // reservate product for 6 horas
-                $insertReservation = $pdo->prepare("INSERT INTO products_reserved (uid,pid) VALUES (?,?)");
-                $insertReservation->execute([$uid, $id]);
-
-                if (($insert || $update) && $insertReservation) {
-
-                    $_SESSION["shoppingCardAmount"]++;
-
-                    $errorInformation = [
-                        "status" => true,
-                        "shoppingCardAmount" => $_SESSION["shoppingCardAmount"]
-                    ];
-
-                    $pdo->commit();
-                    exit(json_encode($errorInformation));
-                } else {
-
-                    $pdo->rollback();
-                    exit('0');
+                    exit(json_encode($insertReservation));
                 }
             } else {
-                exit('3'); // product in reservation
+                $return->message = "Dieses Produkt ist bereits reserviert";
+                exit(json_encode($return)); // product in reservation
             }
         } else {
-            exit('2'); // user not verified
+            $return->message = "Bitte verifiziere deinen Account";
+            exit(json_encode($return)); // user not verified
         }
     } else {
-        exit('1'); // product doesn't exist
+        $return->message = "Das Produkt scheint nicht mehr zu existieren";
+        exit(json_encode($return)); // product doesn't exist
     }
 } else {
-    exit("0");
+    exit(json_encode($return));
 }

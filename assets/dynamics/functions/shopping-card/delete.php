@@ -1,8 +1,18 @@
 <?php
 
-header('Content-type: application/json');
-
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
+
+header('Content-Type: application/json; charset=utf-8');
+
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!",
+    "shoppingCardAmount" => 0
+];
+
+// objectify response array
+$return = (object) $return;
 
 if (
     isset($_REQUEST['action'], $_REQUEST['id'])
@@ -10,8 +20,6 @@ if (
     && is_numeric($_REQUEST['id'])
     && $loggedIn
 ) {
-
-    $debugArray = [];
 
     // variablize
     $id = $_REQUEST['id'];
@@ -23,47 +31,37 @@ if (
 
     if ($getProduct->rowCount() > 0) {
 
-        $debugArray["productExists"] = true;
-
         // start mysql transactions
         $pdo->beginTransaction();
 
-        // update shopping card
-        $update = $pdo->prepare("UPDATE shopping_card SET active = '0' WHERE uid = ? AND pid = ?");
-        $try = $shop->tryExecute($update, [$uid, $id], $pdo);
+        // delete shopping card
+        $delete = $pdo->prepare("DELETE FROM shopping_card WHERE uid = ? AND pid = ?");
+        $delete = $shop->tryExecute($delete, [$uid, $id], $pdo, false);
 
-        if (is_array($try) && $try) {
-
-            $debugArray["updatedShoppingCard"] = true;
+        if ($delete->status) {
 
             // delete reservation
             $delete = $pdo->prepare("DELETE FROM products_reserved WHERE uid = ? AND pid = ?");
-            $try = $shop->tryExecute($delete, [$uid, $id], $pdo);
+            $delete = $shop->tryExecute($delete, [$uid, $id], $pdo, true);
 
-            if (is_array($try) && $try) {
-
-                $debugArray["deletedReservations"] = true;
-
-                // update shopping card amount
-                $shoppingCardAmount = $_SESSION["shoppingCardAmount"] - 1;
-                $_SESSION["shoppingCardAmount"]--;
+            if ($delete->status) {
 
                 // create error output
-                $response = [
-                    "status" => true,
-                    "shoppingCardAmount" => $shoppingCardAmount
-                ];
+                $return->status = true;
+                $return->message = "Vom Warenkorb entfernt";
+                $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]--;
 
-                // commit and exit
-                $pdo->commit();
-                exit(json_encode($response));
+                exit(json_encode($return));
+            } else {
+                exit(json_encode($return));
             }
         } else {
-            exit("0");
+            exit(json_encode($return));
         }
     } else {
-        exit("1"); // product doesn't exist
+        $return->message = "Das Produkt scheint nicht zu exitsieren";
+        exit(json_encode($return));
     }
 } else {
-    exit("0");
+    exit(json_encode($return));
 }
