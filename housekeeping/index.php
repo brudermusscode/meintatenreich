@@ -1,30 +1,26 @@
 <?php
 
-require_once "../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oops');
-    }
-} else {
+if (!$loggedIn && $my->admin !== "1") {
     header('location: /oops');
 }
 
 $ptit = 'Overview: Alles';
 $pid = "aindex";
 
-include_once "./assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "./assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
 
 <main-content class="overview">
 
     <!-- MAIN HEADER -->
-    <?php include_once "./assets/templates/header.php"; ?>
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
     <!-- MAIN CONTENT -->
     <div class="mc-main">
@@ -122,16 +118,15 @@ include_once "./assets/templates/head.php";
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $selCustomer = $c->prepare("SELECT * FROM customer ORDER BY id DESC");
-                $selCustomer->execute();
-                $selCu_r = $selCustomer->get_result();
+                $getCustomers = $pdo->prepare("SELECT * FROM customer ORDER BY id DESC");
+                $getCustomers->execute();
 
-                while ($c = $selCu_r->fetch_assoc()) {
+                foreach ($getCustomers->fetchAll() as $c) {
 
                     $picname = false;
-                    if (strlen($c['firstname']) > 0 && strlen($c['secondname']) > 0) {
+                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
                         $picname = true;
-                        $pn = mb_substr($c['firstname'], 0, 1) . mb_substr($c['secondname'], 0, 1);
+                        $pn = mb_substr($c->firstname, 0, 1) . mb_substr($c->secondname, 0, 1);
                     }
 
                 ?>
@@ -140,7 +135,7 @@ include_once "./assets/templates/head.php";
                         <div class="customer hd-shd adjust">
                             <div class="user-outer lt">
                                 <div class="actual">
-                                    <?php if ($picname === true) { ?>
+                                    <?php if ($picname == true) { ?>
 
                                         <div class="img-name">
                                             <p class=""><?php echo $pn; ?></p>
@@ -148,7 +143,7 @@ include_once "./assets/templates/head.php";
 
                                     <?php } else { ?>
 
-                                        <img src="<?php echo $imgurl; ?>/elem/user.png">
+                                        <img src="<?php echo $url["img"]; ?>/elem/user.png">
 
                                     <?php } ?>
                                 </div>
@@ -160,10 +155,10 @@ include_once "./assets/templates/head.php";
                                     <?php
 
                                     // CHECK NAME
-                                    if (strlen($c['firstname']) > 0 && strlen($c['secondname']) > 0) {
-                                        echo $c['firstname'] . ' ' . $c['secondname'];
+                                    if (strlen($c->firstname) > 0 && strlen($c->secondname) > 0) {
+                                        echo $c->firstname . ' ' . $c->secondname;
                                     } else {
-                                        echo $c['displayname'];
+                                        echo $c->displayname;
                                     }
 
                                     ?>
@@ -173,7 +168,7 @@ include_once "./assets/templates/head.php";
                                     <p class="icon lt">
                                         <i class="material-icons md-18">mail</i>
                                     </p>
-                                    <p class="act rt trimfull"><?php echo $c['mail']; ?></p>
+                                    <p class="act rt trimfull"><?php echo $c->mail; ?></p>
 
                                     <div class="cl"></div>
                                 </div>
@@ -183,21 +178,14 @@ include_once "./assets/templates/head.php";
                         </div>
                     </content-card>
 
-                <?php
-
-                } // END WHILE: CUSTOMER
-
-                ?>
+                <?php } ?>
 
             </div>
-
         </div>
 
         <div class="cl"></div>
     </div>
-
-
 </main-content>
 
 
-<?php include_once "./assets/templates/footer.php"; ?>
+<?php include_once $sroot . "/assets/templates/footer.php"; ?>

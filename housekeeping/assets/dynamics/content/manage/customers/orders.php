@@ -157,7 +157,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                     ?>
 
                                             <div class="prod mshd-1">
-                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $imgurl . '/products/' . $p['url']; ?>">
+                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
                                             </div>
 
                                         <?php
@@ -192,7 +192,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         ?>
 
                                             <div class="prod hd-shd">
-                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $imgurl . '/products/' . $p['url']; ?>">
+                                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p['url']; ?>">
                                             </div>
 
                                     <?php

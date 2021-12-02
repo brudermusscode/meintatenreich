@@ -105,7 +105,7 @@ include_once "../assets/templates/head.php";
                                                 <p><?php echo $pn; ?></p>
                                             </div>
                                         <?php } else { ?>
-                                            <img src="<?php echo $imgurl; ?>/elem/user.png">
+                                            <img src="<?php echo $url["img"]; ?>/elem/user.png">
                                         <?php } ?>
                                     </div>
                                 </div>

@@ -183,7 +183,7 @@ include_once "../assets/templates/head.php";
                             <div class="image">
                                 <div class="image-outer">
                                     <div class="actual">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $imgurl . '/products/' . $s['url']; ?>">
+                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s['url']; ?>">
                                     </div>
                                 </div>
 

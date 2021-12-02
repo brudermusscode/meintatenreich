@@ -119,7 +119,7 @@ include_once "../assets/templates/head.php";
 
 
                     <content-card class="mb24">
-                        <div class="order hd-shd adjust" style="background:url(<?php echo $imgurl; ?>/global/bggreen.jpg) repeat;background-size:42%;">
+                        <div class="order hd-shd adjust" style="background:url(<?php echo $url["img"]; ?>/global/bggreen.jpg) repeat;background-size:42%;">
                             <div class="top" style="position:absolute;top:24px;right:32px;">
 
                                 <!-- CONTENT -->

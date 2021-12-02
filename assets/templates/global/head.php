@@ -127,10 +127,9 @@
     <div data-element="dumper" class="mshd-4">
         <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">
             <p class="title"><strong>SESSION dump</strong></p>
-            <pre class="ovhid"><?php $administrate = new administrate;
-                                var_dump($administrate->getDump("session")); ?></pre>
+            <pre class="ovhid"><?php var_dump($admin->getDump("session")); ?></pre>
             <p class="mt24 title"><strong>REQUEST dump</strong></p>
-            <pre class="ovhid"><?php var_dump($administrate->getDump("request")); ?></pre>
+            <pre class="ovhid"><?php var_dump($admin->getDump("request")); ?></pre>
         </div>
     </div>
 

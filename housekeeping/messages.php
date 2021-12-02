@@ -1,30 +1,27 @@
 <?php
 
-require_once "../mysql/_.session.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($loggedIn) {
-    if ($user['admin'] !== '1') {
-        header('location: /oops');
-    }
-} else {
+
+if (!$admin->isAdmin($pdo, $my)) {
     header('location: /oops');
 }
 
 $ptit = 'Overview: Nachrichten';
 $pid = "overview:messages";
 
-include_once "./assets/templates/head.php";
+include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 ?>
 
 <!-- MAIN MENU -->
-<?php include_once "./assets/templates/menu.php"; ?>
+<?php include_once $sroot . "/housekeeping/assets/templates/menu.php"; ?>
 
 
 <main-content class="messages">
 
     <!-- MC: HEADER -->
-    <?php include_once "./assets/templates/header.php"; ?>
+    <?php include_once $sroot . "/housekeeping/assets/templates/header.php"; ?>
 
 
     <!-- MC: CONTENT -->
@@ -33,8 +30,6 @@ include_once "./assets/templates/head.php";
         <div class="wide mb42">
 
             <style>
-                .chooser {}
-
                 .chooser ul.outer {
                     display: flex;
                     flex-direction: row;
@@ -104,8 +99,6 @@ include_once "./assets/templates/head.php";
                     height: 100%;
                 }
 
-                .msg-outer .ui .name {}
-
                 .msg-outer .msg {
                     width: calc(100% - (200px + 2*32px + 1px));
                     border-left: 1px solid rgba(0, 0, 0, .12);
@@ -114,8 +107,6 @@ include_once "./assets/templates/head.php";
                 .msg-outer .msg .inr {
                     padding: 24px 32px;
                 }
-
-                .msg-outer .msg .inr .cat {}
 
                 .msg-outer .msg .inr .cat .i {
                     height: 24px;
@@ -235,4 +226,4 @@ include_once "./assets/templates/head.php";
 </main-content>
 
 
-<?php include_once "./assets/templates/footer.php"; ?>
+<?php include_once  $sroot . "/assets/templates/footer.php"; ?>

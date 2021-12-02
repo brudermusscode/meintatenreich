@@ -54,6 +54,10 @@ RewriteRule ^sepa/(..*)$ customers/sepa.php?pmid=$1 [NC,L]
 # productview
 RewriteRule ^product/(.*)$ productview.php?artnr=$1 [NC,L]
 
+# ADMIN PAGE
+RewriteRule ^_coffee_corner_/black(.*) housekeeping/index.php [NC,L]
+RewriteRule ^_coffee_corner_/(.*) housekeeping/$1 [NC,L]
+
 # ----------------------------------------------------------------------
 
 
@@ -66,16 +70,7 @@ RewriteRule ^search(|/)$ search.php
 RewriteRule ^maintenance(|/)$ maintenance.php
 
 
-# ADMIN PAGE
-RewriteRule ^hk/admin/v1/secret/overview(|/)$ housekeeping/index.php
-RewriteRule ^hk/admin/v1/secret/overview/messages(|/)$ housekeeping/messages.php
-RewriteRule ^hk/admin/v1/secret/manage/orders(|/)$ housekeeping/manage/orders.php
-RewriteRule ^hk/admin/v1/secret/manage/customers(|/)$ housekeeping/manage/customers.php
-RewriteRule ^hk/admin/v1/secret/manage/app(|/)$ housekeeping/manage/app.php
-RewriteRule ^hk/admin/v1/secret/manage/products(|/)$ housekeeping/manage/products.php
-RewriteRule ^hk/admin/v1/secret/manage/ratings(|/)$ housekeeping/manage/ratings.php
-RewriteRule ^hk/admin/v1/secret/manage/courses(|/)$ housekeeping/manage/courses.php
-RewriteRule ^hk/admin/v1/secret/functions/mailer(|/)$ housekeeping/functions/mailer.php
+
 
 
 # AP: JS GET => Elements #

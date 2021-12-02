@@ -335,7 +335,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                 <p class="posabs" style="text-shadow:0 1px 4px rgba(0,0,0,.32);right:24px;bottom:24px;color:white;font-size:1.2em;font-weight:600;">EUR <?php echo number_format($prd['price'], 2, ',', '.'); ?></p>
                             </div>
                             <div class="actual-image mshd-1">
-                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $imgurl . '/products/' . $prd['url']; ?>">
+                                <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $prd['url']; ?>">
                             </div>
                         </div>
 

@@ -59,7 +59,7 @@
                                     <p class="um-text">Einstellungen</p>
                                 </a>
 
-                                <?php if ($my->admin === '1') { ?>
+                                <?php if ($admin->isAdmin()) { ?>
                                     <a href="<?php echo $url["dashbrd"]; ?>">
                                         <p class="um-icon">
                                             <i class="icon-lock"></i>

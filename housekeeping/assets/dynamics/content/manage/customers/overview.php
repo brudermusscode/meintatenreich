@@ -67,7 +67,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
                                         <p class="cf fw4 tac ttup" style="font-size:1.4em;"><?php echo $pn; ?></p>
                                     </div>
                                 <?php } else { ?>
-                                    <img style="height:100%;" class="ovhid opa0" onload="fadeIn(this)" src="<?php echo $imgurl; ?>/elem/user.png">
+                                    <img style="height:100%;" class="ovhid opa0" onload="fadeIn(this)" src="<?php echo $url["img"]; ?>/elem/user.png">
                                 <?php } ?>
                             </div>
                         </div>

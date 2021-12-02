@@ -82,8 +82,8 @@ include_once "./assets/templates/global/header.php";
                                             </div>
                                         <?php } ?>
 
-                                        <div class="img vishid opa0 tran-all" style="background:url(<?php echo $imgurl; ?>/products/<?php echo $prd['url']; ?>) center no-repeat;background-size:cover;">
-                                            <img class="vishid opa0 hw1 tran-all" onload="fadeInVisOpaBg($(this).parent())" src="<?php echo $imgurl; ?>/products/<?php echo $prd['url']; ?>">
+                                        <div class="img vishid opa0 tran-all" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $prd['url']; ?>) center no-repeat;background-size:cover;">
+                                            <img class="vishid opa0 hw1 tran-all" onload="fadeInVisOpaBg($(this).parent())" src="<?php echo $url["img"]; ?>/products/<?php echo $prd['url']; ?>">
                                         </div>
                                     </div>
 

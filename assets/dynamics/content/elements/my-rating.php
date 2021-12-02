@@ -60,7 +60,7 @@ if (
         <div class="comment-outer mshd-1 rd3">
             <div class="user-outer disfl fldirrow">
                 <div class="uo-image">
-                    <img src="<?php echo $imgurl; ?>/elem/user.png" onload="fadeInVisOpa(this)">
+                    <img src="<?php echo $url["img"]; ?>/elem/user.png" onload="fadeInVisOpa(this)">
                 </div>
                 <div class="uo-name">
                     <p class="trimfull"><?php echo $user['displayname']; ?></p>

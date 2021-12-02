@@ -78,7 +78,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $loggedIn && $user[
                                             echo 'gal';
                                         } ?>" data-json='[{"id":"<?php echo $prdimg['id']; ?>"}]'>
                         <div class="actual-image mshd-1 tran-all-cubic">
-                            <img onload="fadeIn(this)" class="vishid opa0" src="<?php echo $imgurl . '/products/' . $prdimg['url']; ?>">
+                            <img onload="fadeIn(this)" class="vishid opa0" src="<?php echo $url["img"] . '/products/' . $prdimg['url']; ?>">
                         </div>
                     </div>
 

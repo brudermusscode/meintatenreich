@@ -207,7 +207,7 @@ include_once $sroot . "/assets/templates/global/head.php";
 
     <div class="mmain">
         <div class="logo-outer almid-h">
-            <div class="actual" style="background:url(<?php echo $imgurl; ?>/global/logo-font.svg) center no-repeat;background-size:cover;"></div>
+            <div class="actual" style="background:url(<?php echo $url["img"]; ?>/global/logo-font.svg) center no-repeat;background-size:cover;"></div>
         </div>
 
         <div data-react="maintenance"></div>

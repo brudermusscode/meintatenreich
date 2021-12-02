@@ -1,17 +1,14 @@
 <?php
 
-// MESSAGES YES O NO
-$sel = $c->prepare("SELECT * FROM admin_mails_settings WHERE id = ?");
-$sel->bind_param('s', $config["mails_set_id"]);
-$sel->execute();
-$sr = $sel->get_result();
-$sel->close();
+$getAdminMailSettings = $pdo->prepare("SELECT * FROM admin_mails_settings WHERE id = '1'");
+$getAdminMailSettings->execute();
 
-if ($sr->rowCount() > 0) {
+if ($getAdminMailSettings->rowCount() > 0) {
 
     $mailsCh = true;
-    $mailsChecked = $sr->fetch_assoc();
-    if ($mailsChecked['mails_checked'] === '0') {
+    $mailsChecked = $getAdminMailSettings->fetch();
+
+    if ($mailsChecked->mails_checked == '0') {
         $mailsCh = false;
     }
 }
@@ -49,7 +46,6 @@ if ($sr->rowCount() > 0) {
 
 
 <div class="mc-heading">
-
     <div class="lt left-content">
 
         <div class="lt">
@@ -82,5 +78,4 @@ if ($sr->rowCount() > 0) {
     </div>
 
     <div class="cl"></div>
-
 </div>

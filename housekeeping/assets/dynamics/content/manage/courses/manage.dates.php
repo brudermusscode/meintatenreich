@@ -47,7 +47,7 @@ if (isset($_REQUEST['id']) && $loggedIn && $user['admin'] === '1') {
             <form data-form="manage:course,edit">
 
                 <content-card class="mb24 posrel">
-                    <div class="mshd-1 normal-box" style="background:url(<?php echo $imgurl; ?>/global/bggreen.jpg) repeat;background-size:42%;">
+                    <div class="mshd-1 normal-box" style="background:url(<?php echo $url["img"]; ?>/global/bggreen.jpg) repeat;background-size:42%;">
                         <div style="padding:28px 42px;">
 
 
