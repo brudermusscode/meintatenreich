@@ -43,7 +43,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
                 ?>
 
-                    <content-card class="lt mr8 mb8">
+                    <content-card class="lt mr8 mb8" data-id="<?php echo $s->id; ?>" data-element="products:category">
                         <div class="normal-box adjust curpo" data-action="manage:products,category,edit" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
                             <div class="ph24 lh36">
                                 <p class="fw4" style="white-space:nowrap;"><?php echo $s->category_name; ?></p>

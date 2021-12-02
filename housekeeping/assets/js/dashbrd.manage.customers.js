@@ -2,7 +2,7 @@ $(function(){
 
     let $body = $("body");
 
-    // get customer overview
+    // get customer overview ~ works
     $(document).on('click', '[data-action="manage:customers,overview"]', function(){
 
         let id, url, $t;
@@ -31,10 +31,10 @@ $(function(){
                 }
             }
         });
-    });
+    })
     
-    // get customer orders
-    $(document).on('click', '[data-action="manage:customers,orders"]', function(){
+    // get customer orders ~ works
+    .on('click', '[data-action="manage:customers,orders"]', function(){
 
         let $t, formData, url;
 

@@ -94,14 +94,8 @@ $(function() {
     // close overlay
     $(document).on("click", "[data-action='close-overlay']", function(){
 
-        let closeOverlay, $overlay;
-        
         // find overlay and close it
-        $overlay = $('body').find('page-overlay');
-        closeOverlay = Overlay.close($overlay);
-
-        // remove hidden overflow of body
-        $("body").removeClass("ovhid");
+        const closeOverlay = Overlay.close($body);
 
     });
 
@@ -165,19 +159,12 @@ let loadContent = function(content, url, data) {
 
 }
 
-let handleOverlay = function(color, append, ) {
-    addOverlay('255,255,255', $body);
-    let $ov = $body.find('page-overlay');
-    addLoader('color', $ov);
-    let $lo = $ov.find('color-loader');
-}
-
 
 class Overlay {
 
-    static add(append, floatingLoader = true) {
+    static add(append, floatingLoader = true, card = false) {
 
-        let $overlay, $loader, array;
+        let $overlay, $loader, array, hw, position;
 
         array = {
             overlay : null,
@@ -187,17 +174,29 @@ class Overlay {
         // set body's overflow to hidden
         $('body').addClass('ovhid');
     
+        // check if append content is card or body
+        if(!card) {
+            hw = "height:100vh;width:100vw;";
+            position = "posfix";
+        } else {
+            hw = "height:100%;width:100%;";
+            position = "posabs";
+        }
+
         // append the page overlay to passed param append
-        append.append('<page-overlay class="tran-all opa0 posfix" style="height:100vh;width:100vw;background:rgba(255,255,255,.92);"></page-overlay>');
+        $overlay = append.append('<page-overlay class="tran-all opa0 ' + position + '" style="' + hw + 'background:rgba(255,255,255,.92);"></page-overlay>');
 
         // store added page overlay
-        $overlay = $('body').find('page-overlay');
+        $overlay = append.find("page-overlay");
 
         // add overlay to array
         array.overlay = $overlay;
 
-        // append closing area to the overlay
-        $overlay.append('<close data-action="close-overlay"><div class="closer"><p>Klicke hier, um das Overlay zu schließen</p></div></close>');
+        if(!card) {
+
+            // append closing area to the overlay
+            $overlay.append('<close data-action="close-overlay"><div class="closer"><p>Klicke hier, um das Overlay zu schließen</p></div></close>');
+        }
     
         // set timeout function to get full fade in transition
         setTimeout(function(){
@@ -212,6 +211,7 @@ class Overlay {
         // add loader to array
         array.loader = $loader;
 
+        // return the overlay as array
         return array;
     }
     
@@ -229,16 +229,22 @@ class Overlay {
         return $loader = append.find("color-loader");
     }
 
-    static close(overlay) {
+    static close(append) {
         
-        overlay.css('opacity', '0');
+        let $overlay = append.find("page-overlay");
+
+        // let overlay fade out
+        $overlay.css('opacity', '0');
     
+        // set timeout for smooth fade out
         setTimeout(function(){
-            overlay.remove();
-            overlay.closest('body').removeClass('ovhid');
+
+            // remove overlay
+            $overlay.remove();
         }, 400);
 
-        return true;
+        // reove overflow hidden of body
+        append.removeClass('ovhid');
     }
 }
 

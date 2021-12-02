@@ -47,6 +47,7 @@ class Shop
             $return = [
                 "status" => true,
                 "commit" => $commit,
+                "rows" => $stmt->rowCount(),
                 "lastInsertId" => $connection->lastInsertId()
             ];
 
@@ -70,9 +71,7 @@ class Shop
             ];
 
             // rollback data and return error information
-            if ($commit) {
-                $connection->rollback();
-            }
+            $connection->rollback();
 
             return $return;
         }

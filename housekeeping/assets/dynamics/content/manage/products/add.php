@@ -1,9 +1,7 @@
 <?php
 
-
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
-
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if ($admin->isAdmin()) {
 
@@ -121,13 +119,12 @@ if ($admin->isAdmin()) {
 
                                             $selCat = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
                                             $selCat->execute();
-                                            $selCat_r = $selCat->get_result();
 
-                                            foreach ($cat = $selCat_r->fetchAll() as ) {
+                                            foreach ($selCat->fetchAll() as $cat) {
 
                                             ?>
-                                                <li class="trimfull" data-json='[{"id":"<?php echo $cat['id']; ?>"}]'>
-                                                    <?php echo $cat['name']; ?>
+                                                <li class="trimfull" data-json='[{"id":"<?php echo $cat->id; ?>"}]'>
+                                                    <?php echo $cat->name; ?>
                                                 </li>
                                             <?php } ?>
                                         </ul>
@@ -149,7 +146,7 @@ if ($admin->isAdmin()) {
 
                             <div class="desc-bool">
 
-                                <p class="lt text">Sofern das Produkt eine Mehrwert-Steuer enthält, kann diese Option aktiviert werden. Die derzeitige Steuer beträgt <strong><?php echo $mwstr; ?> %</strong>.</p>
+                                <p class="lt text">Sofern das Produkt eine Mehrwert-Steuer enthält, kann diese Option aktiviert werden. Die derzeitige Steuer beträgt <strong><?php echo $main["mwstr"]; ?> %</strong>.</p>
 
                                 <div class="bool rt">
                                     <div class="boolean-great" data-element="boolean-great">
@@ -197,9 +194,9 @@ if ($admin->isAdmin()) {
                         </div>
 
 
-                        <div data-action="manage:products,add,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
+                        <button type="submit" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
                             <p>Hinzufügen</p>
-                        </div>
+                        </button>
 
                     </form>
 
@@ -213,7 +210,7 @@ if ($admin->isAdmin()) {
 <?php
 
 } else {
-    exit;
+    exit(0);
 }
 
 ?>

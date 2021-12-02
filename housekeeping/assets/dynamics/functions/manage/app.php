@@ -9,7 +9,7 @@ header('Content-Type: application/json; charset=utf-8');
 // error output
 $return = [
     "status" => false,
-    "message" => "Das ist wohl ein Oopsie passiert"
+    "message" => "Da ist wohl ein Oopsie passiert"
 ];
 
 // objectify return array

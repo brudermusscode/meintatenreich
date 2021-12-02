@@ -1,169 +1,172 @@
 $(function(){
 
+    let $body = $("body");
+
     // upload images with these arrays
     let uploadImagesArray = [];
     let uploadImagesErrorArray = [];
 
-    // categories > add
+    // categories > add ~ works
     $(document).on('click', '[data-action="manage:products,category,add"]', function(){
         
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
-        
-        let $t = $(this);
-        let url = '/hk/get/manage/product/category/add';
-        
-        let ajax = $.ajax({
-            
-            url: url,
-            method: 'POST',
-            type: 'HTML',
-            success: function(data, status) {
-                
-                $lo.remove();
-                $ov.append(data);
-                
-            }
-            
-        });
-        
-    })
-    
-    // categories > add > save
-    .on('click', '[data-action="manage:products,category,add,save"]', function(){
-        
-        // HANDLE OVERLAY
-        let $ov = $bod.find('page-overlay');
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
-        
-        let $t = $(this);
-        let res;
-        let url = '/hk/ajax/manage/product/category/add';
-        let $f = $('[data-form="manage:products,category,add"]');
-        let $r = $('[data-react="manage:products,category,add"]');
-        let dS = $f.serialize();
-        
-        showDialer('Speichern...');
-        
-        let ajax = $.ajax({
+        let overlay, url;
 
+        // add new overlay
+        overlay = Overlay.add($body, true);
+
+        // set url for xhr request
+        url = dynamicHost + '/_magic_/ajax/content/manage/products/categories/add';
+        
+        $.ajax({
+            
             url: url,
-            data: dS,
             method: 'POST',
             type: 'HTML',
-            success: function(data){
+            success: function(data,) {
                 
-                switch(data){
-                    case '0':
-                    default:
-                        res = 'Ein unbekannter Fehler ist aufgetreten...';
-                        closeOverlay($ccOv, false);
-                        break;
-                    case '1':
-                        res = 'Diese Kategorie existiert bereits...';
-                        closeOverlay($ccOv, false);
-                        break;
-                    case 'success':
-                        res = 'Hinzugefügt!';
-                        $r.prepend('<content-card class="lt mr8 mb8"><div class="normal-box adjust"><div class="ph24 lh36"><p class="fw4" style="white-space:nowrap;">' + $f.find('input[name="name"]').val() + '</p></div></div></content-card>');
-                        closeOverlay($ov, true);
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
                 }
-                
-                showDialer(res);
-
             }
-
         });
-        
     })
     
-    // categories > edit
-    .on('click', '[data-action="manage:products,category,edit"]', function(){
+    // categories > add > save ~ works
+    .on('submit', '[data-form="manage:products,category,add"]', function(e){
         
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
+        e.preventDefault();
+
+        let $t, $r, url, formData, closeOverlay;
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
         
-        let $t = $(this);
-        let url = '/hk/get/manage/product/category/edit';
-        let id = $t.data('json')[0].id;
-        let dS = { id: id };
-        let res;
+        $t = $(this);
+        $r = $('[data-react="manage:products,category,add"]');
+        url = dynamicHost + '/_magic_/ajax/functions/manage/products/categories/add';
+        formData = new FormData(this);
         
-        let ajax = $.ajax({
+        $.ajax({
 
             url: url,
-            data: dS,
+            data: formData,
             method: 'POST',
-            type: 'HTML',
-            success: function(data){
-                
-                $lo.remove();
-                $ov.append(data);
-
-            }
-
-        });
-        
-    })
-    
-    // categories > edit > save
-    .on('click', '[data-action="manage:products,category,edit,confirm"]', function(){
-        
-        // HANDLE OVERLAY
-        let $ov = $bod.find('page-overlay');
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
-        
-        let $t = $(this);
-        let res;
-        let url = '/hk/ajax/manage/product/category/edit';
-        let $f = $('[data-form="manage:products,category,edit"]');
-        let dS = $f.serialize();
-        
-        showDialer('Speichere...');
-        
-        let ajax = $.ajax({
-
-            url: url,
-            data: dS,
-            method: 'POST',
-            type: 'TEXT',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
             success: function(data){
                 
                 console.log(data);
-                
-                switch(data){
-                    case '0':
-                    case '1':
-                    default:
-                        res = 'Ein Fehler ist aufgetreten...';
-                        closeOverlay($ccOv, false);
-                        break;
-                    case 'success':
-                        res = 'Gespeichert!';
-                        closeOverlay($ccOv, false);
-                }
-                
-                showDialer(res);
 
+                if(data.status) {
+                    res = 'Hinzugefügt!';
+                    $r.prepend('<content-card class="lt mr8 mb8"><div class="normal-box adjust"><div class="ph24 lh36"><p class="fw4" style="white-space:nowrap;">' + $t.find('input[name="name"]').val() + '</p></div></div></content-card>');
+                    closeOverlay = Overlay.close($body);
+                } else {
+                    closeOverlay = Overlay.close(overlay.overlay.parent());
+                }
+
+                showDialer(data.message);
+
+            },
+            error: function(data) {
+                console.error(data);
+            }
+
+        });
+        
+        return false;
+    })
+    
+    // categories > edit ~ works
+    .on('click', '[data-action="manage:products,category,edit"]', function(){
+        
+        let overlay, url, id, $t;
+
+        // new overlay
+        overlay = Overlay.add($body, true);
+        
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/content/manage/products/categories/edit';
+        id = $t.data('json')[0].id;
+        
+        $.ajax({
+
+            url: url,
+            data: { id: id },
+            method: 'POST',
+            type: 'HTML',
+            success: function(data){
+
+                if(data != 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("WOOH BRRRRA");
+                    overlay = Overlay.close($body);
+                }
+
+            },
+            error: function(data) {
+                console.error(data);
             }
 
         });
         
     })
     
-    // categories > delete
+    // categories > edit > save ~ works
+    .on('submit', '[data-form="manage:products,category,edit"]', function(e){
+        
+        e.preventDefault();
+
+        let closeOverlay, overlay, url, $t, $append;
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
+        
+        $t = $(this);
+        formData = new FormData(this);
+        url = dynamicHost + '/_magic_/ajax/functions/manage/products/categories/edit';
+        
+        $.ajax({
+
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(data){
+                
+                if(data.status) {
+                    closeOverlay = Overlay.close($body);
+                } else {
+                    closeOverlay = Overlay.close(overlay.overlay.parent());
+                }
+                
+                showDialer(data.message);
+
+            },
+            error: function(data) {
+                console.log(data);
+            }
+
+        });
+        
+        return false;
+    })
+    
+    // categories > delete ~ works
     .on('click', '[data-action="manage:products,category,edit,remove"]', function(){
         
         let $t = $(this);
@@ -180,25 +183,28 @@ $(function(){
         
     })
     
-    // categories > delete > save
-    .on('click', '[data-action="manage:products,category,edit,remove,confirm"]', function(){
+    // categories > delete > save ~ works
+    .on('click', '[data-action="manage:products,category,edit,remove,confirm"]', function(e){
         
-        // HANDLE OVERLAY
-        let $ov = $bod.find('page-overlay');
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
+        e.preventDefault();
+
+        let closeOverlay, overlay, url, id, $t, $f, $card, $append;
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
         
-        let $t = $(this);
-        let res;
-        let url = '/hk/ajax/manage/product/category/edit/delete';
-        let $f = $('[data-form="manage:products,category,edit"]');
-        let dS = $f.serialize();
+        $t = $(this);
+        id = $t.data("id");
+        url = '/_magic_/ajax/functions/manage/products/categories/delete';
+        $f = $('[data-form="manage:products,category,edit"]');
+        $card = $("[data-element='products:category'][data-id='" + id + "']").children();
+
+        dS = $f.serialize();
         
-        showDialer('Lösche...');
-        
-        let ajax = $.ajax({
+        $.ajax({
 
             url: url,
             data: dS,
@@ -206,52 +212,60 @@ $(function(){
             type: 'TEXT',
             success: function(data){
                 
-                switch(data){
-                    case '0':
-                    case '1':
-                    default:
-                        res = 'Ein Fehler ist aufgetreten...';
-                        closeOverlay($ccOv, false);
-                        break;
-                    case 'success':
-                        res = 'Gelöscht, bitte warten...';
-                        window.location.replace(window.location);
+                console.log(data, "hi");
+                
+                if(data.status) {
+                    closeOverlay = Overlay.close($body);
+                    $card.css({
+                        background:"#c48b9f",
+                        color:"white",
+                        transition:"all .4s linear"
+                    });
+
+                    setTimeout(function(){
+                        $card.fadeOut(400);
+                    }, 1600);
+
+                } else {
+                    closeOverlay = Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(res);
+                showDialer(data.message);
 
+            },
+            error: function(data) {
+                console.log(data);
             }
-
         });
         
     })
 
     // add product
     .on('click', '[data-action="manage:products,add"]', function(){
-
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
         
-        let $t = $(this);
-        let url = '/hk/get/manage/product/add';
-        
-        let ajax = $.ajax({
+        let overlay, url;
 
+        // add new overlay
+        overlay = Overlay.add($body, true);
+
+        // set url for xhr request
+        url = dynamicHost + '/_magic_/ajax/content/manage/products/add';
+        
+        $.ajax({
+            
             url: url,
             method: 'POST',
             type: 'HTML',
-            success: function(data){
+            success: function(data,) {
                 
-                $lo.remove();
-                $ov.append(data);
-
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
+                }
             }
-
         });
-
     })
 
     // add > upload images

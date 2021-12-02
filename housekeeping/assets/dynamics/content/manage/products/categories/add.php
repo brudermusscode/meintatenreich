@@ -1,9 +1,7 @@
 <?php
 
-
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
-
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if ($admin->isAdmin()) {
 
@@ -23,7 +21,7 @@ if ($admin->isAdmin()) {
             <div class="mshd-1 normal-box">
                 <div style="padding:32px 42px;">
 
-                    <form data-form="manage:products,category,add">
+                    <form data-form="manage:products,category,add" method="POST" action="" onsubmit="return false;">
 
                         <!-- TITLE -->
                         <div class="fw6 mb12">
@@ -36,11 +34,11 @@ if ($admin->isAdmin()) {
                             </div>
                         </div>
 
-                    </form>
+                        <button type="submit" class="btn-outline rt " style="border-color:#AC49BD;color:#AC49BD;">
+                            <p>Hinzufügen</p>
+                        </button>
 
-                    <div data-action="manage:products,category,add,save" class="btn-outline rt " style="border-color:#AC49BD;color:#AC49BD;">
-                        <p>Hinzufügen</p>
-                    </div>
+                    </form>
 
                     <div class="cl"></div>
                 </div>
@@ -54,7 +52,7 @@ if ($admin->isAdmin()) {
 <?php
 
 } else {
-    exit;
+    exit(0);
 }
 
 ?>
