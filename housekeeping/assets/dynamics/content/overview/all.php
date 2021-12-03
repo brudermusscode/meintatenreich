@@ -7,10 +7,10 @@ if (!$admin->isAdmin()) {
 }
 
 // GET ORDERS, CUSTOMERS, RATINGS
-$selOverview = $pdo->prepare("SELECT * FROM admin_overview ORDER BY timestamp DESC");
-$selOverview->execute();
+$getAdminOverview = $pdo->prepare("SELECT * FROM admin_overview ORDER BY timestamp DESC");
+$getAdminOverview->execute();
 
-if ($selOverview->rowCount() < 1) {
+if ($getAdminOverview->rowCount() < 1) {
 
 ?>
 
@@ -23,35 +23,36 @@ if ($selOverview->rowCount() < 1) {
         </div>
     </content-card>
 
-<?php
+    <?php
 
 }
 
-foreach ($selOverview->fetchAll() as $ov) {
+foreach ($getAdminOverview->fetchAll() as $ov) {
 
+    // type of card
     $tt = $ov->ttype;
+
+    // id of overview card
     $rid = $ov->rid;
 
-?>
-
-    <?php
-
+    // if type is an order, do following
     if ($tt === 'order') {
 
-        $sel = $pdo->prepare("
+        // get all orders
+        $getOrders = $pdo->prepare("
             SELECT *, customer_buys.id AS oid 
             FROM customer_buys, customer 
             WHERE customer_buys.uid = customer.id 
             AND customer_buys.id = ?
         ");
-        $sel->execute([$rid]);
+        $getOrders->execute([$rid]);
 
-        foreach ($sel->fetchAll() as $s) {
+        foreach ($getOrders->fetchAll() as $s) {
 
-            // GET BILL PDF ID
-            $sel = $pdo->prepare("SELECT * FROM customer_buys_pdf WHERE bid = ?");
-            $sel->execute([$s->oid]);
-            $pdf = $sel->fetch();
+            // get bills for orders
+            $getBills = $pdo->prepare("SELECT * FROM customer_buys_pdf WHERE bid = ?");
+            $getBills->execute([$s->oid]);
+            $pdf = $getBills->fetch();
 
     ?>
 
@@ -116,7 +117,7 @@ foreach ($selOverview->fetchAll() as $ov) {
                                                     <div class="cl"></div>
                                                 </li>
 
-                                                <a href="/a/bill/<?php echo $pdf['id']; ?>" target="_blank" style="color:rgb(80, 104, 161);">
+                                                <a href="/a/bill/<?php echo $pdf->id; ?>" target="_blank" style="color:rgb(80, 104, 161);">
                                                     <li class="wic">
                                                         <p class="ic lt"><i class="material-icons md-18">description</i></p>
                                                         <p class="lt ne trimfull">Rechnung anzeigen</p>
@@ -140,69 +141,48 @@ foreach ($selOverview->fetchAll() as $ov) {
                             <?php
 
                             // GET PRODUCT INFORMATION
-                            $selProd = $pdo->prepare("SELECT * FROM customer_buys_products WHERE bid = ?");
-                            $selProd->execute([$s->oid]);
+                            $getOrdersProducts = $pdo->prepare("
+                                SELECT * 
+                                FROM customer_buys_products, products, products_images 
+                                WHERE customer_buys_products.pid = products.id 
+                                AND products.id = products_images.pid 
+                                AND isgal = '1' 
+                                AND bid = ?
+                                ORDER BY customer_buys_products.id
+                                DESC
+                            ");
+                            $getOrdersProducts->execute([$s->oid]);
 
-                            if ($selProd->rowCount() > 3) {
-
-                                // GET PRODUCT INFORMATION
-                                $selProd = $pdo->prepare("
-                                    SELECT * FROM customer_buys_products, products, products_images 
-                                    WHERE customer_buys_products.pid = products.id 
-                                    AND products.id = products_images.pid 
-                                    AND bid = ? 
-                                    AND isgal = '1'
-                                    LIMIT 3
-                                ");
-                                $selProd->execute([$s->oid]);
-
-                                foreach ($selProd->fetchAll() as $p) {
+                            $count = 0;
+                            foreach ($getOrdersProducts->fetchAll() as $p) {
 
                             ?>
 
-                                    <div class="prod mshd-1">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
-                                    </div>
-
-                                <?php
-
-                                } // END WHILE: PRODUCTS 
-
-                                ?>
-
-                                <div class="prod noprod">
-                                    <p>+ <?php echo $selProd->rowCount() - 3; ?></p>
+                                <div class="prod mshd-1">
+                                    <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
                                 </div>
 
                                 <?php
 
-                            } else {
+                                if ($count == 3 - 1) {
 
-                                // GET PRODUCT INFORMATION
-                                $selProd = $pdo->prepare("
-                                    SELECT * FROM customer_buys_products, products, products_images 
-                                    WHERE customer_buys_products.pid = products.id 
-                                    AND products.id = products_images.pid 
-                                    AND bid = ? 
-                                    AND isgal = '1'
-                                    LIMIT 3
-                                ");
-                                $selProd->execute([$s->oid]);
-
-                                foreach ($sPr_r->fetchAll() as $p) {
-
-                                ?>
-
-                                    <div class="prod hd-shd">
-                                        <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $p->url; ?>">
-                                    </div>
-
-                            <?php
-
+                                    break;
+                                } else {
+                                    $count++;
                                 }
                             }
 
-                            ?>
+                            if ($getOrdersProducts->rowCount() > 3) {
+
+                                ?>
+
+                                <div class="prod noprod">
+                                    <p>+ <?php echo $getOrdersProducts->rowCount() - 3; ?></p>
+                                </div>
+
+
+                            <?php } ?>
+
                         </div>
 
                         <!-- TOOLS -->
