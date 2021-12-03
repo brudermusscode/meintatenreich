@@ -130,7 +130,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     if ($selProd->rowCount() > 3) {
 
                                         // GET PRODUCT INFORMATION
-                                        $selProd = $pdo->prepare("
+                                        $getProductInformation = $pdo->prepare("
                                             SELECT * FROM customer_buys_products, products, products_images 
                                             WHERE customer_buys_products.pid = products.id 
                                             AND products.id = products_images.pid 
@@ -138,9 +138,9 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                             AND isgal = '1'
                                             LIMIT 3
                                         ");
-                                        $selProd->execute([$oid]);
+                                        $getProductInformation->execute([$oid]);
 
-                                        foreach ($selProd->fetchAll() as $p) {
+                                        foreach ($getProductInformation->fetchAll() as $p) {
 
                                     ?>
 
