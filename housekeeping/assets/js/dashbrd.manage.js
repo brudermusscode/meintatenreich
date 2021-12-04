@@ -64,7 +64,7 @@ $(function() {
     // >> add images
     $(document).on("click", '[data-action="manage:products,add,addImage"]', function(){
         
-        let $i = $(document).find('[data-react="manage:products,add,addImage"]').click();
+        let $i = $(document).find('[data-form="uploadFiles:products,add"] input[type="file"]').click();
         
     })
 

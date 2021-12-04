@@ -422,5 +422,3 @@ class Image implements \ArrayAccess
       return move_uploaded_file($tmp_name, $destination);
     }
 }
-
-?>

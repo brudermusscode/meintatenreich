@@ -1,47 +1,27 @@
 <?php
 
-
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
-
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = $_REQUEST['id'];
 
-    // SELECT PRODUCT
-    $sel = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-    $sel->bind_param('s', $id);
-    $sel->execute();
+    $sel = $pdo->prepare("
+        SELECT *, products.id AS pid, products_desc.id as did, products_categories.id AS cid, products_images.id AS iid
+        FROM products, products_desc, products_categories, products_images 
+        WHERE products.id = products_desc.pid 
+        AND products.id = products_images.pid 
+        AND products_categories.id = products.cid
+        AND products_images.isgal = '1' 
+        AND products.id = ?
+    ");
+    $sel->execute([$id]);
 
-    $sr = $sel->get_result();
-    $sel->close();
-
-    if ($sr->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // GET PRODUCT INFO
-        $s = $sr->fetch();
-
-        // GET PRODUCT DESCRIPTION
-        $sel = $pdo->prepare("
-                SELECT * 
-                FROM products_desc
-                WHERE pid = ?
-            ");
-        $sel->bind_param('s', $id);
-        $sel->execute();
-        
-        $sdesc = $sel->fetch();
-        $desc = $sdesc['text'];
-
-        // GET CURRENT CATEGORY
-        $selCatCur = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
-        $selCatCur->bind_param('s', $s['cid']);
-        $selCatCur->execute();
-        $srr = $selCatCur->get_result();
-        $selCatCur->close();
-
-        $catCur = $srr->fetch();
+        $s = $sel->fetch();
 
 ?>
 
@@ -59,35 +39,22 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                 <?php
 
-                $sel = $pdo->prepare("
-                    SELECT * 
-                    FROM products_images
-                    WHERE pid = ?
-                    ORDER BY timestamp
-                    DESC
-                ");
-                $sel->bind_param('s', $id);
-                $sel->execute();
-                
+                $sel = $pdo->prepare("SELECT * FROM products_images WHERE pid = ? ORDER BY timestamp DESC");
+                $sel->execute([$id]);
 
-                foreach ($prdimg = $sel->fetchAll() as ) {
+                foreach ($sel->fetchAll() as $prdimg) {
 
                 ?>
 
-                    <div class="item lt <?php if ($prdimg['isgal'] === '1') {
+                    <div class="item lt <?php if ($prdimg->isgal === '1') {
                                             echo 'gal';
-                                        } ?>" data-json='[{"id":"<?php echo $prdimg['id']; ?>"}]'>
+                                        } ?>" data-json='[{"id":"<?php echo $prdimg->id; ?>"}]'>
                         <div class="actual-image mshd-1 tran-all-cubic">
-                            <img onload="fadeIn(this)" class="vishid opa0" src="<?php echo $url["img"] . '/products/' . $prdimg['url']; ?>">
+                            <img onload="fadeIn(this)" class="vishid opa0" src="<?php echo $url["img"] . '/products/' . $prdimg->url; ?>">
                         </div>
                     </div>
 
-                <?php
-
-                }
-                $sel->close(); // END WHILE PRD
-
-                ?>
+                <?php } ?>
 
 
                 <div class="item add-new lt" data-action="manage:products,edit,addImage">
@@ -99,13 +66,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                     </div>
                 </div>
 
-                <div class="vishid opa0 hw1">
-                    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
-                    <input id="image-penetration" type="file" name="pictures" multiple accept="image/*" data-react="manage:products,edit,addImage" />
-                </div>
-
                 <div class="cl"></div>
-
             </div>
 
 
@@ -125,21 +86,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                 <div class="mshd-1 normal-box">
                     <div style="padding:32px 42px;">
 
-                        <form data-form="manage:products,edit">
-
-                            <?php
-
-                            // CHECK GALLERY IMAGE
-                            $selGal = $pdo->prepare("SELECT * FROM products_images WHERE isgal = '1' AND pid = ?");
-                            $selGal->bind_param('s', $id);
-                            $selGal->execute();
-                            $selGal_r = $selGal->get_result();
-                            $selGal->close();
-                            $sg = $selGal_r->fetch();
-
-                            ?>
-
-                            <input type="hidden" name="gallery" data-react="manage:products,edit,addImage,gallery" value="<?php echo $sg['id']; ?>">
+                        <form data-form="manage:products,edit" method="POST" action onsubmit="return false;">
 
                             <div class="fw6 mb12">
                                 <p style="color:#5068A1;">Titel des Produktes</p>
@@ -147,7 +94,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                             <div class="input tran-all-cubic mb42">
                                 <div class="input-outer">
-                                    <input type="text" autocomplete="off" name="name" placeholder="Gebe einen Titel für das Produkt ein..." value="<?php echo $s['name']; ?>" class="tran-all">
+                                    <input type="text" autocomplete="off" name="name" placeholder="Gebe einen Titel für das Produkt ein..." value="<?php echo $s->name; ?>" class="tran-all">
                                 </div>
                             </div>
 
@@ -158,7 +105,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                             <div class="textarea mb42">
                                 <div class="textarea-outer">
-                                    <textarea name="desc" placeholder="Was möchtest du dem Kunden mitteilen?" class="tran-all"><?php echo $desc; ?></textarea>
+                                    <textarea name="desc" placeholder="Was möchtest du dem Kunden mitteilen?" class="tran-all"><?php echo $s->text; ?></textarea>
                                 </div>
                             </div>
 
@@ -172,14 +119,12 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                     <div style="color:green;right:18px;padding-left:12px;line-height:32px;top:5px;font-size:1.2em;border-left:1px solid rgba(0,0,0,.12);" class="fw6 posabs">
                                         <p>€</p>
                                     </div>
-                                    <input type="text" autocomplete="off" name="price" placeholder="Preis in EURO..." class="tran-all" value="<?php echo number_format($s['price'], 2, ',', '.'); ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
+                                    <input type="text" autocomplete="off" name="price" placeholder="Preis in EURO..." class="tran-all" value="<?php echo number_format($s->price, 2, ',', '.'); ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
                                 </div>
                             </div>
 
 
                             <style>
-                                .boolean-great {}
-
                                 .boolean-great .outer {
                                     background: rgba(0, 0, 0, .24);
                                     border-radius: 100px;
@@ -238,7 +183,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                                     <div data-element="admin-select" data-input="true" data-list-size="312" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
                                         <div class="outline disfl fldirrow">
-                                            <p class="text"><?php echo $catCur['name']; ?></p>
+                                            <p class="text"><?php echo $s->category_name; ?></p>
                                             <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                                         </div>
 
@@ -248,17 +193,16 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                                                 $selCat = $pdo->prepare("SELECT * FROM products_categories ORDER BY id DESC");
                                                 $selCat->execute();
-                                                $selCat_r = $selCat->get_result();
 
-                                                foreach ($cat = $selCat_r->fetchAll() as ) {
+                                                foreach ($selCat->fetchAll() as $cat) {
 
                                                 ?>
-                                                    <li class="trimfull" data-json='[{"id":"<?php echo $cat['id']; ?>"}]'>
-                                                        <?php echo $cat['name']; ?>
+                                                    <li class="trimfull" data-json='[{"id":"<?php echo $cat->id; ?>"}]'>
+                                                        <?php echo $cat->category_name; ?>
                                                     </li>
                                                 <?php } ?>
                                             </ul>
-                                            <input type="hidden" name="cid" value="<?php echo $catCur['id']; ?>">
+                                            <input type="hidden" name="cid" value="<?php echo $s->cid; ?>">
                                         </datalist>
                                     </div>
                                 </div>
@@ -276,10 +220,10 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                                 <div class="desc-bool">
 
-                                    <p class="lt text">Sofern das Produkt eine Mehrwert-Steuer enthält, kann diese Option aktiviert werden. Die derzeitige Steuer beträgt <strong><?php echo $mwstr; ?> %</strong>.</p>
+                                    <p class="lt text">Sofern das Produkt eine Mehrwert-Steuer enthält, kann diese Option aktiviert werden. Die derzeitige Steuer beträgt <strong><?php echo $main["mwstr"]; ?> %</strong>.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($s['mwstr'] === '1') {
+                                        <div class="boolean-great <?php if ($s->mwstr === '1') {
                                                                         echo 'on';
                                                                     } ?>" data-element="boolean-great">
                                             <div class="outer tran-all">
@@ -288,7 +232,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                                 </div>
                                             </div>
 
-                                            <input type="hidden" name="mwstr" value="<?php echo $s['mwstr']; ?>">
+                                            <input type="hidden" name="mwstr" value="<?php echo $s->mwstr; ?>">
                                         </div>
                                     </div>
 
@@ -309,7 +253,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                     <p class="lt text">Bei Ausverkauf des Prduktes wird diese Option automatisch deaktiviert. Sollte das Produkt aus dem Programm genommen werden, kann sie manuell ausgeschaltet werden.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($s['available'] === '1') {
+                                        <div class="boolean-great <?php if ($s->available === '1') {
                                                                         echo 'on';
                                                                     } ?>" data-element="boolean-great">
                                             <div class="outer tran-all">
@@ -318,7 +262,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                                 </div>
                                             </div>
 
-                                            <input type="hidden" name="available" value="<?php echo $s['available']; ?>">
+                                            <input type="hidden" name="available" value="<?php echo $s->available; ?>">
                                         </div>
                                     </div>
 
@@ -328,8 +272,15 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                             </div>
 
 
-                            <div data-action="manage:products,edit,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
+                            <button type="submit" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
                                 <p>Speichern</p>
+                            </button>
+
+                            <div class="vishid opa0" data-react="uploadFiles:upload-new-files" style="height:0px;width:0px;overflow:hidden;">
+                                <input name="store" type="hidden" value />
+                                <input name="gallery" type="hidden" value="<?php echo $s->iid; ?>" />
+                                <input name="pid" type="hidden" value="<?php echo $s->pid; ?>" />
+                                <input id="image-penetration" type="file" name="pictures" multiple accept="image/*" data-react="manage:products,edit,addImage" />
                             </div>
 
                         </form>
@@ -345,10 +296,10 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 <?php
 
     } else {
-        exit('1');
+        exit(0);
     }
 } else {
-    exit;
+    exit(0);
 }
 
 ?>

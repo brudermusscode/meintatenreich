@@ -7,7 +7,13 @@ if ($admin->isAdmin()) {
 
 ?>
 
-    <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $id; ?>"}]'>
+    <wide-container style="padding-top:62px;">
+
+        <div style="visibility:hidden;height:0px;width:0px;opacity:0;overflow:hidden;">
+            <form data-form="uploadFiles:products,add" method="POST" enctype="multipart/form-data" action>
+                <input name="pictures" type="file" multiple accept="image/*" />
+            </form>
+        </div>
 
 
         <!-- PICTURES -->
@@ -16,11 +22,6 @@ if ($admin->isAdmin()) {
         </div>
 
         <div class="product-overview mb42 posrel" data-react="manage:products,add,addImage,show" data-action="manage:products,add,addImage,gallery">
-
-            <div class="vishid opa0 hw1">
-                <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
-                <input id="upload-new-images" type="file" name="pictures" multiple accept="image/*" data-react="manage:products,add,addImage" />
-            </div>
 
             <div class="item add-new lt" data-action="manage:products,add,addImage">
                 <div class="actual-image mshd-1 posrel">
@@ -58,9 +59,7 @@ if ($admin->isAdmin()) {
             <div class="mshd-1 normal-box">
                 <div style="padding:32px 42px;">
 
-                    <form data-form="manage:products,add">
-
-                        <input data-react="manage:products,add,addImage,gallery" type="hidden" name="gallery" value>
+                    <form data-form="manage:products,add" method="POST" action="" onsubmit="return false;">
 
                         <div class="fw6 mb12">
                             <p style="color:#5068A1;">Titel des Produktes</p>
@@ -124,10 +123,11 @@ if ($admin->isAdmin()) {
 
                                             ?>
                                                 <li class="trimfull" data-json='[{"id":"<?php echo $cat->id; ?>"}]'>
-                                                    <?php echo $cat->name; ?>
+                                                    <?php echo $cat->category_name; ?>
                                                 </li>
                                             <?php } ?>
                                         </ul>
+
                                         <input type="hidden" name="cid">
                                     </datalist>
                                 </div>
@@ -197,6 +197,11 @@ if ($admin->isAdmin()) {
                         <button type="submit" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
                             <p>Hinzufügen</p>
                         </button>
+
+                        <div class="vishid opa0" data-react="uploadFiles:upload-new-files" style="height:0px;width:0px;overflow:hidden;">
+                            <input name="store" type="hidden" value />
+                            <input name="gallery" type="hidden" value>
+                        </div>
 
                     </form>
 

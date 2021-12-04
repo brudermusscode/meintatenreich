@@ -1,9 +1,20 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
+// set JSON output format
+header('Content-Type: application/json; charset=utf-8');
 
+// error output
+$return = [
+    "status" => false,
+    "message" => "Da ist wohl ein Oopsie passiert",
+    "REQUEST" => $_REQUEST
+];
+
+// objectify return array
+$return = (object) $return;
 
 function clean($string)
 {
@@ -12,164 +23,147 @@ function clean($string)
 }
 
 if (
-    isset($_REQUEST['gallery'], $_REQUEST['id'], $_REQUEST['cid'], $_REQUEST['price'], $_REQUEST['desc'], $_REQUEST['name'], $_REQUEST['mwstr'], $_REQUEST['available'])
-    && is_numeric($_REQUEST['id'])
+    isset(
+        $_REQUEST['pid'],
+        $_REQUEST['store'],
+        $_REQUEST['gallery'],
+        $_REQUEST['cid'],
+        $_REQUEST['price'],
+        $_REQUEST['name'],
+        $_REQUEST['desc'],
+        $_REQUEST['available'],
+        $_REQUEST['mwstr']
+    )
+    && strlen($_REQUEST['name']) > 0
+    && strlen($_REQUEST['desc']) > 0
+    && strlen($_REQUEST['price']) > 0
+    && strlen($_REQUEST['gallery']) > 0
     && is_numeric($_REQUEST['cid'])
-    && is_numeric($_REQUEST['gallery'])
-    && is_numeric($_REQUEST['mwstr'])
     && is_numeric($_REQUEST['available'])
-    && $loggedIn
-    && $user['admin'] === '1'
+    && is_numeric($_REQUEST['mwstr'])
+    && is_numeric($_REQUEST['pid'])
+    && $admin->isAdmin()
 ) {
 
-    // CLEAR VARS
-    $id = $_REQUEST['id'];
+    // convert price format
+    $name = $_REQUEST['name'];
     $cid = $_REQUEST['cid'];
-    $gal = $_REQUEST['gallery'];
     $price = clean($_REQUEST['price']);
     $price = str_replace(',', '.', $price);
     $price = number_format($price, 2, '.', ',');
-    $desc = htmlspecialchars($_REQUEST['desc']);
-    $name = htmlspecialchars($_REQUEST['name']);
+
+    $desc = $_REQUEST['desc'];
     $mwstr = $_REQUEST['mwstr'];
     $av = $_REQUEST['available'];
+    $gal = $_REQUEST['gallery'];
+    $pid = $_REQUEST['pid'];
 
-    // CHECK IF CATEGORY EXISTS
-    $sel = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
-    $sel->bind_param('s', $cid);
-    $sel->execute();
-    $sr = $sel->get_result();
-    $sel->close();
+    // start mysql transaction
+    $pdo->beginTransaction();
 
-    if ($sr->rowCount() < 1) {
-        exit('2');
-    }
+    // don't commit on first query
+    $commit = false;
 
-    // SELECT PRODUCT
-    $sel = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-    $sel->bind_param('s', $id);
-    $sel->execute();
+    // check if sent category id is existent
+    $getProductsCategories = $pdo->prepare("SELECT * FROM products_categories WHERE id = ?");
+    $getProductsCategories->execute([$cid]);
 
-    $sr = $sel->get_result();
-    $sel->close();
+    if ($getProductsCategories->rowCount() > 0) {
 
-    if ($sr->rowCount() > 0) {
-
-        // GET CURRENT INFORMATION
-        $s = $sr->fetch();
-
-
-        // CHECK GALLERY IMAGE
-        $selGal = $pdo->prepare("SELECT * FROM products_images WHERE id = ? AND isgal = '1' AND pid = ?");
-        $selGal->bind_param('ss', $id, $gal);
-        $selGal->execute();
-        $selGal_r = $selGal->get_result();
-        $selGal->close();
-
-        $updPrdImg = true;
-        $updPrdImgNew = true;
-        if ($selGal->rowCount() < 1) {
-
-            $imgarray = [];
-            $selGalNew = $pdo->prepare("SELECT * FROM products_images WHERE pid = ?");
-            $selGalNew->bind_param('s', $id);
-            $selGalNew->execute();
-            $selGalNew_r = $selGalNew->get_result();
-
-            foreach ($g = $selGalNew_r->fetchAll() as ) {
-                $imgarray[] = $g['id'];
-            }
-            $selGalNew->close();
-
-            foreach ($imgarray as $i) {
-                $updPrdImg = $pdo->prepare("UPDATE products_images SET isgal = '0' WHERE id = ?");
-                $updPrdImg->bind_param('s', $i);
-                $updPrdImg->execute();
-            }
-
-            if ($updPrdImg) {
-                $updPrdImgNew = $pdo->prepare("UPDATE products_images SET isgal = '1' WHERE id = ? AND pid = ?");
-                $updPrdImgNew->bind_param('ss', $gal, $id);
-                $updPrdImgNew->execute();
-            }
-        }
-
-        // GET PRODUCT DESCRIPTION
-        $selD = $pdo->prepare("SELECT * FROM products_desc WHERE pid = ?");
-        $selD->bind_param('s', $id);
-        $selD->execute();
-        $selD_r = $selD->get_result();
-        $selD->close();
-        $sdesc = $selD_r->fetch();
-
-        $curdesc = $sdesc['text'];
-
-        if (strlen($desc) < 1) {
-            $desc = $curdesc;
-        }
-
-        if (strlen($cid) < 1) {
-            $cid = $s['cid'];
-        }
-
-        if (strlen($name) < 1) {
-            $name = $s['name'];
-        }
-
-        if (strlen($price) < 1) {
-            $price = $s['price'];
-        }
-
+        // if mwstr is not boolean, just set it to 0
         if (strlen($mwstr) < 1 || ($mwstr !== '0' && $mwstr !== '1')) {
-            $mwstr = $s['mwstr'];
+            $mwstr = '0';
         }
 
+        // same we gotta do with availability of the product
         if (strlen($av) < 1 || ($av !== '0' && $av !== '1')) {
-            $av = $s['available'];
+            $av = '0';
         }
 
-        $updProd = $pdo->prepare("
-                UPDATE products INNER JOIN products_desc 
-                ON (products.id = products_desc.pid)
-                SET products.name = ?, 
-                    products.price = ?, 
-                    products.mwstr = ?,
-                    products.cid = ?,
-                    products.available = ?,
-                    products_desc.text = ?
-                WHERE products.id = ?
-            ");
-        $updProd->bind_param('sssssss', $name, $price, $mwstr, $cid, $av, $desc, $id);
-        $updProd->execute();
+        // convert image string into array
+        $images = $_REQUEST['store'];
+        $images = explode(',', $images);
 
+        // set upload path for images
+        $filepath = $sroot . "/" . $url["upload"];
 
-        $updScard = true;
-        $delRes = true;
-        if ($av === '0' && $s['available'] !== '0') {
-            // DELETE RESERVATIONS
-            $delRes = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
-            $delRes->bind_param('s', $id);
-            $delRes->execute();
+        // check if all images are uploaded and existent
+        foreach ($images as $i) {
 
-            // UPDATE SCARD
-            $updScard = $pdo->prepare("UPDATE scard SET active = '0' WHERE pid = ?");
-            $updScard->bind_param('s', $id);
-            $updScard->execute();
+            if (!file_exists($filepath . '/' . $i)) {
+
+                $return->message = "error finding uploaded image";
+                exit(json_encode($return));
+            }
         }
 
+        // create product name
+        $artnr = 'MTR-' . $login->createString(4);
 
-        if ($updProd && $delRes && $updScard && $updPrdImg && $updPrdImgNew) {
-            $pdo->commit();
-            $pdo->close();
-            exit('success');
+        // try insert product
+        $update = $pdo->prepare("
+            UPDATE products INNER JOIN products_desc 
+            ON (products.id = products_desc.pid)
+            SET products.name = ?, 
+                products.price = ?, 
+                products.mwstr = ?,
+                products.cid = ?,
+                products.available = ?,
+                products_desc.text = ?
+            WHERE products.id = ?
+        ");
+        $update = $shop->tryExecute($update, [$name, $price, $mwstr, $cid, $av, $desc, $pid], $pdo, $commit);
+
+        if ($update->status) {
+
+            // update products images gallery and set any to non galleric
+            $update = $pdo->prepare("UPDATE products_images SET isgal = '0' WHERE pid = ?");
+            $update = $shop->tryExecute($update, [$pid], $pdo, $commit);
+
+            if ($update->status) {
+
+                // update product images to set their pid and create a relation
+                // between product and product images
+                $update = $pdo->prepare("UPDATE products_images SET pid = ? WHERE url = ?");
+
+                foreach ($images as $i) {
+                    $tryUpdate = $shop->tryExecute($update, [$pid, $i], $pdo, $commit);
+
+                    if (!$tryUpdate->status) {
+                        $return->message = $update->message;
+                        exit(json_encode($return));
+                    }
+                }
+
+                // update gallery image
+                $update = $pdo->prepare("UPDATE products_images SET isgal = '1' WHERE id = ?");
+                $update = $shop->tryExecute($update, [$gal], $pdo, true);
+
+                if ($update->status) {
+
+                    $return->status = true;
+                    $return->message = "Produkt bearbeitet";
+                    exit(json_encode($return));
+                } else {
+
+                    $return->message = $update->message;
+                    exit(json_encode($return));
+                }
+            } else {
+
+                $return->message = "product insertion error";
+                exit(json_encode($return));
+            }
         } else {
-            $pdo->rollback();
-            $pdo->close();
-            exit('0');
+
+            $return->message = "product insertion error";
+            exit(json_encode($return));
         }
     } else {
-        exit('1');
+        exit(json_encode($return));
     }
 } else {
-    exit;
+
+    $return->message = "Alle Felder müssen ausgefüllt sein";
+    exit(json_encode($return));
 }
