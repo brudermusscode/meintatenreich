@@ -184,16 +184,16 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                                                             <div class="cl"></div>
                                                         </li>
 
-                                                        <li class="wic" data-action="manage:product,hide" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                                        <li class="wic" data-action='manage:products,toggle' data-json='[{"id":"<?php echo $id; ?>"}]'>
                                                             <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
-                                                            <p class="lt ne trimfull">Produkt verbergen</p>
+                                                            <p class="lt ne trimfull">Produkt deaktivieren</p>
 
                                                             <div class="cl"></div>
                                                         </li>
 
                                                         <div class="dist" style="width:100%;margin:12px 0;border-bottom:1px solid rgba(0,0,0,.04);"></div>
 
-                                                        <li class="wic" data-action="manage:product,delete" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                                        <li class="wic" data-action='manage:products,delete' data-json='[{"id":"<?php echo $id; ?>"}]'>
                                                             <p class="ic lt"><i class="material-icons md-18">clear</i></p>
                                                             <p class="lt ne trimfull">Löschen</p>
 

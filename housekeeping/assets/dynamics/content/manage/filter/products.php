@@ -49,14 +49,16 @@ if (
             break;
         case 'reserved':
             $q = "
-                    SELECT *, products.id AS pid 
-                    FROM products, products_images 
-                    WHERE products.id = products_images.pid
-                    AND products.available = '0'
-                    AND products_images.isgal = '1'
-                    ORDER BY products.id DESC
+                    SELECT * 
+                    FROM products_reserved, products, products_images
+                    WHERE products_reserved.pid = products.id
+                    AND products.id = products_images.pid 
+                    AND products_reserved.active = '1' 
+                    ORDER BY products_reserved.id
+                    DESC
                 ";
             $orderRes = true;
+            break;
         case 'priceup':
             $q = "
                     SELECT *, products.id AS pid 
@@ -78,7 +80,6 @@ if (
 
     $sel = $pdo->prepare($q);
     $sel->execute();
-
 
     if ($sel->rowCount() < 1) {
 
@@ -147,9 +148,9 @@ if (
                                                 <div class="cl"></div>
                                             </li>
 
-                                            <li class="wic" data-action="manage:product,hide" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                            <li class="wic" data-action="manage:product,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
                                                 <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
-                                                <p class="lt ne trimfull">Produkt verbergen</p>
+                                                <p class="lt ne trimfull">Produkt deaktivieren</p>
 
                                                 <div class="cl"></div>
                                             </li>

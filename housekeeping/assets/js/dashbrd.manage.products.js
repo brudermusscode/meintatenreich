@@ -502,6 +502,41 @@ $(function(){
 
         return false;
     })
+
+    // disable
+    .on("click", "[data-action='manage:products,toggle']", function() {
+
+        let $t, id, action, overlay, url;
+
+        $t = $(this);
+        id = $t.data("json")[0].id;
+        action = $t.data("json")[0].action;
+        url = dynamicHost + "/_magic_/ajax/functions/manage/products/disable";
+
+        $.ajax({
+
+            url: url,
+            data: { id: id },
+            method: "POST",
+            type: "JSON",
+            success: function(data) {
+
+                console.log(data);
+
+                if(data.status) {
+                    
+                }
+
+                showDialer(data.message);
+
+            },
+            error: function(e, data) {
+                console.error(data);
+            }
+
+        });
+
+    })
 });
 
 function uploadProductImages(uri, input, react, overlay = null, store = null) {
@@ -515,10 +550,9 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
     input.fileupload({
 
         url: uri,
+        context: this,
         autoUpload: false,
         add: function(e, data) {
-
-            console.log(this);
 
             data.submit();
         },
