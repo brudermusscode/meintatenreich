@@ -42,6 +42,61 @@
         });
     </script>
 
+    <?php
+
+    switch ($pid) {
+        case "manage:customers":
+            $pagetitle = "customers";
+            $ajaxurl = "/_magic_/ajax/content/manage/filter/customers";
+            break;
+        case "manage:orders":
+            $pagetitle = "orders";
+            $ajaxurl = "/_magic_/ajax/content/manage/filter/orders";
+            break;
+        case "manage:products":
+            $pagetitle = "products";
+            $ajaxurl = "/_magic_/ajax/content/manage/filter/products";
+            break;
+        case "manage:courses":
+            $pagetitle = "courses";
+            $ajaxurl = "/_magic_/ajax/content/manage/filter/courses";
+            break;
+        case "manage:ratings":
+            $pagetitle = "ratings";
+            $ajaxurl = "/_magic_/ajax/content/manage/filter/ratings";
+            break;
+        case "aindex":
+            $pagetitle = "index";
+            $ajaxurl = "/_magic_/ajax/content/overview/filter/all";
+            break;
+        default:
+            $pagetitle = NULL;
+            $ajaxurl = NULL;
+            break;
+    }
+
+    ?>
+
+    <script>
+        $(function() {
+
+            let react, loader, $body = $("body");
+
+            react = $body.find('[data-react="manage:filter"]');
+            loader = $body.find('color-loader');
+
+            let loadPageContent = {
+                "manage": "<?php echo $pagetitle; ?>",
+                "url": dynamicHost + "<?php echo $ajaxurl; ?>"
+            }
+
+            <?php if ($pagetitle !== NULL) { ?>
+                Manage.loadPage(loadPageContent.url, false, react, loader);
+            <?php } ?>
+
+        });
+    </script>
+
     <title><?php if (isset($ptit)) echo $ptit;
             else echo "Kein Titel"; ?> - Administration</title>
 

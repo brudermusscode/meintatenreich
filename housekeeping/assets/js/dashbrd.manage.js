@@ -1,32 +1,55 @@
-let loadPageManage = function(url = false, page, order, react = false, loader = false) {
-    if(url !== false) {
+class Manage {
 
-        react.empty();
-        loader.show();
+    static loadPage(url = false, order = false, react = false, loader = false) {
 
-        $.ajax({
-
-            url: url,
-            data: { order: order },
-            method: 'POST',
-            type: "HTML",
-            success: function(data){
-
-                if(data !== 0) {
-                    loader.hide();
-                    react.prepend(data);
-                } else {
-                    showDialer("WrongoOo");
-                }
-            },
-            error: function(data){
-                console.error(data);
+        if(url) {
+    
+            // if there's no order given for filtering,
+            // just show the default page content
+            if(!order) {
+                order = "all";
             }
-        });
 
-    } else {
-        showDialer('Ein fehler ist aufgetreten...');
+            // clear content before adding the filter
+            react.empty();
+
+            // show loader if true
+            if(loader) {
+                loader.show();
+            }
+    
+            // start the ajax call for getting content
+            $.ajax({
+    
+                url: url,
+                data: { order: order },
+                method: 'POST',
+                type: "HTML",
+                success: function(data){
+
+                    // if we successfully got content from the other
+                    // PHP file, ...
+                    if(data !== 0) {
+
+                        // ... hide the loader and ...
+                        if(loader) {
+                            loader.hide();
+                        }
+
+                        // prepend the data received
+                        react.prepend(data);
+                    } else {
+                        showDialer("WrongoOo");
+                    }
+                },
+                error: function(data){
+                    console.error(data);
+                }
+            });
+        }
+
     }
+
 }
 
 $(function() {
@@ -45,31 +68,35 @@ $(function() {
         $t = $(this);
         manage = $t.closest('div[data-page]').data('page');
         react = $body.find('div[data-react="manage:filter"]');
-        loader = react.find('color-loader');
+        loader = $body.find('color-loader');
         order = $t.data('json')[0].order;
 
         switch(manage) {
+            case "index":
+
+                url = dynamicHost + '/_magic_/ajax/content/filter/index';
+                Manage.loadPage(url, order, react, loader);
+                break;
             case 'orders':
 
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/orders';
-                loadPageManage(url, manage, order, react, loader);
+                Manage.loadPage(url, order, react, loader);
                 break;
             case 'products':
 
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/products';
-                loadPageManage(url, manage, order, react, loader);
+                Manage.loadPage(url, order, react, loader);
                 break;
             case 'customers':
 
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/customers';
-                loadPageManage(url, manage, order, react, loader);
+                Manage.loadPage(url, order, react, loader);
                 break;
             default:
 
                 url = false;
                 break;
         }
-    
     })
 
     // manage: products

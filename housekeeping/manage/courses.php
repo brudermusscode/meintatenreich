@@ -43,6 +43,13 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 <div class="cl"></div>
             </div>
 
+            <color-loader class="almid-h mt24 mb42">
+                <inr>
+                    <circl3 class="color-loader1"></circl3>
+                    <circl3 class="color-loader2"></circl3>
+                </inr>
+            </color-loader>
+
             <div data-react="manage:filter">
 
                 <?php
