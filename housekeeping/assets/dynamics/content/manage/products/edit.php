@@ -29,13 +29,17 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
         <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $id; ?>"}]'>
 
+            <div style="visibility:hidden;height:0px;width:0px;opacity:0;overflow:hidden;">
+                <form data-form="uploadFiles:products,add" method="POST" enctype="multipart/form-data" action>
+                    <input name="pictures" type="file" multiple accept="image/*" />
+                </form>
+            </div>
 
-            <!-- PICTURES -->
             <div class="head-text mb12">
                 <p>Bilder</p>
             </div>
 
-            <div class="product-overview" data-action="manage:products,edit,addImage,gallery" data-react="manage:products,edit,addImage,show">
+            <div class="product-overview" data-action="manage:products,edit,addImage,gallery" data-react="manage:products,add,addImage,show">
 
                 <?php
 
@@ -57,7 +61,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                 <?php } ?>
 
 
-                <div class="item add-new lt" data-action="manage:products,edit,addImage">
+                <div class="item add-new lt" data-action="manage:products,add,addImage">
                     <div class="actual-image mshd-1 posrel tran-all-cubic">
                         <div class="almid posabs tac" style="color:#5068A1;">
                             <p class="mb12"><i class="material-icons md-36">library_add</i></p>
@@ -280,7 +284,6 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                 <input name="store" type="hidden" value />
                                 <input name="gallery" type="hidden" value="<?php echo $s->iid; ?>" />
                                 <input name="pid" type="hidden" value="<?php echo $s->pid; ?>" />
-                                <input id="image-penetration" type="file" name="pictures" multiple accept="image/*" data-react="manage:products,edit,addImage" />
                             </div>
 
                         </form>

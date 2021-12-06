@@ -165,10 +165,6 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
             // save product ID
             $pid = $p->pid;
 
-            // check result
-            $checkRes = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = '1'");
-            $checkRes->execute([$pid]);
-
         ?>
 
             <a href="/product/<?php echo $p->artnr; ?>" class="tran-all">
@@ -177,13 +173,7 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
                     <div class="pr-inr">
                         <div class="pr-img-outer posrel">
 
-                            <?php if ($checkRes->rowCount() > 0) { ?>
-
-                                <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
-                                    <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Reserviert</p>
-                                </div>
-
-                            <?php } else if ($p->available == "0") { ?>
+                            <?php if ($p->available == "0") { ?>
 
                                 <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
                                     <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Nicht verfügbar</p>

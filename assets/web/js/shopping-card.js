@@ -84,13 +84,14 @@ $(function(document) {
     // Buy
     .on('click', '[data-action="buyshit"]', function() {
         
-        var form = $('[data-form="scard"]');
-        var formData = form.serialize();
-        var prval = $.trim($('[data-name="products"]').val()).length;
-        var action = $(this).data('action');
-        var isValid;
-        var res;
-        let url = dynamicHost + "/ajax/functions/shopping-card/buy";
+        let form, formData, prval, action, isValid, url, ov, clOv, lo;
+
+        form = $('[data-form="scard"]');
+        formData = form.serialize();
+        prval = $.trim($('[data-name="products"]').val()).length;
+        action = $(this).data('action');
+        url = dynamicHost + "/ajax/functions/shopping-card/buy";
+        isValid;
         
         form.find('input').each(function() {
             var element = $(this);
@@ -100,79 +101,52 @@ $(function(document) {
         });
         
         formData = formData + '&action='+action;
-        
-        if(isValid === false) {
-            showDialer('Bitte wähle alle Optionen!');
-        } else if(prval < 1) {
-            showDialer('Dein Warenkorb ist leer!');
-        } else {
-            
-            addOverlay(body, dark = true);
-            var ov = body.find('page-overlay');
-            var clOv = ov.find('close-overlay').remove();
-            addLoader(ov, 'floating');
-            var lo = ov.find('loader').parent();
-            
-            var removeOverlay = function(ov) {
-                ov.removeAttr('style');
-                setTimeout(function(){
-                    ov.remove();
-                }, 400);
-            }
-            
-            $.ajax({
-                
-                url: url,
-                data: formData,
-                method: 'POST',
-                type: 'TEXT',
-                success: function(response) {
-                    
-                    console.log(response);
 
-                    var resArray = ['', 0, 1, 2, 3, 4, 5, 6];
-                    
-                    if($.inArray(response, resArray) !== -1) {
-                        removeOverlay(ov);
-                    }
-                    
-                    switch(response) {
-                        case '':
-                        case 0:
-                            res = 'Ein unbekannter Fehler ist aufgetreten!';
-                            break;
-                        case 1:
-                            res = 'Dein Warenkorb ist leer';
-                            break;
-                        case 2:
-                            res = 'Um eine Bestellung aufzugeben, muss dein Account verifiziert sein. Bitte schau in deinem E-Mail Postfach nach einer E-Mail unseres Shops';
-                            break;
-                        case 3:
-                            res = 'Einige deiner Produkte sind nicht verfügbar';
-                            break;
-                        case 4:
-                            res = 'Deine Zahlungsmethode ist ungültig';
-                            break;
-                        case 5:
-                            res = 'Deine Lieferadresse ist ungültig';
-                            break;
-                        case 6:
-                            res = 'Deine Liefermethode ist ungültig';
-                            break;
-                        default:
-                            let price = response.price;
-                            let delivery = response.delivery;
-                            res = 'Bestellung erfolgreich, leite weiter...';
-                            window.location.replace('?pr='+price+'&del='+delivery);
-                    }
-                    
-                    showDialer(res);
-                },
-                error: function(response) {
-                    console.log(response.responseText);
-                }
-            });
+        addOverlay(body, dark = true);
+        ov = body.find('page-overlay');
+        clOv = ov.find('close-overlay').remove();
+        addLoader(ov, 'floating');
+        lo = ov.find('loader').parent();
+        
+        var removeOverlay = function(ov) {
+            ov.removeAttr('style');
+            setTimeout(function(){
+                ov.remove();
+            }, 400);
         }
+        
+        $.ajax({
+            
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            success: function(response) {
+                
+                let price, delivery;
+
+                if(response.status) {
+
+                    price = response.price;
+                    delivery = response.delivery;
+
+                    // redirect to order success page
+                    setTimeout(function(){
+                        window.location.replace('?pr='+price+'&del='+delivery);
+                    }, 600);
+                } else {
+
+                    // something went wrong, so close the overlay
+                    removeOverlay(ov);
+                }
+                
+                // show responsive dialer
+                showDialer(response.message);
+            },
+            error: function(response) {
+                console.error(response.responseText);
+            }
+        });
     })
 
     .on('click', '[data-element="select"] .list ul li', function() {
@@ -202,13 +176,11 @@ $(function(document) {
                 body.removeClass('calculated');
             } else {
                 formData = formData + '&action='+action;
-                showDialer('Preis wird berechnet...');
                 pricing(formData, appendPricing);
             }
         }, 100);
         
     });
-
 });
 
 
@@ -245,85 +217,54 @@ function getScardOverview() {
             setTimeout(function(){
                 ov.remove();
             }, 400);
-
         }
-
     });
-
 }
 
 function pricing(data, append) {
     
-    let body = $('body');
-    let appendPricing = append;
-    let button = $('[data-react="select-scard"]');
-    let pricingHint = $('[data-react="pricing-hint"]');
+    let appendPricing, button, pricingHint, url, $body = $("body");
 
-    let url = dynamicHost + "/ajax/functions/shopping-card/pricing";
-    let formData = data;
-    let res;
+    appendPricing = append;
+    button = $('[data-react="select-scard"]');
+    pricingHint = $('[data-react="pricing-hint"]');
+
+    url = dynamicHost + "/ajax/functions/shopping-card/pricing";
 
     $.ajax({
 
         url: url,
-        data: formData,
+        data: data,
         method: 'POST',
         type: 'TEXT',
         success: function(response) {
 
-            switch(response) {
-                case '':
-                case 0:
-                    res = 'Ein unbekannter Fehler ist aufgetreten!';
-                    break;
-                case 1:
-                    res = 'Dein Warenkorb ist leer!';
-                    appendPricing.empty();
-                    pricingHint.show();
-                    button.attr('disabled', 'disabled');
-                    button.removeAttr('data-action');
-                    body.removeClass('calculated');
-                    break;
-                case 2:
-                    res = 'Einige deiner Produkte sind nicht verfügbar!';
-                    break;
-                case 3:
-                    res = 'Deine Zahlungsmethode ist ungültig!';
-                    break;
-                default:
-                    let price = response.price;
-                    let delivery = response.delAmt;
+            if(response.status) {
 
-                    // reassign url
-                    let url = dynamicHost + "/ajax/content/shopping-card/pricing";
-                    res = 'Preis wird berechnet...';
+                // reassign url
+                let url = dynamicHost + "/ajax/content/shopping-card/pricing";
 
-                    $.ajax({
+                $.ajax({
 
-                        url: url,
-                        data: { price: price, delivery: delivery },
-                        method: 'POST',
-                        type: 'TEXT',
-                        success: function(data) {
+                    url: url,
+                    data: { price: response.price, delivery: response.delivery },
+                    method: 'POST',
+                    type: 'TEXT',
+                    success: function(data) {
 
-                            button.attr('data-action', 'buyshit');
-                            button.removeAttr('disabled');
-                            pricingHint.hide();
-                            appendPricing.empty();
-                            appendPricing.append(data);
-                            body.addClass('calculated');
-                            showDialer('Preis berechnet!');
+                        button.attr('data-action', 'buyshit');
+                        button.removeAttr('disabled');
+                        pricingHint.hide();
+                        appendPricing.empty();
+                        appendPricing.append(data);
+                        $body.addClass('calculated');
 
-                        }
+                    }
+                });
+            } else {
 
-                    });
-
+                showDialer(response.message);
             }
-
-            showDialer(res);
-
         }
-
     });
-    
 }

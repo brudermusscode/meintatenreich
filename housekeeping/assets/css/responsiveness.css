@@ -1,0 +1,19 @@
+@media screen and (max-width: 1580px) {
+  content-card.tripple {
+    width: calc(33.33% - 14px);
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  content-card.tripple {
+    width: calc(50% - 14px);
+  }
+}
+
+@media screen and (max-width: 700px) {
+  content-card.tripple {
+    width: calc(100%);
+    margin: 0px;
+    margin-bottom: 24px;
+  }
+}

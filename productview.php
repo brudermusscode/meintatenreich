@@ -33,7 +33,7 @@ if (isset($_GET['artnr'])) {
     if ($loggedIn) {
 
         // check if in shopping card
-        $getShoppingCard = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND pid = ? AND active = '1'");
+        $getShoppingCard = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND pid = ?");
         $getShoppingCard->execute([$my->id, $prid]);
         $sNum = $getShoppingCard->rowCount();
 
@@ -51,14 +51,6 @@ if (isset($_GET['artnr'])) {
         if ($rNum > 0) {
             $rid  = $r->id;
         }
-    }
-
-    // check for reservation
-    $reserved = false;
-    $getReservations = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = '1'");
-    $getReservations->execute([$prid]);
-    if ($getReservations->rowCount() > 0) {
-        $reserved = true;
     }
 } else {
 
@@ -142,27 +134,14 @@ include_once $sroot . "/assets/templates/global/header.php";
                             <?php
 
                             if (!($sNum >= $p->amt)) {
-                                if ($reserved == true) {
-
-                            ?>
-
-                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
-                                        <p><i class="icon-flash"></i></p>
-                                        <p class="ml12 trimfull">Reserviert</p>
-                                    </div>
-
-                                <?php   } else if ($p->available == "0") { ?>
+                                if ($p->available == "0") { ?>
 
                                     <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
                                         <p><i class="icon-shopping-basket"></i></p>
                                         <p class="ml12 trimfull">Nicht verfügbar</p>
                                     </div>
 
-                                <?php
-
-                                } else {
-
-                                ?>
+                                <?php } else { ?>
 
                                     <div class="button black disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard" data-json='[{"id":"<?php echo $prid; ?>"}]'>
                                         <p><i class="icon-shopping-basket"></i></p>
@@ -170,6 +149,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                     </div>
 
                                 <?php
+
                                 }
                             } else {
 
@@ -182,21 +162,15 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                             <?php } ?>
 
-                            <?php if ($fNum < 1) { ?>
-
-                                <div class="button white disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard-remember">
+                            <div class="button white disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard-remember">
+                                <?php if ($fNum < 1) { ?>
                                     <p><i class="icon-star-empty"></i></p>
                                     <p class="ml12 trimfull">Merken</p>
-                                </div>
-
-                            <?php } else { ?>
-
-                                <div class="button brown disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard-remember">
+                                <?php } else { ?>
                                     <p><i class="icon-star-filled"></i></p>
                                     <p class="ml12 trimfull">Gemerkt</p>
-                                </div>
-
-                            <?php } ?>
+                                <?php } ?>
+                            </div>
 
                         </div>
                     </div>

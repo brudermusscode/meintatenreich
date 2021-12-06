@@ -4,7 +4,16 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 header('Content-type: application/json');
 
-$cArray = new checkArray;
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!",
+    "price" => 0,
+    "delAmt" => 0
+];
+
+// objectify response array
+$return = (object) $return;
 
 if (
     isset($_REQUEST['action'], $_REQUEST['delivery'])
@@ -17,62 +26,47 @@ if (
     $delivery = htmlspecialchars($_REQUEST['delivery']);
 
     // get products from shopping card
-    $getProducts = $pdo->prepare("SELECT pid FROM shopping_card WHERE uid = ? AND active = '1'");
-    $getProducts->execute([$uid]);
+    $getShoppingCard = $pdo->prepare("
+        SELECT shopping_card.pid, products.price
+        FROM shopping_card, products 
+        WHERE products.id = shopping_card.pid 
+        AND shopping_card.uid = ?
+    ");
+    $getShoppingCard->execute([$uid]);
 
-    if ($getProducts->rowCount() > 0) {
+    if ($getShoppingCard->rowCount() > 0) {
 
-        // create array of all products
         $products = [];
-        foreach ($getProducts->fetchAll() as $p) {
+        $prices = [];
 
-            $products[] = (int)$p->pid;
+        // create array of all products & prices of products
+        foreach ($getShoppingCard->fetchAll() as $p) {
+
+            $products[] = (int) $p->pid;
+            $price[] = (float) $p->price;
         }
 
-        // check if all product ID's are ints
-        if ($cArray->all($products, 'is_int')) {
+        // store all valid delivery methods
+        $validDels = ['single', 'combi'];
 
-            $validDels = ['single', 'combi'];
+        // check for valid delivery method
+        if (in_array($delivery, $validDels)) {
 
-            // check for valid delivery method
-            if (in_array($delivery, $validDels)) {
+            // sum up all prices from array
+            $price = array_sum($price);
 
-                $price = [];
-
-                // + get product prices
-                // + add to array
-                foreach ($products as $pid) {
-
-                    $getProductsPrices = $pdo->prepare("SELECT price FROM products WHERE id = ?");
-                    $getProductsPrices->execute([$pid]);
-
-                    if ($getProductsPrices->rowCount() > 0) {
-                        $pp = $getProductsPrices->fetch();
-                        $price[] = (float)$pp->price;
-                    }
-                }
-
-                // sum up all prices from array
-                $price = array_sum($price);
-
-
-                if ($delivery === 'single') {
-                    $delivery = count($products);
-                }
-
-                $price = $price;
-
-                $res = [
-                    'price' => $price,
-                    'delAmt' => $delivery
-                ];
-
-                exit(json_encode($res));
-            } else {
-                exit('3'); // delivery method is invalid
+            if ($delivery == 'single') {
+                $delivery = count($products);
             }
+
+            $return->status = true;
+            $return->message = "";
+            $return->price = $price;
+            $return->delivery = $delivery;
+
+            exit(json_encode($return));
         } else {
-            exit('2'); // products are invalid
+            exit('3'); // delivery method is invalid
         }
     } else {
         exit('1'); // shopping card is empty

@@ -40,10 +40,10 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 
         <!-- MC: RIGHT -->
-        <div class="rt right-content">
+        <div class="rt right-content" style="margin-top:-84px;">
 
-            <div class="mm-heading">
-                <p class="title lh42">Kundenübersicht</p>
+            <div class="mm-heading" style="padding:0px 0 24px;">
+                <p class="title lh42">Neue Kunden</p>
             </div>
 
             <div class="mm-content">
@@ -51,7 +51,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $getCustomers = $pdo->prepare("SELECT * FROM customer ORDER BY id DESC");
+                $getCustomers = $pdo->prepare("SELECT * FROM customer ORDER BY id DESC LIMIT 8");
                 $getCustomers->execute();
 
                 foreach ($getCustomers->fetchAll() as $c) {

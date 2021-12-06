@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/tipr.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_gen.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_wide.container.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/responsiveness.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/animations.css">
 
@@ -30,6 +31,7 @@
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.orders.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.products.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.customers.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.messages.js"></script>
 
     <script>
         $(function() {
@@ -71,6 +73,10 @@
             $pagetitle = "index";
             $ajaxurl = "/_magic_/ajax/content/overview/filter/all";
             break;
+        case "overview:messages":
+            $pagetitle = "messages";
+            $ajaxurl = "/_magic_/ajax/content/overview/messages";
+            break;
         default:
             $pagetitle = NULL;
             $ajaxurl = NULL;
@@ -84,7 +90,6 @@
 
             let react, loader, loadPageContent, $body = $("body");
 
-            react = $body.find('[data-react="manage:filter"]');
             loader = $body.find('color-loader');
 
             loadPageContent = {
@@ -92,8 +97,15 @@
                 "url": dynamicHost + "<?php echo $ajaxurl; ?>"
             }
 
-            <?php if ($pagetitle !== NULL) { ?>
+
+            <?php if (isset($ajaxurl) && $ajaxurl !== NULL) { ?>
+                react = $body.find('[data-react="manage:filter"]');
                 Manage.loadPage(loadPageContent.url, false, react, loader);
+            <?php } ?>
+
+            <?php if (isset($pid) && $pid == "overview:messages") { ?>
+                react = $body.find("[data-load='overview:messages']");
+                Manage.loadMessages(loadPageContent.url, false, react, loader);
             <?php } ?>
 
         });

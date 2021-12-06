@@ -6,6 +6,13 @@ $(function(){
 
     $(document)
 
+    // open search explorer for images
+    .on("click", '[data-action="manage:products,add,addImage"]', function(){
+        
+        let $i = $(document).find('[data-form="uploadFiles:products,add"] input[type="file"]').click();
+        
+    })
+
     // categories > add ~ works
     .on('click', '[data-action="manage:products,category,add"]', function(){
         
@@ -271,7 +278,7 @@ $(function(){
     // add > upload images ~ works partially
     .on('change', '[data-form="uploadFiles:products,add"]', function(e){
 
-        let $t, $append, overlay, uri, error, input, react;
+        let $t, $append, overlay, uri, react;
 
         $t = $(this),
         uri = dynamicHost + '/_magic_/ajax/functions/manage/products/upload-images';
@@ -288,7 +295,6 @@ $(function(){
             react = '[data-react="manage:products,add,addImage,show"]';
             store = '[data-react="uploadFiles:upload-new-files"] input[name="store"]';
             info = $('[data-react="manage:products,add,addImage,gallery,info"]');
-            error = "Validiere...";
 
             // upload it!
             uploadProductImages(uri, $(this).find("input[type='file']"), react, overlay.overlay.parent(), store);
@@ -298,9 +304,6 @@ $(function(){
                 visibility:"visible",
                 bottom:"-24px"
             });
-
-            // stay responsive
-            showDialer(error);
         }
     })
 
@@ -416,9 +419,9 @@ $(function(){
     })
 
     // edit > upload images
-    .on('change', 'input#image-penetration', function(){
+    .on('change', '[data-form="uploadFiles:products,add"]', function(){
 
-        let $t, $append, overlay, uri, error, input, react;
+        let $t, $append, overlay, uri, react;
 
         $t = $(this),
         uri = dynamicHost + '/_magic_/ajax/functions/manage/products/upload-images';
@@ -432,22 +435,17 @@ $(function(){
         // start new fileupload (jquery)
         if($t.length > 0) {
 
-            input = "#" + this.id;
-            react = '[data-react="manage:products,edit,addImage,show"]';
+            react = '[data-react="manage:products,add,addImage,show"]';
             store = '[data-react="uploadFiles:upload-new-files"] input[name="store"]';
             info = $('[data-react="manage:products,add,addImage,gallery,info"]');
-            error = "Validiere...";
 
-            uploadProductImages(uri, input, react, overlay.overlay.parent(), store);
+            uploadProductImages(uri, $(this).find("input[type='file']"), react, overlay.overlay.parent(), store);
 
             info.css({
                 opacity:"1",
                 visibility:"visible",
                 bottom:"-24px"
             });
-
-            // stay responsive
-            showDialer(error);
         }
 
     })

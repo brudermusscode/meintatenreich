@@ -22,7 +22,7 @@ if (
 ) {
 
     // variablize
-    $id = htmlspecialchars($_REQUEST['id']);
+    $id = $_REQUEST['id'];
     $uid = $my->id;
 
     // check product existence
@@ -31,48 +31,37 @@ if (
 
     if ($getProduct->rowCount() > 0) {
 
+        // check verification status of the customer
         if ($my->verified === '1') {
 
-            // check for reservation
-            $getReservation = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ?");
-            $getReservation->execute([$id]);
+            // check if the product was added already
+            $getProductAdded = $pdo->prepare("SELECT * FROM shopping_card WHERE pid = ? AND uid = ? LIMIT 1");
+            $getProductAdded->execute([$id, $uid]);
 
-            if ($getReservation->rowCount() < 1) {
-
-                // check for added already
-                $getProductAdded = $pdo->prepare("SELECT * FROM shopping_card WHERE pid = ? AND uid = ?");
-                $getProductAdded->execute([$id, $uid]);
+            if ($getProductAdded->rowCount() < 1) {
 
                 // begin transactions
                 $pdo->beginTransaction();
 
                 // add to shopping card
-                $addShoppingCard = $pdo->prepare("INSERT INTO shopping_card (uid,pid) VALUES (?,?)");
-                $addShoppingCard = $shop->tryExecute($addShoppingCard, [$uid, $id], $pdo, false);
+                // commit changes on this query
+                $addShoppingCard = $pdo->prepare("INSERT INTO shopping_card (uid, pid) VALUES (?, ?)");
+                $addShoppingCard = $shop->tryExecute($addShoppingCard, [$uid, $id], $pdo, true);
 
                 if ($addShoppingCard->status) {
 
-                    // reservate product for 6 horas
-                    $insertReservation = $pdo->prepare("INSERT INTO products_reserved (uid,pid) VALUES (?,?)");
-                    $insertReservation = $shop->tryExecute($insertReservation, [$uid, $id], $pdo, true);
+                    // store error information
+                    $return->status = true;
+                    $return->message = "Produkt wurde hinzugefügt!";
+                    $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]++;
 
-                    if ($insertReservation->status) {
-
-                        // store error information
-                        $return->status = true;
-                        $return->message = "Produkt wurde hinzugefügt!";
-                        $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]++;
-
-                        exit(json_encode($return));
-                    } else {
-                        exit(json_encode($insertReservation));
-                    }
+                    exit(json_encode($return));
                 } else {
                     exit(json_encode($insertReservation));
                 }
             } else {
-                $return->message = "Dieses Produkt ist bereits reserviert";
-                exit(json_encode($return)); // product in reservation
+                $return->message = "Das Produkt befindet sich bereits in deinem Warenkorb";
+                exit(json_encode($return)); // user not verified
             }
         } else {
             $return->message = "Bitte verifiziere deinen Account";

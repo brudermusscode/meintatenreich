@@ -171,53 +171,14 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 }
             </style>
 
-            <!-- ALL CUSTOMERS -->
-            <div class="mm-heading">
-                <p class="title lt lh42">Nachrichten</p>
-                <div class="tools lt ml32">
+            <color-loader class="almid-h mt24 mb42">
+                <inr>
+                    <circl3 class="color-loader1"></circl3>
+                    <circl3 class="color-loader2"></circl3>
+                </inr>
+            </color-loader>
 
-                    <div class="chooser" data-element="chooser" data-action="overview:messages,panel">
-                        <ul class="outer">
-                            <li class="point tran-all active" data-order="got">
-                                <p class="icon lt mr12">
-                                    <i class="material-icons md-24 lh42">call_received</i>
-                                </p>
-                                <p class="text lt">Erhalten</p>
-
-                                <div class="cl"></div>
-                            </li>
-                            <li class="point tran-all" data-order="sent">
-                                <p class="icon lt mr12">
-                                    <i class="material-icons md-24 lh42">call_made</i>
-                                </p>
-                                <p class="text lt">Gesendet</p>
-
-                                <div class="cl"></div>
-                            </li>
-                            <li class="point tran-all green" data-order="fav">
-                                <p class="icon lt mr12">
-                                    <i class="material-icons md-24 lh42">star</i>
-                                </p>
-                                <p class="text lt">Gemerkt</p>
-
-                                <div class="cl"></div>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-
-                <div class="cl"></div>
-            </div>
-
-            <div data-load="overview:messages" data-order="got">
-                <color-loader class="almid-h mt24 mb42">
-                    <inr>
-                        <circl3 class="color-loader1"></circl3>
-                        <circl3 class="color-loader2"></circl3>
-                    </inr>
-                </color-loader>
-            </div>
+            <div data-load="overview:messages" data-order="got"></div>
 
             <div class="cl"></div>
         </div>

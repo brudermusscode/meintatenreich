@@ -3,7 +3,7 @@
 // include everything needed to keep a session
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-$orderValid = ['all', 'available', 'unavailable', 'reserved', 'priceup', 'pricedown'];
+$orderValid = ['all', 'available', 'unavailable', 'priceup', 'pricedown'];
 
 if (
     isset($_REQUEST['order'])
@@ -11,11 +11,13 @@ if (
     && $admin->isAdmin()
 ) {
 
-    $o = htmlspecialchars($_REQUEST['order']);
+    $o = $_REQUEST['order'];
     $unav = false;
-    $orderRes = false;
 
+    // switch through all filtering cases and create query which will be passed
+    // in prepared statement down under
     switch ($o) {
+
         case 'all':
         default:
             $q = "
@@ -47,18 +49,6 @@ if (
             ";
             $unav = true;
             break;
-        case 'reserved':
-            $q = "
-                SELECT * 
-                FROM products_reserved, products, products_images
-                WHERE products_reserved.pid = products.id
-                AND products.id = products_images.pid 
-                AND products_reserved.active = '1' 
-                ORDER BY products_reserved.id
-                DESC
-            ";
-            $orderRes = true;
-            break;
         case 'priceup':
             $q = "
                 SELECT *, products.id AS pid 
@@ -79,9 +69,11 @@ if (
             break;
     }
 
+    // query all products
     $sel = $pdo->prepare($q);
     $sel->execute();
 
+    // if there aren't any products for the chosen filter
     if ($sel->rowCount() < 1) {
 
 ?>
@@ -97,11 +89,15 @@ if (
 
     <?php
 
+        // exit out of the script since we don't want to show anything else than
+        // the content that no products are available
         exit;
     }
 
+    // ... else go and foreach loop everything that was found in the database
     foreach ($sel->fetchAll() as $elementInclude) {
 
+        // use product element for looping to keep a slim code
         include $sroot . "/housekeeping/assets/dynamics/elements/products.php";
     }
 

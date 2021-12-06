@@ -2,9 +2,19 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-$pdo->beginTransaction();
+header('Content-Type: application/json; charset=utf-8');
 
-header('Content-type: application/json');
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!",
+    "shoppingCardAmount" => 0,
+    "price" => 0,
+    "delivery" => 0
+];
+
+// objectify response array
+$return = (object) $return;
 
 $cArray = new checkArray;
 
@@ -23,7 +33,7 @@ if (
     $delivery = htmlspecialchars($_REQUEST['delivery']);
 
     // get all products from shopping card
-    $getProducts = $pdo->prepare("SELECT pid FROM shopping_card WHERE uid = ? AND active = '1'");
+    $getProducts = $pdo->prepare("SELECT pid FROM shopping_card WHERE uid = ?");
     $getProducts->execute([$uid]);
 
     if ($getProducts->rowCount() > 0) {
@@ -33,7 +43,7 @@ if (
             // create product array
             $products = [];
             foreach ($getProducts->fetchAll() as $p) {
-                $products[] = (int)$p->pid;
+                $products[] = (int) $p->pid;
             }
 
             if ($cArray->all($products, 'is_int')) {
@@ -57,15 +67,27 @@ if (
                             $price = [];
 
                             // recalculate prices (in case someone likes to play around)
-                            foreach ($products as $pid) {
+                            $getPrices = $pdo->prepare("SELECT price FROM products WHERE id = ?");
 
-                                $getPrices = $pdo->prepare("SELECT price FROM products WHERE id = ?");
+                            // and update all products to make them unavailable for buying
+                            $update = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
+
+                            foreach ($products as $pid) {
                                 $getPrices->execute([$pid]);
 
                                 if ($getPrices->rowCount() > 0) {
 
                                     $pr = $getPrices->fetch();
                                     $price[] = (float)$pr->price;
+                                }
+
+                                // make products unavailable
+                                $tryUpdate = $shop->tryExecute($update, [$pid], $pdo, false);
+
+                                if (!$tryUpdate->status) {
+
+                                    $return->message = "Bei der Verarbeitung der Produkte ist ein Fehler aufgetreten";
+                                    exit(json_encode($return));
                                 }
                             }
 
@@ -85,91 +107,123 @@ if (
                             // create new order id
                             $orderid = $login->createString(4) . '-' . $login->createString(4) . '-' . $login->createString(4);
 
+                            // begin mysql transaction
+                            $pdo->beginTransaction();
+
                             // insert order
                             $insertOrder = $pdo->prepare("INSERT INTO customer_buys (uid,orderid,adid,pmid,delivery,price,price_delivery) VALUES (?,?,?,?,?,?,?)");
-                            $insertOrder->execute([$uid, $orderid, $address, $account, $delivery, $priceb, $productsDel]);
+                            $insertOrder = $shop->tryExecute($insertOrder, [$uid, $orderid, $address, $account, $delivery, $priceb, $productsDel], $pdo, false);
 
-                            // get id of new order
-                            $needid = $pdo->lastInsertId();
+                            if ($insertOrder->status) {
 
-                            // loop through all products of shopping card
-                            foreach ($products as $pid) {
+                                // get new id of inserted order
+                                $needid = $insertOrder->lastInsertId;
 
-                                // and insert them into customer_buys related table
-                                $insertProducts = $pdo->prepare("INSERT INTO customer_buys_products (bid,pid) VALUES (?,?)");
-                                $insertProducts->execute([$needid, $pid]);
+                                // loop through all products of shopping card
+                                foreach ($products as $pid) {
 
-                                // update reservation for the product
-                                $updateReservations = $pdo->prepare("UPDATE products_reserved SET isorder = '1' WHERE pid = ?");
-                                $updateReservations->execute([$pid]);
-                            }
+                                    // and insert them into customer_buys related table
+                                    $insertProducts = $pdo->prepare("INSERT INTO customer_buys_products (bid,pid) VALUES (?,?)");
+                                    $insertProducts = $shop->tryExecute($insertProducts, [$needid, $pid], $pdo, false);
 
-                            // insert admin log
-                            $insertAdminLog = $pdo->prepare("INSERT INTO admin_overview (rid,ttype) VALUES (?,'order')");
-                            $insertAdminLog->execute([$needid]);
+                                    if (!$insertProducts->status) {
+                                        exit(json_encode($result));
+                                    }
+                                }
 
-                            // insert new bill as pdf
-                            $insertBillPdf = $pdo->prepare("INSERT INTO customer_buys_pdf (pmid,adid,bid) VALUES (?,?,?)");
-                            $insertBillPdf->execute([$account, $address, $needid]);
+                                $insertAdminLog = $pdo->prepare("INSERT INTO admin_overview (rid,ttype) VALUES (?,'order')");
+                                $insertAdminLog = $shop->tryExecute($insertAdminLog, [$needid], $pdo, false);
 
-                            // delete shopping card entries
-                            $deleteShoppingCard = $pdo->prepare("DELETE FROM shopping_card WHERE uid = ?");
-                            $deleteShoppingCard->execute([$uid]);
+                                if ($insertAdminLog->status) {
 
-                            // format price properly
-                            $price = number_format($price, 2, ',', '.');
-                            $res = [
-                                'price' => $price,
-                                'delivery' => $delivery
-                            ];
+                                    $insertBillPdf = $pdo->prepare("INSERT INTO customer_buys_pdf (pmid,adid,bid) VALUES (?,?,?)");
+                                    $insertBillPdf = $shop->tryExecute($insertBillPdf, [$account, $address, $needid], $pdo, false);
 
-                            // prepare verification mail
-                            $mailsubject = $mail['subjectOrder'];
+                                    if ($insertBillPdf->status) {
 
-                            if ($delivery == "single") {
-                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/order.html');
+                                        $deleteShoppingCard = $pdo->prepare("DELETE FROM shopping_card WHERE uid = ?");
+                                        $deleteShoppingCard = $shop->tryExecute($deleteShoppingCard, [$uid], $pdo, true);
+
+                                        if ($deleteShoppingCard->status) {
+
+                                            // format price properly
+                                            $price = number_format($price, 2, ',', '.');
+                                            $res = [
+                                                'price' => $price,
+                                                'delivery' => $delivery
+                                            ];
+
+                                            // prepare verification mail
+                                            $mailsubject = $mail['subjectOrder'];
+
+                                            if ($delivery == "single") {
+                                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/order.html');
+                                            } else {
+                                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/orderCombi.html');
+                                            }
+                                            $mailbody = str_replace('%price%', $price, $mailbody);
+                                            $mailbody = str_replace('%orderid%', $orderid, $mailbody);
+
+                                            $mailheader  = $mail['header'];
+
+                                            $sendMail = $shop->trySendMail(
+                                                $my->mail,
+                                                "Deine Bestellung auf MeinTatenReich ist eingegangen!",
+                                                $mailbody,
+                                                $mailheader
+                                            );
+
+                                            if ($sendMail) {
+
+                                                // reset shopping card amount
+                                                $_SESSION["shoppingCardAmount"] = 0;
+
+                                                $return->status = true;
+                                                $return->message = "Erfolgreich, leite weiter...";
+                                                $return->price = $price;
+                                                $return->delivery = $delivery;
+
+                                                exit(json_encode($return));
+                                            } else {
+                                                $return->status = true;
+                                                $return->message = "Es konnte keine Bestätigungsmail geschickt werden";
+                                                exit(json_encode($return));
+                                            }
+                                        } else {
+                                            exit(json_encode($return));
+                                        }
+                                    } else {
+                                        exit(json_encode($return));
+                                    }
+                                } else {
+                                    exit(json_encode($return));
+                                }
                             } else {
-                                $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/orderCombi.html');
-                            }
-                            $mailbody = str_replace('%price%', $price, $mailbody);
-                            $mailbody = str_replace('%orderid%', $orderid, $mailbody);
-
-                            $mailheader  = $mail['header'];
-
-                            if (
-                                $insertOrder && $insertProducts && $updateReservations && $insertAdminLog && $insertBillPdf && $deleteShoppingCard &&
-                                mail($my->mail, $mailsubject, $mailbody, $mailheader)
-                            ) {
-
-                                // reset shopping card amount
-                                $_SESSION["shoppingCardAmount"] = 0;
-
-                                // commit
-                                $pdo->commit();
-                                exit(json_encode($res));
-                            } else {
-
-                                $pdo->rollback();
-                                exit('0');
+                                exit(json_encode($return));
                             }
                         } else {
-                            exit('6'); // invalid derlivery method
+                            exit(json_encode($return));
                         }
                     } else {
-                        exit('5'); // no valid address
+                        $return->message = "Bei der Verarbeitung deiner Adresse ist ein Fehler aufgetreten";
+                        exit(json_encode($return));
                     }
                 } else {
-                    exit('4'); // no valid billing method
+                    $return->message = "Bei der Verarbeitung deiner Zahlungsmethode ist ein Fehler aufgetreten";
+                    exit(json_encode($return));
                 }
             } else {
-                exit('3'); // invalid products added
+                $return->message = "Bei der Verarbeitung der Produkte ist ein Fehler aufgetreten";
+                exit(json_encode($return));
             }
         } else {
-            exit('2'); // user's not verified
+            $return->message = "Bitte verifiziere dein Profil, bevor du etwas kaufen kannst";
+            exit(json_encode($return));
         }
     } else {
-        exit('1'); // shopping card is empty
+        $return->message = "Dein Warenkorb ist leer";
+        exit(json_encode($return));
     }
 } else {
-    exit("0");
+    exit(json_encode($return));
 }

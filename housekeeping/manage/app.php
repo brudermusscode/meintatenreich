@@ -26,13 +26,8 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
     <div class="mc-main">
         <div class="wide">
 
-            <!-- ATTENTION -->
-            <div class="mm-heading mb12">
-                <p class="title lt lh42">Achtung!</p>
-            </div>
-
             <content-card>
-                <div class="adjust apps hd-shd">
+                <div class="adjust apps hd-shd" style="background:#fff8e1;">
                     <div class="inr">
                         <p class="fw4">Nehme verschiedenste Einstellungen zu der Applikation vor. Diese Einstellungen sollten einem administrierenden Entwickler vorbehalten werden, da sie Sektionen der gesamten Webpräsenz verändern und bei falscher Bearbeitung Probleme erzeugen können.</p>
                     </div>
@@ -47,8 +42,8 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             </style>
 
             <!-- DISPLAY -->
-            <div class="mm-heading mb12 mt32">
-                <p class="title lt lh42">Display</p>
+            <div class="mm-heading" style="padding-bottom:12px;">
+                <p class="title lh42">Debugging</p>
             </div>
 
             <form id="data-form-manage-app-display" data-form="manage:app,display">
@@ -60,7 +55,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                             <div class="boolean-input">
 
                                 <div class="fw6 mb8">
-                                    <p style="color:#5068A1;">PHP Error Reporting</p>
+                                    <p style="color:#5068A1;">PDO Error Reporting</p>
                                 </div>
 
                                 <div class="desc-bool">
@@ -173,8 +168,8 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 
             <!-- GENERAL -->
-            <div class="mm-heading mb12 mt42">
-                <p class="title lt lh42">Allgemein</p>
+            <div class="mm-heading" style="padding-bottom:12px;">
+                <p class="title lh42">Applikation</p>
             </div>
 
             <form data-form="manage:app">
@@ -261,12 +256,12 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
 
                 <!-- GENERAL -->
-                <div class="mm-heading mb12 mt42">
-                    <p class="title lt lh42">Linking</p>
+                <div class="mm-heading" style="padding-bottom:12px;">
+                    <p class="title lh42">Linking</p>
                 </div>
 
                 <content-card class="mb42">
-                    <div class="adjust apps hd-shd">
+                    <div class="adjust apps">
 
                         <div class="inr">
 

@@ -878,7 +878,7 @@ content-card .customer .user-info .mail .act {
 
 /* PAGE: MANAGE CUSTOMERS */
 content-card.tripple {
-  width: calc(33.33333% - 14px);
+  width: calc(25% - 14px);
   margin: 6px;
 }
 content-card .auser {
@@ -1219,21 +1219,6 @@ content-card .products .inr-content .av .av-outer p {
   font-size: 0.8em;
   color: white;
   font-weight: 600;
-}
-
-@media screen and (max-width: 1200px) {
-  content-card.tripple {
-    width: calc(50% - 14px);
-    margin: 6px;
-  }
-}
-
-@media screen and (max-width: 700px) {
-  content-card.tripple {
-    width: calc(100%);
-    margin: 0px;
-    margin-bottom: 24px;
-  }
 }
 
 /* MAIN: CARDS, ALL ORDERS */

@@ -15,8 +15,6 @@ if ($admin->isAdmin()) {
             </form>
         </div>
 
-
-        <!-- PICTURES -->
         <div class="head-text mb12">
             <p>Bilder</p>
         </div>
@@ -49,8 +47,6 @@ if ($admin->isAdmin()) {
             </p>
         </div>
 
-
-        <!-- GENERAL -->
         <div class="head-text mb12">
             <p>Allgemein</p>
         </div>
@@ -200,7 +196,7 @@ if ($admin->isAdmin()) {
 
                         <div class="vishid opa0" data-react="uploadFiles:upload-new-files" style="height:0px;width:0px;overflow:hidden;">
                             <input name="store" type="hidden" value />
-                            <input name="gallery" type="hidden" value>
+                            <input name="gallery" type="hidden" value />
                         </div>
 
                     </form>

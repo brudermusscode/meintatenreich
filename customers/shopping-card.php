@@ -67,7 +67,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             <div data-json='[{"pid":[<?php
 
                                                         // GET PRODUCT IDS
-                                                        $getProducts = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND active = '1'");
+                                                        $getProducts = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ?");
                                                         $getProducts->execute([$my->id]);
 
                                                         $pNum = $getProducts->rowCount();
@@ -96,7 +96,6 @@ include_once $sroot . "/assets/templates/global/header.php";
                                 AND products.id = products_images.pid 
                                 AND products_images.isgal = '1' 
                                 AND shopping_card.uid = ? 
-                                AND shopping_card.active = '1'
                             ");
                                 $getProducts->execute([$my->id]);
 

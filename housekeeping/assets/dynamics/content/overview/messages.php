@@ -1,23 +1,21 @@
 <?php
 
-
-require_once "../../../../../../mysql/_.session.php";
-
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 $orderValid = ['got', 'sent', 'fav'];
 
 if (
     isset($_REQUEST['order'])
     && in_array($_REQUEST['order'], $orderValid)
-    && $loggedIn
-    && $user['admin'] === '1'
+    && $admin->isAdmin()
 ) {
 
     $order = $_REQUEST['order'];
 
-    if ($order === 'got') {
+    if ($order == 'got') {
         $query = "SELECT * FROM admin_mails_got ORDER BY isread ASC, timestamp DESC";
-    } else if ($order === 'sent') {
+    } else if ($order == 'sent') {
         $query = "SELECT * FROM admin_mails_sent ORDER BY timestamp DESC";
     } else {
         $query = "SELECT * FROM admin_mails_got WHERE fav = '1' ORDER BY isread ASC, timestamp DESC";
@@ -25,77 +23,84 @@ if (
 
     $sel = $pdo->prepare($query);
     $sel->execute();
-    $sr = $sel->get_result();
-    $sel->close();
 
-    foreach ($s = $sr->fetchAll() as ) {
+    if ($sel->rowCount() < 1) {
 
-        $id = $s['id'];
+?>
+
+        <content-card class="mb24" style="margin-bottom:200px;">
+            <div class="order hd-shd adjust">
+                <div style="padding:82px 42px;">
+                    <p class="tac">Hier gibt es noch nichts zu sehen! ;)</p>
+                </div>
+
+            </div>
+        </content-card>
+
+    <?php
+
+    }
+
+    foreach ($sel->fetchAll() as $s) {
+
+        $id = $s->id;
 
         // GET CAT
         if ($order === 'got' || $order === 'fav') {
 
-            $cid = $s['cid'];
-            $selCat = $pdo->prepare("SELECT * FROM admin_mails_categories WHERE id = ?");
-            $selCat->bind_param('s', $cid);
-            $selCat->execute();
-            $scr = $selCat->get_result();
-            $sc = $scr->fetch();
-            $selCat->close();
+            $cid = $s->cid;
 
-            $fullname = $s['fullname'];
-            $ref = $s['ref'];
+            $selCat = $pdo->prepare("SELECT * FROM admin_mails_categories WHERE id = ?");
+            $selCat->execute([$cid]);
+            $sc = $selCat->fetch();
+
+            $fullname = $s->fullname;
+            $ref = $s->ref;
             $overlay = true;
-            $category = $sc['name'];
+            $category = $sc->name;
         } else {
 
-            $sid = $s['sid'];
-            if ($s['uref'] === 'none') {
+            $sid = $s->sid;
+            if ($s->uref === 'none') {
                 $uid = 'Rundmail';
             } else {
-                $uid = $s['uref'];
+                $uid = $s->uref;
             }
 
             // GET USER INFORMATION: Sent
             $selUs = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
-            $selUs->bind_param('s', $sid);
-            $selUs->execute();
-            $sus = $selUs->get_result();
-            $su = $sus->fetch();
-            $selUs->close();
+            $selUs->execute([$sid]);
+            $su = $selUs->fetch();
 
             // GET USER INFORMATION: Got
             if (is_numeric($uid)) {
                 $selUsGot = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
-                $selUsGot->bind_param('s', $uid);
-                $selUsGot->execute();
-                $susg = $selUsGot->get_result();
-                $sug = $susg->fetch();
-                $selUsGot->close();
+                $selUsGot->execute([$uid]);
+                $sug = $selUsGot->fetch();
 
-                $mailto = $sug['mail'];
+                $mailto = $sug->mail;
             } else {
                 $mailto = $uid;
             }
 
-            $fullname = $su['firstname'] . ' ' . $su['secondname'];
-            $ref = $su['mail'];
+            $fullname = $su->firstname . ' ' . $su->secondname;
+            $ref = $su->mail;
             $overlay = false;
             $category = 'Direkt Mail';
         }
 
         // CONVERT TIMESTAMP
         $timeAgoObject = new convertToAgo;
-        $ts = $s['timestamp'];
+        $ts = $s->timestamp;
         $convertedTime = ($timeAgoObject->convert_datetime($ts));
         $when = ($timeAgoObject->makeAgo($convertedTime));
 
-?>
+    ?>
 
         <content-card class="mb12 posrel" data-json='[{"id":"<?php echo $id; ?>"}]'>
 
 
-            <div class="msg-outer mshd-1 posrel <?php if ($s['isread'] === '0') echo 'new'; ?> <?php if ($s['fav'] === '1') echo 'fav'; ?> tran-all-cubic" data-react="overview:messages">
+            <div class="msg-outer mshd-1 posrel <?php if ($s->isread === '0') echo 'new'; ?> <?php if ($s->fav === '1') echo 'fav'; ?> tran-all-cubic" data-react="overview:messages">
 
                 <div class="ui lt posabs w100 h100 l0 t0">
 
@@ -138,26 +143,26 @@ if (
 
                                 <?php if ($overlay === true) { ?>
                                     <!-- read // not read -->
-                                    <li class="p tac tran-all-cubic" data-action="overview:messages,read" data-tooltip="<?php if ($s['isread'] === '0') echo 'Als gelesen markieren';
+                                    <li class="p tac tran-all-cubic" data-action="overview:messages,read" data-tooltip="<?php if ($s->isread === '0') echo 'Als gelesen markieren';
                                                                                                                         else echo 'Als ungelesen markieren'; ?>" data-tooltip-align="bottom">
                                         <p class="text">
-                                            <i class="material-icons md24"><?php if ($s['isread'] === '0') echo 'done';
+                                            <i class="material-icons md24"><?php if ($s->isread === '0') echo 'done';
                                                                             else echo 'unsubscribe'; ?></i>
                                         </p>
                                     </li>
 
-                                    <input type="hidden" name="isread" value="<?php echo $s['isread']; ?>">
+                                    <input type="hidden" name="isread" value="<?php echo $s->isread; ?>">
 
                                     <!-- Fav o not fav -->
-                                    <li class="p tac tran-all-cubic" data-action="overview:messages,fav" data-tooltip="<?php if ($s['fav'] === '0') echo 'Merken';
+                                    <li class="p tac tran-all-cubic" data-action="overview:messages,fav" data-tooltip="<?php if ($s->fav === '0') echo 'Merken';
                                                                                                                         else echo 'Nicht mehr merken'; ?>" data-tooltip-align="bottom">
                                         <p class="text">
-                                            <i class="material-icons md24"><?php if ($s['fav'] === '0') echo 'star_border';
+                                            <i class="material-icons md24"><?php if ($s->fav === '0') echo 'star_border';
                                                                             else echo 'star'; ?></i>
                                         </p>
                                     </li>
 
-                                    <input type="hidden" name="fav" value="<?php echo $s['fav']; ?>">
+                                    <input type="hidden" name="fav" value="<?php echo $s->fav; ?>">
                                 <?php } ?>
 
                             </form>
@@ -188,7 +193,7 @@ if (
                         </div>
                         <div class="posrel mt8" style="line-height:1.3;">
                             <p class="trimfull w100 veralmid c3" style="height:24px;" data-react="overview:messages,open,fulltext">
-                                <?php echo $s['msg']; ?>
+                                <?php echo $s->msg; ?>
                             </p>
                         </div>
                         <div class="timestamp mt8">
@@ -204,8 +209,7 @@ if (
 
 <?php
 
-    } // END WHILE: MSGS
-
+    }
 } else {
     exit;
 }

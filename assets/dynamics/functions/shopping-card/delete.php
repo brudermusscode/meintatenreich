@@ -26,7 +26,7 @@ if (
     $uid = $my->id;
 
     // CHECK EXISTENCE
-    $getProduct = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND pid = ? AND active = '1'");
+    $getProduct = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND pid = ?");
     $getProduct->execute([$uid, $id]);
 
     if ($getProduct->rowCount() > 0) {
@@ -36,26 +36,18 @@ if (
 
         // delete shopping card
         $delete = $pdo->prepare("DELETE FROM shopping_card WHERE uid = ? AND pid = ?");
-        $delete = $shop->tryExecute($delete, [$uid, $id], $pdo, false);
+        $delete = $shop->tryExecute($delete, [$uid, $id], $pdo, true);
 
         if ($delete->status) {
 
-            // delete reservation
-            $delete = $pdo->prepare("DELETE FROM products_reserved WHERE uid = ? AND pid = ?");
-            $delete = $shop->tryExecute($delete, [$uid, $id], $pdo, true);
+            // create error output
+            $return->status = true;
+            $return->message = "Vom Warenkorb entfernt";
+            $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]--;
 
-            if ($delete->status) {
-
-                // create error output
-                $return->status = true;
-                $return->message = "Vom Warenkorb entfernt";
-                $return->shoppingCardAmount = $_SESSION["shoppingCardAmount"]--;
-
-                exit(json_encode($return));
-            } else {
-                exit(json_encode($return));
-            }
+            exit(json_encode($return));
         } else {
+            $return->message = "Etwas ist schief gelaufen";
             exit(json_encode($return));
         }
     } else {

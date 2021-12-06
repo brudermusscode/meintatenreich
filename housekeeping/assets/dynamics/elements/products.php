@@ -4,14 +4,6 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
     $id = $elementInclude->pid;
 
-    $res = false;
-    $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
-    $selres->execute([$id]);
-
-    if ($selres->rowCount() > 0) {
-        $res = true;
-    }
-
 ?>
 
     <content-card class="mb24 lt tripple">
@@ -36,15 +28,19 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                                     <ul>
                                         <li class="wic" data-action="manage:products,edit" data-json='[{"id":"<?php echo $id; ?>"}]'>
                                             <p class="ic lt"><i class="material-icons md-18">edit</i></p>
-                                            <p class="lt ne trimfull">Produkt bearbeiten</p>
+                                            <p class="lt ne trimfull">Bearbeiten</p>
 
                                             <div class="cl"></div>
                                         </li>
 
-                                        <li class="wic" data-action="manage:product,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
-                                            <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
-                                            <p class="lt ne trimfull">Produkt deaktivieren</p>
-
+                                        <li class="wic" data-action="manage:products,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                            <?php if ($elementInclude->available == "1") { ?>
+                                                <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
+                                                <p class="lt ne trimfull">Deaktivieren</p>
+                                            <?php } else { ?>
+                                                <p class="ic lt"><i class="material-icons md-18">visibility_on</i></p>
+                                                <p class="lt ne trimfull">Aktivieren</p>
+                                            <?php } ?>
                                             <div class="cl"></div>
                                         </li>
 
@@ -90,25 +86,16 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
                 <div class="av rt">
 
-                    <?php if ($res === true) { ?>
-
-                        <div class="av-outer o">
-                            <p class="ttup">Reserviert</p>
+                    <?php if ($elementInclude->available === '1') { ?>
+                        <div class="av-outer g">
+                            <p class="ttup">Verfügbar</p>
                         </div>
-
                     <?php } else { ?>
-
-                        <?php if ($elementInclude->available === '1') { ?>
-                            <div class="av-outer g">
-                                <p class="ttup">Verfügbar</p>
-                            </div>
-                        <?php } else { ?>
-                            <div class="av-outer r">
-                                <p class="ttup">Nicht verfügbar</p>
-                            </div>
-                        <?php } ?>
-
+                        <div class="av-outer r">
+                            <p class="ttup">Nicht verfügbar</p>
+                        </div>
                     <?php } ?>
+
                 </div>
 
                 <div class="cl"></div>

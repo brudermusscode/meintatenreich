@@ -25,24 +25,6 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
     <div class="mc-main">
         <div class="wide">
 
-
-
-            <!-- ATTENTION -->
-            <div class="mm-heading mb12">
-                <p class="title lt lh42">Kurse</p>
-
-                <div class="rt">
-                    <div class="mshd-1" style="color:#A247C0;border-radius:50px;background:white;cursor:pointer;padding:0 18px;" data-action="manage:course,add">
-                        <p class="lt mr12"><i class="material-icons md-24 lh42">add</i></p>
-                        <p class="lt lh42">Kurs hinzufügen</p>
-
-                        <div class="cl"></div>
-                    </div>
-                </div>
-
-                <div class="cl"></div>
-            </div>
-
             <color-loader class="almid-h mt24 mb42">
                 <inr>
                     <circl3 class="color-loader1"></circl3>

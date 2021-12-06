@@ -47,9 +47,61 @@ class Manage {
                 }
             });
         }
-
     }
 
+    static loadMessages(url = false, order = false, react = false, loader = false) {
+
+        if(url) {
+
+            // if there's no order given for filtering,
+            // just show the default page content
+            if(!order) {
+                order = "got";
+            }
+
+            // clear content before adding the filter
+            react.empty();
+
+            // show loader if true
+            if(loader) {
+                loader.show();
+            }
+
+            // start the ajax call for getting content
+            $.ajax({
+    
+                url: url,
+                data: { order: order },
+                method: 'POST',
+                type: "HTML",
+                success: function(data){
+
+                    console.log(data);
+
+                    // if we successfully got content from the other
+                    // PHP file, ...
+                    if(data !== 0) {
+
+                        // ... hide the loader and ...
+                        if(loader) {
+                            loader.hide();
+                        }
+
+                        // prepend the data received
+                        react.prepend(data);
+
+                        // remove loading class to enable tab change again
+                        loader.closest("body").removeClass("loading");
+                    } else {
+                        showDialer("WrongoOo");
+                    }
+                },
+                error: function(data){
+                    console.error(data);
+                }
+            });
+        }
+    }
 }
 
 $(function() {
@@ -124,75 +176,7 @@ $(function() {
                 url = false;
                 break;
         }
-    })
-
-    // manage: products
-    // >> add images
-    $(document).on("click", '[data-action="manage:products,add,addImage"]', function(){
-        
-        let $i = $(document).find('[data-form="uploadFiles:products,add"] input[type="file"]').click();
-        
-    })
-
-    // >> edit images
-    .on('click', '[data-action="manage:products,edit,addImage"]', function(){
-        
-        let $i = $(document).find('[data-react="manage:products,edit,addImage"]').click();
-        
-    })
-
-    // manage: messages
-    // >> check
-    .on("click", '[data-action="overview:messages,check"]', function(){
-        
-        let $t = $(this);
-        
-        if(!$('main-content').hasClass('messages')) {
-            
-            showDialer('Öffne Nachrichten...');
-
-            let ajax = $.ajax({
-                url: '/_magic_/ajax/check',
-                method: 'POST',
-                type: 'TEXT',
-                success: function(data) {
-
-                    switch(data){
-                        case '0':
-                        case '':
-                            showDialer('Ein Fehler ist aufgetreten...');
-                            break;
-                        case '1':
-                            window.location.replace('/hk/admin/v1/secret/overview/messages');
-                    }
-
-                }
-            });
-            
-        } else {
-            showDialer('Du befindest dich im Nachrichten-Center!');
-        }
-        
-    })
-
-    // >> change tab and load content
-    .on("click", '[data-action="overview:messages,panel"] .point', function(){
-        
-        let $t = $(this);
-        let or = $t.data('order');
-        let $c = '[data-load="overview:messages"]';
-        
-        if(!$bod.hasClass('loading')) {
-            $($c).find('color-loader').show().nextAll().remove();
-            $bod.addClass('loading');
-            loadContent($c, '/hk/get/overview/messages', {order:or});
-        }
-        
     });
-    
-    if($('main-content').hasClass('messages')) {
-        loadContent('[data-load="overview:messages"]', '/hk/get/overview/messages', {order:'got'});
-    }
 
     $(document).on('click', '[data-action="overview:messages,open"]', function(){
 
