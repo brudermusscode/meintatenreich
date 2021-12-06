@@ -1,16 +1,18 @@
 <?php
 
-$admin = new Admin($pdo, $my);
+$admin = new Admin($pdo, $my, $main);
 
 class Admin extends Login
 {
     public object $pdo;
     public object $my;
+    public array $main;
 
-    public function __construct(object $pdo, object $my)
+    public function __construct(object $pdo, object $my, array $main)
     {
         $this->pdo = $pdo;
         $this->my = $my;
+        $this->main = $main;
     }
 
     public function isAdmin()
@@ -25,6 +27,21 @@ class Admin extends Login
         }
 
         return false;
+    }
+
+    public function isMaintenance()
+    {
+        if ($this->main["maintenance"] == "1") {
+            if ($this->isAuthed($this->pdo)) {
+                if ($this->my->admin == '1') {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
     public function getDump($dump)

@@ -59,6 +59,9 @@ RewriteRule ^_coffee_corner_/black(.*) housekeeping/index.php [NC,L]
 RewriteRule ^_coffee_corner_/(.*) housekeeping/$1 [NC,L]
 RewriteRule ^_magic_/ajax/(.*) housekeeping/assets/dynamics/$1 [NC,L]
 
+# maintenance
+RewriteRule ^soon(.*) maintenance/index.php [NC,L]
+
 # ----------------------------------------------------------------------
 
 

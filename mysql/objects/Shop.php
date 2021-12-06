@@ -4,6 +4,7 @@ $shop = new Shop;
 
 class Shop
 {
+
     public static function validateName($nameString)
     {
         if (!preg_match('/[^a-z\-\s]/i', $nameString)) {

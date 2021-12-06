@@ -55,7 +55,7 @@ if (
 
                 if ($updateSession->status) {
 
-                    $getShoppingCardAmount = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ? AND active = '1'");
+                    $getShoppingCardAmount = $pdo->prepare("SELECT * FROM shopping_card WHERE uid = ?");
                     $getShoppingCardAmount->execute([$uid]);
 
                     $login->createCookie($token, $serial);
@@ -68,7 +68,7 @@ if (
                     exit(json_encode($return));
                 }
             } else {
-                $return->message = "Kein Profil mit dieser E-Mail und Password gefunden";
+                $return->message = "Kein Profil mit dieser Kombination aus E-Mail und Password gefunden";
                 exit(json_encode($return));
             }
         } else {

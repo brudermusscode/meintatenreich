@@ -104,15 +104,12 @@ if ($loggedIn) {
         $my->addressPreference = true;
         $ap = $addressPreference->fetch();
     }
+}
 
-
-    // check authentification for admin cookie
-    $isauthedAdmin = false;
-    if (isset($_COOKIE['EzGqsVq6rY8xE5'])) {
-        if ($_COOKIE['EzGqsVq6rY8xE5'] === 'CjkzqEy2uhSsqc') {
-            $isauthedAdmin = true;
-        }
-    }
+// check if maintenance mode is enabled and redirect if user has
+// no permissions to stay 
+if ($admin->isMaintenance()) {
+    header("location: ./soon");
 }
 
 include_once "_.functions.php";
