@@ -501,15 +501,18 @@ $(function(){
         return false;
     })
 
-    // disable
+    // toggle
     .on("click", "[data-action='manage:products,toggle']", function() {
 
-        let $t, id, action, overlay, url;
+        let $t, id, url, react, contentCard, buttonIcon, buttonText;
 
         $t = $(this);
-        id = $t.data("json")[0].id;
-        action = $t.data("json")[0].action;
-        url = dynamicHost + "/_magic_/ajax/functions/manage/products/disable";
+        id = $t.closest("content-card").data("json")[0].id;
+        url = dynamicHost + "/_magic_/ajax/functions/manage/products/toggle";
+        contentCard = $t.closest("content-card");
+        react = contentCard.find('[data-react="manage:products,toggle"]');
+        buttonIcon = $t.find(".material-icons");
+        buttonText = $t.find(".trimfull");
 
         $.ajax({
 
@@ -519,16 +522,25 @@ $(function(){
             type: "JSON",
             success: function(data) {
 
+                console.log(data.message);
                 console.log(data);
 
                 if(data.status) {
-                    
+                    react.toggleClass("enabled disabled");
+
+                    if(data.toggle == 0) {
+                        buttonIcon.html("visibility_on");
+                        buttonText.html("Aktivieren");
+                    } else {
+                        buttonIcon.html("visibility_off");
+                        buttonText.html("Deaktivieren");
+                    }
                 }
 
                 showDialer(data.message);
 
             },
-            error: function(e, data) {
+            error: function(data) {
                 console.error(data);
             }
 

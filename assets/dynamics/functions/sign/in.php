@@ -17,9 +17,7 @@ if (
     isset($_REQUEST['mail'], $_REQUEST['password'])
     && $_REQUEST['mail'] !== ''
     && $_REQUEST['password'] !== ''
-    && !$loggedIn
 ) {
-
 
     if (isset($_COOKIE['cookies']) && $_COOKIE['cookies'] == 'true') {
 

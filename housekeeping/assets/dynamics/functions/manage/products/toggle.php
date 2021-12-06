@@ -10,6 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 $return = [
     "status" => false,
     "message" => "Da ist wohl ein Oopsie passiert",
+    "toggle" => 0,
     "REQUEST" => $_REQUEST
 ];
 
@@ -26,13 +27,26 @@ if (isset($_REQUEST["id"]) && is_numeric($_REQUEST["id"]) && $admin->isAdmin()) 
 
     if ($getProducts->rowCount() > 0) {
 
-        $update = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
-        $update = $shop->tryExecute($update, [$id], $pdo, true);
+        if ($getProducts->fetch()->available == '0') {
+            $set = '1';
+            $setMessage = "aktiviert";
+            $return->toggle = 1;
+        } else {
+            $set = '0';
+            $setMessage = "deaktiviert";
+            $return->toggle = 0;
+        }
+
+        // start mysql transaction
+        $pdo->beginTransaction();
+
+        $update = $pdo->prepare("UPDATE products SET available = ? WHERE id = ?");
+        $update = $shop->tryExecute($update, [$set, $id], $pdo, true);
 
         if ($update->status) {
 
             $return->status = true;
-            $return->message = "Produkt [" . $id . "] deaktiviert";
+            $return->message = "Produkt [" . $id . "] " . $setMessage;
             exit(json_encode($return));
         } else {
             $return->message = $update->message;

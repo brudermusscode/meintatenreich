@@ -18,7 +18,13 @@
     <link rel="stylesheet" type="text/css" href="/assets/web/fonts/fontello/css/mtr-icons.css">
     <link rel="stylesheet" type="text/css" href="/assets/web/fonts/fontello/css/animation.css">
 
+    <script src="/assets/web/js/thirdparty/de.jq.311.js"></script>
+    <script src="/assets/web/js/thirdparty/public.suffix.list.js"></script>
+    <script src="/assets/web/js/core.js"></script>
+    <script src="/housekeeping/assets/js/objects/Overlay.js"></script>
+
     <?php if (!isset($_COOKIE['cookies'])) { ?>
+
         <script type="text/javascript">
             setTimeout(function() {
                 $('cookie-accept').css('bottom', '12px');
@@ -38,6 +44,7 @@
                 }, 400);
             });
         </script>
+
     <?php } ?>
 
     <!-- NO IDEA -->

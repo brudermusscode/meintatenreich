@@ -1179,18 +1179,29 @@ content-card .products .inr-content .artnr {
   padding: 0 24px;
   color: #999;
 }
+
 content-card .products .inr-content .artnr p {
   font-size: 0.8em;
 }
+
 content-card .products .inr-content .av {
   margin-top: 8px;
 }
-content-card .products .inr-content .av .av-outer {
+
+content-card .products .inr-content .av .av-outer p::before {
   line-height: 32px;
   padding: 0 12px;
   border-radius: 6px 0 12px 0;
+  color: white;
+  font-size: 0.8em;
+  color: white;
+  font-weight: 600;
+  transition: all 2s linear;
 }
-content-card .products .inr-content .av .av-outer.g {
+
+content-card .products .inr-content .av .av-outer.enabled p::before {
+  display: block;
+  content: "VERFÜGRBAR";
   background: rgb(20, 134, 23);
   background: linear-gradient(
     45deg,
@@ -1198,27 +1209,15 @@ content-card .products .inr-content .av .av-outer.g {
     rgba(38, 215, 16, 1) 100%
   );
 }
-content-card .products .inr-content .av .av-outer.r {
+content-card .products .inr-content .av .av-outer.disabled p::before {
+  display: block;
+  content: "NICHT VERFÜGBAR";
   background: rgb(144, 20, 20);
   background: linear-gradient(
     45deg,
     rgba(144, 20, 20, 1) 0%,
     rgba(213, 29, 29, 1) 100%
   );
-}
-content-card .products .inr-content .av .av-outer.o {
-  background: rgb(208, 140, 16);
-  background: linear-gradient(
-    45deg,
-    rgba(208, 140, 16, 1) 0%,
-    rgba(242, 162, 5, 1) 100%
-  );
-}
-content-card .products .inr-content .av .av-outer p {
-  color: white;
-  font-size: 0.8em;
-  color: white;
-  font-weight: 600;
 }
 
 /* MAIN: CARDS, ALL ORDERS */

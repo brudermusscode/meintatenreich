@@ -6,7 +6,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
 ?>
 
-    <content-card class="mb24 lt tripple">
+    <content-card class="mb24 lt tripple" data-json='[{"id":"<?php echo $id; ?>"}]'>
         <div class="products hd-shd adjust">
 
             <div class="image">
@@ -85,17 +85,10 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                 </div>
 
                 <div class="av rt">
-
-                    <?php if ($elementInclude->available === '1') { ?>
-                        <div class="av-outer g">
-                            <p class="ttup">Verfügbar</p>
-                        </div>
-                    <?php } else { ?>
-                        <div class="av-outer r">
-                            <p class="ttup">Nicht verfügbar</p>
-                        </div>
-                    <?php } ?>
-
+                    <div data-react="manage:products,toggle" class="av-outer <?php if ($elementInclude->available === '1') echo "enabled";
+                                                                                else echo "disabled"; ?>">
+                        <p class="ttup"></p>
+                    </div>
                 </div>
 
                 <div class="cl"></div>

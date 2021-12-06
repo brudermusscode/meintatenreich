@@ -60,10 +60,10 @@ $mail = [
     "subjectOrder" => 'Bestätigung Deiner Bestellung auf MeinTatenreich'
 ];
 
+// require objects
 require_once "objects/Login.php";
 require_once "objects/Shop.php";
 require_once "objects/Admin.php";
-
 
 // get information about logged in customer
 $loggedIn = $login->isAuthed();
@@ -108,8 +108,7 @@ if ($loggedIn) {
 
 // check if maintenance mode is enabled and redirect if user has
 // no permissions to stay 
-if ($admin->isMaintenance()) {
-    header("location: ./soon");
-}
+// ++
 
+// include functions
 include_once "_.functions.php";

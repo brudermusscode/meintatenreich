@@ -81,7 +81,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                 <?php
 
                 // GET ALL ORDERS & USER INFORMATION
-                $sel = $pdo->prepare("
+                $getProducts = $pdo->prepare("
                     SELECT *, products.id AS pid 
                     FROM products, products_images 
                     WHERE products.id = products_images.pid
@@ -89,9 +89,9 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                     AND products.cid = ?
                     ORDER BY products.id DESC
                 ");
-                $sel->execute([$id]);
+                $getProducts->execute([$id]);
 
-                if ($sel->rowCount() < 1) {
+                if ($getProducts->rowCount() < 1) {
 
                 ?>
                     <content-card class="mb42 posrel">
@@ -99,19 +99,18 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                             <div style="padding:32px 42px;">
                                 <div class="tac">
                                     <p class="mb12"><i class="material-icons md-42">hourglass_empty</i></p>
-                                    <p class="fw4">Keine Produkte in dieser Kategorie</p>
+                                    <p class="fw4">Keine Produkte</p>
                                 </div>
                             </div>
                         </div>
                     </content-card>
 
-                <?php
+                    <?php
 
                 } else {
 
-                ?>
+                    if (!$sc->id == 0) { ?>
 
-                    <?php if (!$sc->id == 0) { ?>
                         <content-card class="mb42 posrel">
                             <div class="mshd-1 normal-box">
                                 <div style="padding:32px 42px;">
@@ -119,90 +118,14 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                                 </div>
                             </div>
                         </content-card>
-                    <?php } ?>
-
-                    <?php
-
-                    foreach ($sel->fetchAll() as $s) {
-
-                        $pid = $s->pid;
-
-                        $res = false;
-                        $selres = $pdo->prepare("SELECT * FROM products_reserved WHERE pid = ? AND active = 1");
-                        $selres->execute([$pid]);
-
-                        if ($selres->rowCount() > 0) {
-                            $res = true;
-                        }
-
-                    ?>
-
-                        <content-card class="mb24 lt tripple">
-                            <div class="products mshd-1 adjust">
-
-                                <div class="image">
-                                    <div class="image-outer">
-                                        <div class="actual">
-                                            <img class="vishid opa0" onload="fadeIn(this)" src="<?php echo $url["img"] . '/products/' . $s->url; ?>">
-                                        </div>
-                                    </div>
-
-                                    <div class="overlay">
-                                        <div class="bottom">
-                                            <div class="price rt">
-                                                <p>EUR <?php echo number_format($s->price, 2, ',', '.'); ?></p>
-                                            </div>
-
-                                            <div class="cl"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="inr-content">
-                                    <div class="name">
-                                        <p class="trimfull"><?php echo $s->name; ?></p>
-                                    </div>
-
-                                    <div class="artnr">
-                                        <p class="ttup tac fw4 lt mr8">
-                                            <i class="material-icons md-18 lh32">bookmark</i>
-                                        </p>
-                                        <p class="ttup tac fw4 lh32 lt"><?php echo $s->artnr; ?></p>
-
-                                        <div class="cl"></div>
-                                    </div>
-
-                                    <div class="av rt">
-
-                                        <?php if ($res === true) { ?>
-
-                                            <div class="av-outer o">
-                                                <p class="ttup">Reserviert</p>
-                                            </div>
-
-                                        <?php } else { ?>
-
-                                            <?php if ($s->available == '1') { ?>
-                                                <div class="av-outer g">
-                                                    <p class="ttup">Verfügbar</p>
-                                                </div>
-                                            <?php } else { ?>
-                                                <div class="av-outer r">
-                                                    <p class="ttup">Nicht verfügbar</p>
-                                                </div>
-                                            <?php } ?>
-
-                                        <?php } ?>
-                                    </div>
-
-                                    <div class="cl"></div>
-                                </div>
-
-                            </div>
-                        </content-card>
 
                 <?php
 
+                    }
+
+                    foreach ($getProducts->fetchAll() as $elementInclude) {
+
+                        include $sroot . "/housekeeping/assets/dynamics/elements/products.php";
                     }
                 }
 
