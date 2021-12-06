@@ -40,6 +40,7 @@ $url = [
     "maintenance" => $system_settings->maintenance,
     "intern" => $system_settings->intern,
     "dashbrd" => $system_settings->dashboard,
+    "mysql" => $system_settings->mysql,
     "error" => $system_settings->error,
     "css" => $system_settings->css,
     "js" => $system_settings->js,

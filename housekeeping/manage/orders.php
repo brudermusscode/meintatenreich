@@ -82,33 +82,6 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
     <div class="mc-main">
         <div class="wide">
 
-            <div class="mm-heading" data-closeout="manage:filter">
-                <p class="title lt lh42">Bestellungen</p>
-                <div class="tools lt ml32">
-                    <div data-element="admin-select" data-action="manage:filter" data-page="orders" data-list-size="244" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
-                        <div class="outline disfl fldirrow">
-                            <p class="text">Filtern</p>
-                            <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
-                        </div>
-
-                        <datalist class="tran-all-cubic">
-                            <ul>
-                                <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
-                                <li class="trimfull" data-json='[{"order":"got"}]'>Neue Bestellungen</li>
-                                <li class="trimfull" data-json='[{"order":"sent"}]'>Versandte</li>
-                                <li class="trimfull" data-json='[{"order":"done"}]'>Abgeschlossene</li>
-                                <li class="trimfull" data-json='[{"order":"canceled"}]'>Stornierte</li>
-                                <li class="trimfull" data-json='[{"order":"unpaid"}]'>Nicht bezahlte</li>
-                                <li class="trimfull" data-json='[{"order":"paidmarked"}]'>Als bezahlt markierte</li>
-                                <li class="trimfull" data-json='[{"order":"paid"}]'>Bezahlte</li>
-                            </ul>
-                        </datalist>
-                    </div>
-                </div>
-
-                <div class="cl"></div>
-            </div>
-
             <color-loader class="almid-h mt24 mb42">
                 <inr>
                     <circl3 class="color-loader1"></circl3>

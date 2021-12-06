@@ -123,7 +123,7 @@
                     </li>
                 </a>
 
-                <a target="_blank" href="https://sagak8jmzvk3qqe44a7fwsek.meintatenreich.de/">
+                <a target="_blank" href="<?php echo $url["mysql"]; ?>">
                     <li class="point tran-all">
                         <div class="point-inr">
                             <p class="icon"><i class="material-icons md-24">data_usage</i>&nbsp;</p>

@@ -27,69 +27,6 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
         <!-- MC: LEFT -->
         <div class="lt left-content">
-            <div class="mm-heading">
-                <p class="title lt lh42">Übersicht</p>
-                <div class="tools lt ml32">
-                    <div data-element="admin-select" data-action="manage:filter" data-page="overview" data-list-size="212" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
-                        <div class="outline disfl fldirrow">
-                            <p class="text">Filtern</p>
-                            <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
-                        </div>
-
-                        <datalist class="tran-all-cubic">
-                            <ul>
-                                <li class="trimfull" data-json='[{"order":"#nofilter"}]'>Alle anzeigen</li>
-                                <li class="trimfull" data-json='[{"order":"orders"}]'>Bestellungen</li>
-                                <li class="trimfull" data-json='[{"order":"customers"}]'>Kunden</li>
-                                <li class="trimfull" data-json='[{"order":"ratings"}]'>Bewertungen</li>
-                            </ul>
-                        </datalist>
-                    </div>
-                </div>
-
-                <style>
-                    .mm-heading .tools .change-view {
-                        line-height: 42px;
-                        padding-top: 6px;
-                    }
-
-                    .mm-heading .tools .change-view ul {
-                        list-style: none;
-                        display: flex;
-                        flex-direction: row;
-                    }
-
-                    .mm-heading .tools .change-view ul li i {
-                        list-style: none;
-                        display: flex;
-                        flex-direction: row;
-                    }
-
-                    .mm-heading .tools .change-view ul li {
-                        opacity: .6;
-                        cursor: pointer;
-                    }
-
-                    .mm-heading .tools .change-view ul li:hover {
-                        opacity: 1;
-                    }
-
-                    .mm-heading .tools .change-view ul li.active {
-                        opacity: 1;
-                    }
-                </style>
-
-                <div class="tools rt">
-                    <div class="change-view">
-                        <ul>
-                            <li class="tran-all"><i class="material-icons md-32">view_module</i></li>
-                            <li class="tran-all active"><i class="material-icons md-32">view_stream</i></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="cl"></div>
-            </div>
 
             <color-loader class="almid-h mt24 mb42">
                 <inr>
