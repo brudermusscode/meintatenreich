@@ -30,7 +30,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             <div class="mm-heading">
                 <p class="title lt lh42">Übersicht</p>
                 <div class="tools lt ml32">
-                    <div data-element="admin-select" data-action="selector:overview,all" data-list-size="212" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
+                    <div data-element="admin-select" data-action="manage:filter" data-page="overview" data-list-size="212" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
                         <div class="outline disfl fldirrow">
                             <p class="text">Filtern</p>
                             <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
@@ -91,18 +91,14 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                 <div class="cl"></div>
             </div>
 
-            <div class="mm-content" data-react="get-content:overview,all">
+            <color-loader class="almid-h mt24 mb42">
+                <inr>
+                    <circl3 class="color-loader1"></circl3>
+                    <circl3 class="color-loader2"></circl3>
+                </inr>
+            </color-loader>
 
-
-                <color-loader class="almid-h mt24 mb42">
-                    <inr>
-                        <circl3 class="color-loader1"></circl3>
-                        <circl3 class="color-loader2"></circl3>
-                    </inr>
-                </color-loader>
-
-
-            </div>
+            <div class="mm-content" data-react="manage:filter"></div>
         </div>
 
 

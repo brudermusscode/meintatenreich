@@ -12,20 +12,23 @@ $getAdminOverview->execute();
 
 if ($getAdminOverview->rowCount() < 1) {
 
+    if ($sel->rowCount() < 1) {
+
 ?>
 
-    <content-card class="mb24">
-        <div class="order hd-shd adjust">
-            <div style="padding:82px 42px;">
-                <p class="tac">Hier gibt es noch nichts zu sehen! ;)</p>
+        <content-card class="mb24" style="margin-bottom:200px;">
+            <div class="order hd-shd adjust">
+                <div style="padding:82px 42px;">
+                    <p class="tac">Hier gibt es noch nichts zu sehen! ;)</p>
+                </div>
+
             </div>
+        </content-card>
 
-        </div>
-    </content-card>
+        <?php
 
-    <?php
-
-    exit;
+        exit;
+    }
 }
 
 foreach ($getAdminOverview->fetchAll() as $ov) {
@@ -55,7 +58,7 @@ foreach ($getAdminOverview->fetchAll() as $ov) {
             $getBills->execute([$s->oid]);
             $pdf = $getBills->fetch();
 
-    ?>
+        ?>
 
             <content-card class="mb24">
                 <div class="order hd-shd adjust">

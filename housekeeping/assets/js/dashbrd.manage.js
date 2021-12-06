@@ -72,28 +72,55 @@ $(function() {
         order = $t.data('json')[0].order;
 
         switch(manage) {
-            case "index":
 
+            case "index":
                 url = dynamicHost + '/_magic_/ajax/content/filter/index';
                 Manage.loadPage(url, order, react, loader);
                 break;
-            case 'orders':
 
+            case 'orders':
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/orders';
                 Manage.loadPage(url, order, react, loader);
                 break;
-            case 'products':
 
+            case 'products':
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/products';
                 Manage.loadPage(url, order, react, loader);
                 break;
-            case 'customers':
 
+            case 'customers':
                 url = dynamicHost + '/_magic_/ajax/content/manage/filter/customers';
                 Manage.loadPage(url, order, react, loader);
                 break;
-            default:
 
+            case 'overview':
+
+                switch(order) {
+
+                    case "orders":
+                        url = dynamicHost + "/_magic_/ajax/content/overview/filter/orders";
+                        break;
+
+                    case "customers":
+                        url = dynamicHost + "/_magic_/ajax/content/overview/filter/customers";
+                        break;
+
+                    case "ratings":
+                        url = dynamicHost + "/_magic_/ajax/content/overview/filter/ratings";
+                        break;
+
+                    case "#nofilter":
+                        url = dynamicHost + "/_magic_/ajax/content/overview/filter/all";
+                        break;
+
+                    default:
+                        url = false;
+                        break;
+                }
+                Manage.loadPage(url, order, react, loader);
+                break;
+
+            default:
                 url = false;
                 break;
         }

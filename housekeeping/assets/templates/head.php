@@ -44,6 +44,8 @@
 
     <?php
 
+    // switch through loading cases for all different manage pages to keep
+    // a dry code and use elements only once
     switch ($pid) {
         case "manage:customers":
             $pagetitle = "customers";
@@ -80,12 +82,12 @@
     <script>
         $(function() {
 
-            let react, loader, $body = $("body");
+            let react, loader, loadPageContent, $body = $("body");
 
             react = $body.find('[data-react="manage:filter"]');
             loader = $body.find('color-loader');
 
-            let loadPageContent = {
+            loadPageContent = {
                 "manage": "<?php echo $pagetitle; ?>",
                 "url": dynamicHost + "<?php echo $ajaxurl; ?>"
             }
