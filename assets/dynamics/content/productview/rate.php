@@ -1,8 +1,6 @@
 <?php
 
-// ERROR CODE :: 0
-
-require_once "../../../../mysql/_.session.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-rating' && is_numeric($_REQUEST['id']) && $loggedIn) {
 
@@ -11,28 +9,23 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 
     // CHECK IF PRODUCT EXISTS
     $select = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-    $select->bind_param('s', $id);
-    $select->execute();
-    $s_r = $select->get_result();
+    $select->execute([$id]);
 
-    if ($s_r->rowCount() > 0) {
+    if ($select->rowCount() > 0) {
 
-        $pr = $s_r->fetch_assoc();
-        $select->close();
+        $pr = $select->fetch();
 
         // CHECK IF BOUGHT
         $select = $pdo->prepare("
-                SELECT * FROM customer_buys, customer_buys_products 
-                WHERE customer_buys.id = customer_buys_products.bid 
-                AND customer_buys.uid = ? 
-                AND customer_buys.status = 'done' 
-                AND customer_buys_products.pid = ?
-            ");
-        $select->bind_param('ss', $uid, $id);
-        $select->execute();
-        $s_r = $select->get_result();
+            SELECT * FROM customer_buys, customer_buys_products 
+            WHERE customer_buys.id = customer_buys_products.bid 
+            AND customer_buys.uid = ? 
+            AND customer_buys.status = 'done' 
+            AND customer_buys_products.pid = ?
+        ");
+        $select->execute([$uid, $id]);
 
-        if ($s_r->rowCount() > 0) {
+        if ($select->rowCount() > 0) {
 
 ?>
 
@@ -157,7 +150,7 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 
                                     var t = $(this);
                                     var rate = t.data('json')[0].rate;
-                                    var input = $('[data-form="rating"]').find('input[name="rate"]').val(rate);
+                                    var input = $('[data-form="productview:rating"]').find('input[name="rate"]').val(rate);
 
                                     t.parent().find('.star').removeClass('hit');
                                     t.addClass('hit').prevAll('.star').addClass('hit');
@@ -169,7 +162,7 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 
                         <div class="star-rating">
                             <div class="sr-hd">
-                                <p>Wie sehr gefällt Dir das Produkt?</p>
+                                <p>Wie sehr gefällt dir das Produkt?</p>
                             </div>
                             <div class="stars-outer disfl fldrirrow jstfycc" data-action="star-rating">
                                 <div class="star tran-all-cubic" data-json='[{"rate":"1"}]'>
@@ -192,23 +185,21 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
                         </div>
 
                         <div class="new-comment">
-                            <div class="nc-textarea-label">
-                                <p></p>
-                            </div>
                             <div class="textarea">
-                                <div style="width:calc(100% - 48px);">
-                                    <form data-form="rating">
-                                        <textarea data-action="po-comment" placeholder="Sag mir, was Dir gefallen hat!" class="mshd-1" name="comment"></textarea>
+                                <form data-form="productview:rating" method="POST" onsubmit="return false;" action>
+                                    <div style="width:calc(100% - 48px);">
+                                        <textarea data-action="po-comment" placeholder="Sag uns, was dir gefallen hat!" class="mshd-1" name="comment"></textarea>
                                         <input type="hidden" name="rate" value>
                                         <input type="hidden" name="id" value="<?php echo $id; ?>">
                                         <input type="hidden" name="action" value="submit-comment">
-                                    </form>
-                                </div>
-                                <div>
-                                    <button data-react="po-comment" class="po-c-send mshd-1 tran-all" type="button">
-                                        <i class="icon-direction-outline"></i>
-                                    </button>
-                                </div>
+                                    </div>
+
+                                    <div>
+                                        <button type="submit" class="po-c-send mshd-1 tran-all">
+                                            <i class="icon-direction-outline"></i>
+                                        </button>
+                                    </div>
+                                </form>
 
                                 <div class="cl"></div>
                             </div>
@@ -221,11 +212,11 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 <?php
 
         } else {
-            exit('2');
+            exit(0);
         }
     } else {
-        exit('1');
+        exit(0);
     }
 } else {
-    exit;
+    exit(0);
 }

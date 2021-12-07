@@ -25,23 +25,24 @@
             <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/productview.css">
         <?php } ?>
 
+        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/responsiveness.css">
+
         <!-- SCRIPTS -->
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/de.jq.311.js"></script>
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/public.suffix.list.js"></script>
-        <script type="text/javascript" src="<?php echo $url["js"]; ?>/core.js"></script>
-        <script type="text/javascript" src="<?php echo $url["js"]; ?>/shop.js"></script>
-        <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/sign.js"></script>
-        <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/sign.get.js"></script>
+        <script type="text/javascript" src="<?php echo $url["js"]; ?>/core.min.js"></script>
+        <script type="text/javascript" src="<?php echo $url["js"]; ?>/shop.min.js"></script>
+        <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/sign.min.js"></script>
         <?php if ($loggedIn) { ?>
-            <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/user.js"></script>
+            <script type="text/javascript" src="<?php echo $url["js"]; ?>/user/user.min.js"></script>
         <?php } ?>
 
         <?php if ($pid == "contact") { ?>
-            <script type="text/javascript" src="<?php echo $url["js"]; ?>/contact.js"></script>
+            <script type="text/javascript" src="<?php echo $url["js"]; ?>/contact.min.js"></script>
         <?php } else if ($pid == "productview") { ?>
-            <script type="text/javascript" src="<?php echo $url["js"]; ?>/productview.js"></script>
+            <script type="text/javascript" src="<?php echo $url["js"]; ?>/productview.min.js"></script>
         <?php } else if ($pid == "scard") { ?>
-            <script type="text/javascript" src="<?php echo $url["js"]; ?>/shopping-card.js"></script>
+            <script type="text/javascript" src="<?php echo $url["js"]; ?>/shopping-card.min.js"></script>
         <?php } ?>
 
         <?php if (!isset($_COOKIE['cookies'])) { ?>
@@ -72,7 +73,6 @@
 
     <?php } ?>
 
-    <!-- NO IDEA -->
     <title><?php echo $ptit; ?> - Meintatenreich.de</title>
 
 </head>

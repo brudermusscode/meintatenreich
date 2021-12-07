@@ -43,7 +43,7 @@ if (isset($_GET['artnr'])) {
         $fNum = $getFavorites->rowCount();
 
         // check for my rating
-        $getRatings = $pdo->prepare("SELECT * FROM products_comments WHERE uid = ? AND pid = ?");
+        $getRatings = $pdo->prepare("SELECT * FROM products_ratings_comments WHERE uid = ? AND pid = ?");
         $getRatings->execute([$my->id, $prid]);
         $rNum = $getRatings->rowCount();
         $r    = $getRatings->fetch();
@@ -73,32 +73,148 @@ include_once $sroot . "/assets/templates/global/header.php";
 
             <div class="product-overview main-overflow-scroll">
 
+                <div class="product-name mb12 mt12">
+                    <p class="trimfull" style="font-size:1.4em;">
+                        <?php echo $p->name; ?>
+                        <span class="cblue" style="font-size:0.8em;">#<?php echo $p->artnr; ?></span>
+                    </p>
+                </div>
+
+                <script>
+                    $(function() {
+
+                        $('.main-overflow-scroll').on("scroll", function() {
+
+                            if ($(this).scrollTop() >= 130) {
+                                $("[data-react='productview:price,toggle']").addClass('hide').css("top", "32px");
+                            } else {
+                                $("[data-react='productview:price,toggle']").removeClass('hide').removeAttr("style");
+                            }
+                        });
+
+                    });
+                </script>
+
+                <div class="pricing-overflow" data-react="productview:price,toggle">
+                    <div class="papel-klammer price rt">
+                        <div class="justify">
+                            <p class="ttup">Preis</p>
+                            <p><?php echo number_format($p->price, 2, ',', '.'); ?> €</p>
+                        </div>
+                    </div>
+
+                    <div class="cl"></div>
+
+                    <div class="pv-buttons rt" data-json='[{"id":"<?php echo $prid; ?>"}]'>
+
+
+                        <?php
+
+                        if (!($sNum >= $p->amt)) {
+                            if ($p->available == "0") { ?>
+
+                                <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
+                                    <p><i class="icon-shopping-basket"></i></p>
+                                    <p class="ml12 trimfull">Nicht verfügbar</p>
+                                </div>
+
+                            <?php } else { ?>
+
+                                <div class="button black disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard" data-json='[{"id":"<?php echo $prid; ?>"}]'>
+                                    <p><i class="icon-shopping-basket"></i></p>
+                                    <p class="ml12 trimfull">In den Warenkorb</p>
+                                </div>
+
+                            <?php
+
+                            }
+                        } else {
+
+                            ?>
+
+                            <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
+                                <p><i class="icon-ok"></i></p>
+                                <p class="ml12 trimfull">Im Warenkorb</p>
+                            </div>
+
+                        <?php } ?>
+
+                        <div class="button white disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard-remember">
+                            <?php if ($fNum < 1) { ?>
+                                <p><i class="icon-star-empty"></i></p>
+                                <p class="ml12 trimfull">Merken</p>
+                            <?php } else { ?>
+                                <p><i class="icon-star-filled"></i></p>
+                                <p class="ml12 trimfull">Gemerkt</p>
+                            <?php } ?>
+                        </div>
+
+                    </div>
+
+                    <div class="cl"></div>
+                </div>
+
                 <!-- PRODUCT IMAGES -->
                 <div class="po-images-outer">
 
+                    <style>
+                        .image-preview--small {
+                            list-style: none;
+                            padding-right: 12px;
+                        }
+
+                        .image-preview--small li {
+                            height: 52px;
+                            width: 52px;
+                            border-radius: 12px;
+                            margin-bottom: 8px;
+                            border: 3px solid white;
+                            cursor: pointer;
+                            overflow: hidden;
+                            visibility: hidden;
+                            opacity: 0;
+                        }
+
+                        .image-preview--small li:hover {
+                            border: 3px solid #b3e5fc;
+                            opacity: .6;
+                        }
+
+                        .image-preview--small li:active {
+                            transform: scale(.9);
+                        }
+
+                        .image-preview--small li.selected {
+                            border: 3px solid #03a9f4;
+                        }
+                    </style>
                     <!-- ALL IMAGES OVERVIEW -->
-                    <div class="all-images lt">
+                    <div class="image-preview--small lt">
                         <ul data-action="change-product-image">
 
                             <?php
 
                             // get gallery image
                             // # merge later
-                            $getProductImages = $pdo->prepare("SELECT * FROM products_images WHERE pid = ? AND isgal = '1'");
+                            $getProductImages = $pdo->prepare("SELECT * FROM products_images WHERE pid = ? ORDER BY isgal desc LIMIT 6");
                             $getProductImages->execute([$prid]);
-                            $igal = $getProductImages->fetch();
 
-                            $getProductImages = $pdo->prepare("SELECT * FROM products_images WHERE pid = ?");
-                            $getProductImages->execute([$prid]);
+                            $galleryImage = $getProductImages->fetch();
+
+                            ?>
+
+                            <li class="selected tran-all fadeImages" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $galleryImage->url; ?>) center no-repeat;background-size:cover;" data-json='[{"url":"<?php echo $url["img"] . "/products/" . $galleryImage->url; ?>"}]'>
+                                <img onload="fadeImages(this, true)" src="<?php echo $url["img"]; ?>/products/<?php echo $galleryImage->url; ?>" />
+                            </li>
+
+                            <?php
 
                             foreach ($getProductImages->fetchAll() as $i) {
 
                             ?>
 
-                                <li class="<?php if ($i->isgal == '1') {
-                                                echo 'selected ';
-                                            } ?>tran-all" data-json='[{"url":"<?php echo $i->url; ?>"}]'>
-                                    <img class="tran-all" onload="fadeInVisOpa(this)" src="<?php echo $url["img"]; ?>/products/<?php echo $i->url; ?>">
+                                <li class="tran-all fadeImages" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $i->url; ?>) center no-repeat;background-size:cover;" data-json='[{"url":"<?php echo $url["img"] . "/products/" . $i->url; ?>"}]'>
+                                    <img onload="fadeImages(this, true)" src="<?php echo $url["img"]; ?>/products/<?php echo $galleryImage->url; ?>" />
                                 </li>
 
                             <?php } ?>
@@ -107,8 +223,8 @@ include_once $sroot . "/assets/templates/global/header.php";
                     </div>
 
                     <!-- GALLERY IMAGE -->
-                    <div class="gallery-image lt" data-react="change-product-image" data-action="open-image-viewer" data-url="<?php echo $igal->url; ?>">
-                        <img onload="fadeInVisOpa(this)" class="almid-h tran-all" src="<?php echo $url["img"]; ?>/products/<?php echo $igal->url; ?>">
+                    <div class="gallery-image lt" data-react="productview:gallery,change" data-action="open-image-viewer" data-url="<?php echo $url["img"]; ?>/products/<?php echo $galleryImage->url; ?>">
+                        <img onload="fadeImages(this)" class="almid-h" src="<?php echo $url["img"]; ?>/products/<?php echo $galleryImage->url; ?>" />
                     </div>
 
                     <div class="cl"></div>
@@ -116,64 +232,6 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                 <!-- PRODUCT OVERVIEW -->
                 <div class="action-card">
-                    <div class="product-name">
-                        <p class="trimfull"><?php echo $p->name; ?> <span class="cblue" style="font-size:0.6em;">#<?php echo $p->artnr; ?></span></p>
-                    </div>
-
-                    <div class="rt">
-                        <div class="papel-klammer price">
-                            <div class="justify">
-                                <p class="ttup">Preis</p>
-                                <p><?php echo number_format($p->price, 2, ',', '.'); ?> €</p>
-                            </div>
-                        </div>
-
-                        <div class="pv-buttons" data-json='[{"id":"<?php echo $prid; ?>"}]'>
-
-
-                            <?php
-
-                            if (!($sNum >= $p->amt)) {
-                                if ($p->available == "0") { ?>
-
-                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
-                                        <p><i class="icon-shopping-basket"></i></p>
-                                        <p class="ml12 trimfull">Nicht verfügbar</p>
-                                    </div>
-
-                                <?php } else { ?>
-
-                                    <div class="button black disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard" data-json='[{"id":"<?php echo $prid; ?>"}]'>
-                                        <p><i class="icon-shopping-basket"></i></p>
-                                        <p class="ml12 trimfull">In den Warenkorb</p>
-                                    </div>
-
-                                <?php
-
-                                }
-                            } else {
-
-                                ?>
-
-                                <div class="button black disfl fldirrow jstfycc mt12 tran-all" disabled="disabled">
-                                    <p><i class="icon-ok"></i></p>
-                                    <p class="ml12 trimfull">Im Warenkorb</p>
-                                </div>
-
-                            <?php } ?>
-
-                            <div class="button white disfl fldirrow jstfycc mt12 tran-all" data-action="add-scard-remember">
-                                <?php if ($fNum < 1) { ?>
-                                    <p><i class="icon-star-empty"></i></p>
-                                    <p class="ml12 trimfull">Merken</p>
-                                <?php } else { ?>
-                                    <p><i class="icon-star-filled"></i></p>
-                                    <p class="ml12 trimfull">Gemerkt</p>
-                                <?php } ?>
-                            </div>
-
-                        </div>
-                    </div>
 
                     <div class="desc">
                         <p><?php echo $p->text; ?></p>
@@ -232,7 +290,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                 if ($rNum > 0) {
 
                                     // get my rating
-                                    $getMyRating = $pdo->prepare("SELECT * FROM products_rating WHERE uid = ? AND cid = ? LIMIT 1");
+                                    $getMyRating = $pdo->prepare("SELECT * FROM products_ratings WHERE uid = ? AND cid = ? LIMIT 1");
                                     $getMyRating->execute([$my->id, $rid]);
                                     $mr = $getMyRating->fetch();
 
@@ -283,7 +341,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         <?php
 
                                         // get rating comments
-                                        $getRatingComment = $pdo->prepare("SELECT * FROM products_comments WHERE uid = ? AND pid = ?");
+                                        $getRatingComment = $pdo->prepare("SELECT * FROM products_ratings_comments WHERE uid = ? AND pid = ?");
                                         $getRatingComment->execute([$my->id, $prid]);
 
                                         foreach ($getRatingComment->fetchAll() as $rc) {
@@ -320,7 +378,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                                 <?php } else { ?>
 
-                                    <div data-react="my-rating"></div>
+                                    <div data-react="productview:ratings,add"></div>
 
                                 <?php } ?>
 
@@ -340,12 +398,12 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                                     // get helpful comments (upvoted)
                                     $getCommentsHelpful = $pdo->prepare("
-                                        SELECT *, products_comments.id AS commentid 
-                                        FROM products_comments, customer 
-                                        WHERE products_comments.uid = customer.id 
-                                        AND products_comments.pid = ? 
-                                        AND products_comments.up > products_comments.down 
-                                        AND products_comments.up >= 2 
+                                        SELECT *, products_ratings_comments.id AS commentid 
+                                        FROM products_ratings_comments, customer 
+                                        WHERE products_ratings_comments.uid = customer.id 
+                                        AND products_ratings_comments.pid = ? 
+                                        AND products_ratings_comments.up > products_ratings_comments.down 
+                                        AND products_ratings_comments.up >= 2 
                                         ORDER BY up 
                                         DESC LIMIT 6
                                     ");
@@ -453,11 +511,11 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                                     // get newest comments
                                     $getCommentsNew = $pdo->prepare("
-                                        SELECT *, products_comments.id AS commentid 
-                                        FROM products_comments, customer 
-                                        WHERE products_comments.uid = customer.id 
-                                        AND products_comments.pid = ? 
-                                        ORDER BY products_comments.id 
+                                        SELECT *, products_ratings_comments.id AS commentid 
+                                        FROM products_ratings_comments, customer 
+                                        WHERE products_ratings_comments.uid = customer.id 
+                                        AND products_ratings_comments.pid = ? 
+                                        ORDER BY products_ratings_comments.id 
                                         DESC LIMIT 6
                                     ");
                                     $getCommentsNew->execute([$prid]);
@@ -483,12 +541,12 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         $when = ($timeAgoObject->makeAgo($convertedTime));
 
                                         // get comment's votes
-                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_comments_votes WHERE cid = ? AND vote = 'up' AND active = '1'");
+                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE cid = ? AND vote = 'up'");
                                         $getCommentsVotes->execute([$cn->commentid]);
                                         $cv = $getCommentsVotes->fetch();
 
                                         // check my comment's vote
-                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_comments_votes WHERE uid = ? AND cid = ? AND active = '1'");
+                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE uid = ? AND cid = ?");
                                         $getMyCommentsVotes->execute([$my->id, $cn->commentid]);
                                         $mcv = $getMyCommentsVotes->fetch();
 

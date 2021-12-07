@@ -1,10 +1,9 @@
 <?php
 
-include_once '../../../../mysql/_.session.php';
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (
-    isset($_REQUEST['action'], $_REQUEST['comment'], $_REQUEST['rate'])
-    && $_REQUEST['action'] === 'get-my-rating'
+    isset($_REQUEST['comment'], $_REQUEST['rate'])
     && $_REQUEST['comment'] !== ''
     && is_numeric($_REQUEST['rate'])
     && $loggedIn
@@ -63,7 +62,7 @@ if (
                     <img src="<?php echo $url["img"]; ?>/elem/user.png" onload="fadeInVisOpa(this)">
                 </div>
                 <div class="uo-name">
-                    <p class="trimfull"><?php echo $user['displayname']; ?></p>
+                    <p class="trimfull"><?php echo $my->displayname; ?></p>
                 </div>
                 <div class="uo-date">
                     <p class="timeago">Jetzt</p>

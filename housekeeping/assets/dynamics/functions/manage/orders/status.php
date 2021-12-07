@@ -25,9 +25,6 @@ if (
     in_array($_REQUEST['status'], $validStatus)
 ) {
 
-    // begin mysql transaction
-    $pdo->beginTransaction();
-
     // variablize
     $id = $_REQUEST['id'];
     $st = $_REQUEST['status'];
@@ -42,7 +39,7 @@ if (
     if ($getOrder->rowCount() > 0) {
 
         // check for status and set commiting
-        if ($st == "done" || $st == "canceled") {
+        if ($st == "canceled") {
 
             // set autocommiting to false
             $commit = false;
@@ -52,6 +49,9 @@ if (
         $s = $getOrder->fetch();
         $to = $s->mail;
         $oi = $s->orderid;
+
+        // begin mysql transaction
+        $pdo->beginTransaction();
 
         // update order's status and updated timestamp
         $updateOrder = $pdo->prepare("UPDATE customer_buys SET status = ?, updated = CURRENT_TIMESTAMP WHERE id = ?");
@@ -63,58 +63,21 @@ if (
             // products inside of the order and their reservations
             if (!$commit) {
 
-                // store product ids in array
-                $pids = [];
-                $getOrderProducts = $pdo->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
-                $getOrderProducts->execute([$id]);
+                // set commiting to true
+                $commit = true;
 
-                foreach ($getOrderProducts->fetchAll() as $p) {
-                    $pids[] = $p->pid;
-                }
+                $updateProducts = $pdo->prepare("
+                    UPDATE products, customer_buys, customer_buys_products 
+                    SET products.available = '1' 
+                    WHERE customer_buys_products.bid = customer_buys.id
+                    AND customer_buys_products.pid = products.id
+                    AND customer_buys.id = ?
+                ");
+                $updateProducts = $shop->tryExecute($updateProducts, [$id], $pdo, true);
 
-                foreach ($pids as $pid => $index) {
-
-                    if ($st == "canceled") {
-                        if ($pid == array_key_last($pids)) {
-
-                            // set commiting to true, since we need to commit our changes at the
-                            // last iteration
-                            $commit = true;
-                        }
-                    }
-
-                    // delete reservations in any of these cases
-                    $deleteReservation = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
-                    $deleteReservation = $shop->tryExecute($deleteReservation, [$pid], $pdo, $commit);
-
-                    if (!$deleteReservation->status) {
-                        $return->message = "[1] reservations update error";
-                        exit(json_encode($return));
-                    }
-                }
-
-                // check if status was set to done in which case we need to
-                // update all products of order and set to unavailable
-                if ($st == "done") {
-
-                    foreach ($pids as $pid => $index) {
-
-                        if ($pid == array_key_last($pids)) {
-
-                            // set commiting to true, since we need to commit our changes at the
-                            // last iteration
-                            $commit = true;
-                        }
-
-                        // update products and set to unavailable
-                        $updateProducts = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
-                        $updateProducts = $shop->tryExecute($updateProducts, [$pid], $pdo, $commit);
-
-                        if (!$updateProducts->status) {
-                            $return->message = "[3] products update error";
-                            exit(json_encode($return));
-                        }
-                    }
+                if (!$updateOrder->status) {
+                    $return->message = "error updating products";
+                    exit(json_encode($return));
                 }
             }
 

@@ -1,0 +1,62 @@
+// productview
+@media screen and (max-width: 1200px), screen and (max-height: 900px) {
+  .product-overview .po-images-outer .gallery-image {
+    height: 220px;
+    width: 200px;
+  }
+
+  .product-overview .action-card {
+    width: calc(100% - 300px);
+    position: relative;
+  }
+
+  .product-overview .action-card .rt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%, -50%);
+    margin-top: -140px;
+    margin-left: 160px;
+  }
+
+  .product-overview {
+    .product-name {
+      width: calc(100% - 190px);
+    }
+
+    .pricing-overflow {
+      right: 82px;
+      top: 24px;
+      .price {
+        height: 180px;
+        width: 180px;
+
+        p {
+          &:first-of-type {
+            font-size: 1.2em;
+            font-weight: 700;
+          }
+
+          &:nth-of-type(2) {
+            font-size: 2em;
+          }
+        }
+
+        .justify {
+          padding-top: 42px;
+          padding-left: 38px;
+        }
+      }
+    }
+
+    .action-card {
+      height: 280px;
+    }
+
+    .po-images-outer {
+      .gallery-image {
+        height: 280px;
+      }
+    }
+  }
+}

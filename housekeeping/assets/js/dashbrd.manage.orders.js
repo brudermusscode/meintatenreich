@@ -59,6 +59,8 @@ $(function(){
             processData: false,
             success: function(data){
 
+                console.log(data);
+
                 if(data.status) {
 
                     $btn.removeClass('got done canceled sent');

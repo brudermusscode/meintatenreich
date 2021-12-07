@@ -3,38 +3,41 @@ $(function() {
     // DRY code responsive overlay
 
     let body = $("body");
+    let $body = $("body");
 
-    // change image
+    // change image ~ works
     $(document).on('click', '[data-action="change-product-image"] li', function() {
 
-        let t = $(this);
-        let tdata = t.data('json');
-        let url = 'https://statics.meintatenreich.de/img/products/' + tdata[0].url;
-        let galimg = $('[data-react="change-product-image"]');
-        addLoader(galimg, 'floating');
-        let loader = galimg.find('loader').parent();
-        let galimgg = galimg.find('img');
-        
-        galimg.data('url', tdata[0].url);
-        
-        $('[data-action="change-product-image"] li').removeClass('selected');
-        t.addClass('selected');
-        
-        
-        galimgg.remove();
-        galimg.append('<img src="'+url+'" class="tran-all almid-h">');
+        let $t, url, react;
+
+        $t = $(this);
+        url = $t.data('json')[0].url;
+        react = $body .find('[data-react="productview:gallery,change"]');
+
+        // remove selected circle from current one and...
+        $t.parent().find("li").removeClass("selected");
+
+        // ... set new selected image
+        $t.addClass('selected');
+
+        // find and remove current large gallery image
+        react.find("img").remove();
+        react.data("url", url).append('<img src="' + url + '" class="tran-all almid-h">');
+
         setTimeout(function(){
-            galimg.find('img').css({ 'visibility':'visible', 'opacity':'1' });
-        }, 10);
-        loader.remove();
+            fadeImages(react.find("img"));
+        }, 200);
+        
+
 
     })
 
-    // show full image
+    // show full image ~ works
     .on('click', '[data-action="open-image-viewer"]', function() {
         
-        let url = 'https://statics.meintatenreich.de/img/products/' + $(this).data('url');
-        let action = 'open-image-viewer';
+        let url;
+
+        url = $(this).data('url');
 
         // add responsive overlay
         addOverlay(body, dark = true);
@@ -45,7 +48,7 @@ $(function() {
         $.ajax({
             
             url: dynamicHost + "/ajax/content/productview/resize-image",
-            data: { action: action, url: url },
+            data: { url: url },
             method: 'POST',
             type: 'HTML',
             success: function(data) {
@@ -60,7 +63,7 @@ $(function() {
         
     })
 
-    // open description
+    // open description ~ works
     .on('click', '[data-action="open-desc"]', function() {
 
         let id = $(this).data('json')[0].id;
@@ -90,7 +93,7 @@ $(function() {
         
     })
 
-    // add to shopping card
+    // add to shopping card ~ works
     .on('click', '[data-action="add-scard"]', function() {
         
         let t, id, action, res, url, $shoppingCardAmount;
@@ -140,7 +143,7 @@ $(function() {
         
     })
 
-    // add to favorite
+    // add to favorite ~ works
     .on('click', '[data-action="add-scard-remember"]', function() {
         
         let t = $(this);
@@ -188,157 +191,131 @@ $(function() {
         
     })
 
-    // add rating
+    // add rating ~ works
     .on('click', '[data-action="add-rating"]', function() {
         
-        addOverlay(body);
-        let overlay = body.find('page-overlay');
+        let overlay, loader, action, id, url;
+
+        addOverlay($body);
+        overlay = body.find('page-overlay');
         addLoader(overlay, 'floating');
-        let loader = $('loader').parent();
-        let action = 'add-rating';
-        let id = $(this).data('json')[0].id;
-        let res;
+        loader = $('loader').parent();
+        action = 'add-rating';
+        id = $(this).data('json')[0].id;
+        url = dynamicHost + "/ajax/content/productview/rate",
         
         $.ajax({
             
             data: { action: action, id: id },
-            url: '/get/addrating',
+            url: url,
             method: 'POST',
             type: 'HTML',
             success: function(data) {
-                
-                switch(data) {
-                    case '':
-                    case '0':
-                    case '1':
-                        res = 'Ein unbekannter Fehler ist aufgetreten.';
-                        overlay.removeAttr('style');
-                        showDialer(res);
-                        setTimeout(function(){
-                            overlay.remove();
-                        }, 400);
-                        break;
-                    case '2':
-                        res = 'Sie müssen das Produkt kaufen, bevor Sie es bewerten können!';
-                        overlay.removeAttr('style');
-                        showDialer(res);
-                        setTimeout(function(){
-                            overlay.remove();
-                        }, 400);
-                        break;
-                    default:
-                        loader.remove();
-                        overlay.append(data);
+
+                if(data !== 0) {
+                    loader.remove();
+                    overlay.append(data);
                 }
                 
             }
             
         });
-        
     })
 
+    // add rating >> activate send button ~ works
     .on('keyup', '[data-action="po-comment"]', function(){
             
         let val = $.trim($(this).val().length);
-        let sendButton = $('[data-react="po-comment"]');
+        let sendButton = $(this).closest("form").find('button[type="submit"]');
 
         if(val >= 3) {
-            sendButton.attr('data-action', 'submit-comment')
-            .addClass('active');
+            sendButton.addClass('active');
         } else {
-            sendButton.removeAttr('data-action')
-            .removeClass('active');
+            sendButton.removeClass('active');
         }
 
     })
 
-    .on('click', '[data-action="submit-comment"]', function(){
+    // submit rating
+    .on('submit', '[data-form="productview:rating"]', function(e){
 
-        let textarea = $(this).closest('.textarea').find('textarea');
-        let valLen = $.trim(textarea.val().length);
-        let res;
-        let form = $('[data-form="rating"]');
-        let formData = form.serialize();
-        let inputLen = form.find('input[name="rate"]').val();
-        let overlay = $('page-overlay');
-        let addRating = $('[data-react="my-rating"]');
-        let comment = textarea.val();
-        let action = 'get-my-rating';
-        let wc = overlay.find('wide-container');
-        let buttonHide = $('[data-action="add-rating"]');
+        e.preventDefault();
+
+        let $t, textarea, textareaLength, inputLength, formData, $overlay, $react, $submitButton, $wideContainer;
+
+        $t = $(this);
+        textarea = $t.closest('.textarea').find('textarea');
+        textareaLength = $.trim(textarea.val().length);
+        formData = new FormData(this);
+        inputLength = $t.find('input[name="rate"]').val();
+        $overlay = $('page-overlay');
+        $react = $body.find('[data-react="productview:ratings,add"]');
+        $wideContainer = $overlay.find('wide-container');
+        $submitButton = $('[data-action="add-rating"]');
+        url = dynamicHost + "/ajax/functions/productview/rate";
         
-        if(valLen < 3) {
-            res = 'Bitte gebe mindestens 3 Zeichen ein!'
-            showDialer(res);
-        } else if($.trim(inputLen).length < 1 && !($.isNumeric(inputLen))) {
-            res = 'Bitte bewerte das Produkt mit Sternen!'
-            showDialer(res);
+        if(textareaLength < 3) {
+            
+            showDialer("Bitte gib eine Bewertung ein");
+        } else if($.trim(inputLength).length < 1 && !($.isNumeric(inputLength))) {
+
+            showDialer("Wähle zwischen 1 und 5 Sternen");
         } else {
         
+            let wcOverlay, closeover, wcLoader;
+
+            // add overlay to prevent clicking
+            addOverlay($wideContainer, dark = true);
+            wcOverlay = $wideContainer.find('page-overlay');
+            closeover = wcOverlay.find('close-overlay').remove();
+            addLoader(wcOverlay, 'floating');
+            wcLoader = wcOverlay.find('loader').parent();
+
             $.ajax({
 
+                url: url,
                 data: formData,
-                url: '/ajax/submitcomment',
                 method: 'POST',
-                type: 'TEXT',
+                type: 'JSON',
+                contentType: false,
+                processData: false,
                 success: function(data) {
                     
-                    switch(data) {
-                        default:
-                        case '0':
-                        case '1':
-                        case '4':
-                            res = 'Ein unbekannter Fehler ist aufgetreten.';
-                            break;
-                        case '2':
-                            res = 'Sie müssen das Produkt kaufen, bevor Sie es bewerten können!';
-                            break;
-                        case '3':
-                            res = 'Ihr Kommentar enthält ungültige Zeichen!';
-                            break;
-                        case '5':
-                            res = 'Sie haben das Produkt bereits bewertet!';
-                            break;
-                        case '6':
-                            res = 'Bewertung wird veröffentlicht...';
-                            addOverlay(wc, dark = true);
-                            let wcOverlay = wc.find('page-overlay');
-                            let closeover = wcOverlay.find('close-overlay').remove();
-                            addLoader(wcOverlay, 'floating');
-                            let wcLoader = wcOverlay.find('loader').parent();
+                    console.log(data);
+
+                    url = dynamicHost + "/ajax/content/elements/rate";
+
+                    if(data.status) {
+                        
+                        $.ajax({
                             
-                            $.ajax({
+                            data: { comment: textarea.val(), rate: inputLength },
+                            url: url,
+                            method: 'POST',
+                            type: 'HTML',
+                            success: function(data) {
                                 
-                                data: { action: action, comment: comment, rate: inputLen },
-                                url: '/get/myrating',
-                                method: 'POST',
-                                type: 'HTML',
-                                success: function(data) {
-                                    
-                                    res = 'Ihre Bewertung wurde erfolgreich veröffentlicht!';
-                                    buttonHide.remove();
-                                    addRating.append(data);
-                                    overlay.removeAttr('style');
-                                    setTimeout(function(){
-                                        overlay.remove();
-                                    }, 400);
-
-                                    showDialer(res);
-                                    
+                                if(data !== 0) {
+                                    $react.append(data);
                                 }
-                                
-                            });
 
+                                $overlay.removeAttr('style');
+
+                                setTimeout(function(){
+                                    $overlay.remove();
+                                }, 400);
+                                
+                            }
+                        });
                     }
 
-                    showDialer(res);
-
+                    showDialer(data.message);
+                },
+                error: function(data) {
+                    console.error(data);
                 }
-
             });
-
         }
-
     })
 
     // Comment voting

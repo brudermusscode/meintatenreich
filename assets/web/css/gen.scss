@@ -654,8 +654,8 @@ footer#ftr .adjust ul a:last-of-type {
 }
 .main-overflow-scroll {
   height: calc(var(--main-content-height) - 24px);
-  overflow: auto;
-  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: visible;
   width: calc(100% - (182px + 2 * 42px));
 }
 

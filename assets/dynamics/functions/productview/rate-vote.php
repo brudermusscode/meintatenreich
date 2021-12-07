@@ -1,12 +1,20 @@
 <?php
 
-// ERROR CODE :: 0
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-require_once "../../../mysql/_.session.php";
+header('Content-Type: application/json; charset=utf-8');
+
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!"
+];
+
+// objectify response array
+$return = (object) $return;
 
 if (
-    isset($_REQUEST['action'], $_REQUEST['vote'],  $_REQUEST['cid'],  $_REQUEST['pid'],  $_REQUEST['uid'])
-    && $_REQUEST['action'] === 'comment-vote'
+    isset($_REQUEST['vote'],  $_REQUEST['cid'],  $_REQUEST['pid'],  $_REQUEST['uid'])
     && ($_REQUEST['vote'] === 'up' || $_REQUEST['vote'] === 'down')
     && is_numeric($_REQUEST['cid'])
     && is_numeric($_REQUEST['pid'])
@@ -27,64 +35,57 @@ if (
     }
 
     // CHECK IF COMMENT EXISTS
-    $sel = $pdo->prepare("SELECT * FROM products_comments WHERE id = ? AND uid = ? AND pid = ?");
-    $sel->bind_param('sss', $cid, $cuid, $cpid);
-    $sel->execute();
-    $sel_r = $sel->get_result();
+    $sel = $pdo->prepare("SELECT * FROM products_ratings_comments WHERE id = ? AND uid = ? AND pid = ?");
+    $sel->execute([$cid, $cuid, $cpid]);
 
-    if ($sel_r->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
-        $cex = $sel_r->fetch_assoc();
-        $sel->close();
+        $cex = $sel->fetch();
 
         $upvotes = $cex['up'];
         $dwvotes = $cex['down'];
 
         // CHECK IF VOTED ALREADY
-        $sel = $pdo->prepare("SELECT * FROM products_comments_votes WHERE uid = ? AND cid = ?");
-        $sel->bind_param('ss', $cuid, $cid);
-        $sel->execute();
-        $sel_r = $sel->get_result();
+        $sel = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE uid = ? AND cid = ?");
+        $sel->execute([$cuid, $cid]);
 
-        if ($sel_r->rowCount() > 0) {
+        if ($sel->rowCount() > 0) {
 
-            $s = $sel_r->fetch_assoc();
-            $sel->close();
+            $s = $sel->fetch();
 
-            if ($s['vote'] === $vote) {
+            if ($s->vote === $vote) {
 
                 // BUILD QUERY FOR UPDATE COMMENT
                 $votes = false;
                 if ($vote === 'up') {
                     $votes = $upvotes - 1;
-                    $sql = "UPDATE products_comments SET up = ?";
+                    $sql = "UPDATE products_ratings_comments SET up = ?";
                 } else {
                     $votes = $dwvotes - 1;
-                    $sql = "UPDATE products_comments SET down = ?";
+                    $sql = "UPDATE products_ratings_comments SET down = ?";
                 }
 
                 // UPDATE COMMENT
                 $updCom = $pdo->prepare($sql);
-                $updCom->bind_param('s', $votes);
-                $updCom->execute();
+                $updCom = $shop->tryExecute($updCom, [$votes], $pdo, false);
 
-                // UPDATE VOTE
-                $upd = $pdo->prepare("UPDATE products_comments_votes SET vote = 'none', active = '0' WHERE uid = ? AND cid = ?");
-                $upd->bind_param('ss', $cuid, $cid);
-                $upd->execute();
+                if ($updCom->status) {
 
-                if ($upd && $updCom) {
-                    $pdo->commit();
-                    $updCom->close();
-                    $upd->close();
-                    $pdo->close();
-                    exit('inactive');
+                    // UPDATE VOTE
+                    $upd = $pdo->prepare("DELETE FROM products_ratings_votes WHERE uid = ? AND cid = ?");
+                    $upd = $shop->tryExecute($upd, [$cuid, $cid], $pdo, true);
+
+                    if ($upd->status) {
+
+                        $return->message = "Bewertung abgegeben";
+                        $return->status = true;
+
+                        exit(json_encode($result));
+                    } else {
+                        exit(json_encode($result));
+                    }
                 } else {
-                    $pdo->rollback();
-                    $updCom->close();
-                    $upd->close();
-                    $pdo->close();
-                    exit('0');
+                    exit(json_encode($result));
                 }
             } else {
 
@@ -120,20 +121,6 @@ if (
                 $upd = $pdo->prepare("UPDATE products_comments_votes SET vote = ?, timestamp = ?, active = '1' WHERE uid = ? AND cid = ?");
                 $upd->bind_param('ssss', $vote, $timestamp, $cuid, $cid);
                 $upd->execute();
-
-                if ($upd && $updCom) {
-                    $pdo->commit();
-                    $upd->close();
-                    $updCom->close();
-                    $pdo->close();
-                    exit($exit);
-                } else {
-                    $pdo->rollback();
-                    $upd->close();
-                    $updCom->close();
-                    $pdo->close();
-                    exit('0');
-                }
             }
         } else {
 
@@ -141,18 +128,6 @@ if (
             $ins = $pdo->prepare("INSERT INTO products_comments_votes (uid, cid, vote, timestamp, active) VALUES (?,?,?,?,'1')");
             $ins->bind_param('ssss', $cuid, $cid, $vote, $timestamp);
             $ins->execute();
-
-            if ($ins) {
-                $pdo->commit();
-                $ins->close();
-                $pdo->close();
-                exit($exit);
-            } else {
-                $pdo->rollback();
-                $ins->close();
-                $pdo->close();
-                exit('0');
-            }
         }
     } else {
         exit('1');
