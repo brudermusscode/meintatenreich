@@ -57,6 +57,19 @@ if (
 
                 if ($update->status) {
 
+                    // prepare mail's body
+                    $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/orderCanceled.html');
+                    $mailbody = str_replace('%orderid%', $o->orderid, $mailbody);
+
+                    // send mail
+                    $sendMail = $shop->trySendMail(
+                        $my->mail,
+                        "Stornierung deiner Bestellung - " . $o->orderid,
+                        $mailbody,
+                        $mail["header"]
+                    );
+
+                    // set status to true and return
                     $return->status = true;
                     $return->message = "Deine Bestellung wurde storniert";
 

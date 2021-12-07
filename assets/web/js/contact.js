@@ -4,12 +4,12 @@ $(function() {
 
     $doc.delegate('[data-action="contact:send"]', 'click', function() {
 
-        let $t = $(this);
-        let $f = $t.closest('[data-form="contact"]');
-        let dataString = $f.serialize();
-        let url = dynamicHost + '/ajax/functions/contact';
-        let empty;
-        let res;
+        let $t, $f, dataString, url, empty;
+
+        $t = $(this);
+        $f = $t.closest('[data-form="contact"]');
+        dataString = $f.serialize();
+        url = dynamicHost + '/ajax/functions/contact';
 
         $f.find('input, textarea').each(function() {
             let $t = $(this);
@@ -20,43 +20,27 @@ $(function() {
             }
         });
 
-        if (empty === false) {
+        if (!empty) {
 
             showDialer('Nachricht wird gesendet...');
 
-            let ajax = $.ajax({
+            $.ajax({
                 url: url,
                 data: dataString,
                 method: 'POST',
-                type: 'TEXT',
+                type: 'JSON',
                 success: function(data) {
 
                     console.log(data);
 
-                    switch (data) {
-                        case '':
-                        case '0':
-                        default:
-                            res = 'Oh! Ein Fehler!';
-                            break;
-                        case '1':
-                            res = 'Diese Kategorie existiert nicht';
-                            break;
-                        case '2':
-                            res = 'Dein Vorname enthält ungültige Zeichen';
-                            break;
-                        case '3':
-                            res = 'Dein Nachname enthält ungültige Zeichen';
-                            break;
-                        case '4':
-                            res = 'Die Form deiner E-Mail Adresse ist ungültig. Nutze <strong class="fw7">name@host.endung</strong>';
-                            break;
-                        case 'success':
-                            res = 'Deine Nachricht wurde erfolgreich versendet! Du solltest bereits eine Bestätigung erhalten haben';
-                            $f.trigger('reset');
+                    if(data.status) {
+                        $f.trigger('reset');
                     }
 
-                    showDialer(res);
+                    showDialer(data.message);
+                },
+                error: function(data) {
+                    console.error(data);
                 }
 
             });
@@ -65,7 +49,5 @@ $(function() {
 
             showDialer('Bitte fülle alle Felder aus');
         }
-
     });
-
 });
