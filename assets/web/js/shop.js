@@ -986,7 +986,6 @@ $(function(){
         
         let id = $(this).data('json')[0].id;
         let action = 'request-cancel-order';
-        let res;
         let url = dynamicHost + "/ajax/functions/orders/cancel";
 
         $.ajax({
@@ -994,32 +993,23 @@ $(function(){
             url: url,
             data: { action: action, id: id },
             method: 'POST',
-            type: 'TEXT',
+            type: 'JSON',
             success: function(data) {
 
-                switch(data) {
-                    case '0':
-                    case '1':
-                        res = 'Oh nein! Ein Fehler!';
-                        break;
-                    case '2':
-                        res = 'Die Stornierungsfrist von 2 Stunden ist bereits abgelaufen';
-                        closePageoverlay();
-                        break;
-                    default:
-                        res = 'Stornierung erfolgreich, bitte warten...';
-                        setTimeout(function(){
+                if(data.status) {
+
+                    setTimeout(function(){
                             
-                            window.location.replace(window.location);
-                            
-                        }, 1200);
+                        window.location.replace(window.location);
+                    }, 1200);
+                } else {
+                    closePageoverlay();
                 }
                 
-                showDialer(res);
-                
+                showDialer(data.message);
             },
             error: function(data) {
-                // add error log
+                console.error(data);
             }
             
         });

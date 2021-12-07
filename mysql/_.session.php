@@ -1,10 +1,10 @@
 <?php
 
-// create session when cookies are accepted and no
-// session was started before
-if (!isset($_SESSION) && isset($_COOKIE['cookies']) && $_COOKIE['cookies'] == 'true') {
-    session_start();
-}
+// create new session
+session_start();
+
+// store session values in $my object
+$my = (object) $_SESSION;
 
 // include prepare file
 require_once "_.prepare.php";
@@ -18,9 +18,6 @@ $get_system_settings = $pdo->prepare("
 ");
 $get_system_settings->execute([$conf["environment"]]);
 $system_settings = $get_system_settings->fetch();
-
-// objectify my array
-$my = (object) $_SESSION;
 
 // create main array with system specific information
 $main = [

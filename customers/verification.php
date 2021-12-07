@@ -8,6 +8,8 @@ $pdo->beginTransaction();
 $ptit = "Verifiziere dein Profil";
 $pid = "verify";
 
+// check for request input
+// user id and verification key are needed
 if (isset($_GET['id'], $_GET['key'])) {
 
     $id = $_GET['id'];
@@ -30,11 +32,15 @@ if (isset($_GET['id'], $_GET['key'])) {
         // fetch users information
         $c = $getCustomer->fetch();
 
+        // the user is already verified
         if ($c->verified == '1') {
 
-            $status = 'verified'; // already verified
+            $status = 'verified';
+
+            // user is not verified, now...
         } else {
 
+            // ... update users information
             $update = $pdo->prepare("
                 UPDATE customer, customer_verifications 
                 SET customer.verified = '1', customer_verifications.used = '1' 
@@ -42,22 +48,27 @@ if (isset($_GET['id'], $_GET['key'])) {
                 AND customer.id = ? 
                 AND customer_verifications.vkey = ?
             ");
-            $try = $shop->tryExecute($update, [$id, $key], $pdo);
+            $update = $shop->tryExecute($update, [$id, $key], $pdo, true);
 
-            if (is_array($try) && $try) {
+            if ($update->status) {
 
+                // update session
                 $_SESSION["verified"] = "1";
 
-                $pdo->commit();
-                $status = 'success'; // verified
+                // user has been verified, tell him!
+                $status = 'success';
+            } else {
+                $status = 'error';
             }
         }
+
+        // the user does not exist
     } else {
 
-        $status = 'notexist'; // user does not exist
+        $status = 'notexist';
     }
 } else {
-    //exit(header('location: /oops'));
+    exit(header('location: /error'));
 }
 
 include_once $sroot . "/assets/templates/global/head.php";
@@ -118,11 +129,11 @@ include_once $sroot . "/assets/templates/global/head.php";
     <div class="easy-box mshd-1 rd3">
         <div class="p42">
             <p class="tac">
-                <?php if ($status === 'notexist') { ?>
+                <?php if ($status == 'notexist') { ?>
                     Da stimmt was nicht!<br>Entweder existiert dieses Profil nicht, oder der Schlüssel zur Verifikation wurde bereits verwendet. Vielleicht versuchst du's einfach nochmal!
-                <?php } else if ($status === 'verified') { ?>
+                <?php } else if ($status == 'verified') { ?>
                     Dieser Nutzer ist bereits verifiziert!
-                <?php } else if ($status === 'error') { ?>
+                <?php } else if ($status == 'error') { ?>
                     Ein unbekannter Fehler ist aufgetreten. Bitte versuche es erneut!
                 <?php } else { ?>
                     Du hast deinen Account erfolgreich verifiziert!

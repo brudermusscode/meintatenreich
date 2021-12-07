@@ -2,10 +2,14 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-rating' && is_numeric($_REQUEST['id']) && $loggedIn) {
+if (
+    isset($_REQUEST['id']) &&
+    is_numeric($_REQUEST['id']) &&
+    $loggedIn
+) {
 
-    $id = htmlspecialchars($_REQUEST['id']);
-    $uid = htmlspecialchars($my->id);
+    $id = $_REQUEST['id'];
+    $uid = $my->id;
 
     // CHECK IF PRODUCT EXISTS
     $select = $pdo->prepare("SELECT * FROM products WHERE id = ?");
@@ -15,7 +19,7 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 
         $pr = $select->fetch();
 
-        // CHECK IF BOUGHT
+        // check if the user has successfully bought the product
         $select = $pdo->prepare("
             SELECT * FROM customer_buys, customer_buys_products 
             WHERE customer_buys.id = customer_buys_products.bid 
@@ -212,11 +216,11 @@ if (isset($_REQUEST['action'], $_REQUEST['id']) && $_REQUEST['action'] === 'add-
 <?php
 
         } else {
-            exit(0);
+            exit('3'); // not bought
         }
     } else {
-        exit(0);
+        exit('2'); // product doesn't exist
     }
 } else {
-    exit(0);
+    exit('1');
 }

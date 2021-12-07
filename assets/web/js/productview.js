@@ -194,29 +194,38 @@ $(function() {
     // add rating ~ works
     .on('click', '[data-action="add-rating"]', function() {
         
-        let overlay, loader, action, id, url;
+        let overlay, id, url;
 
-        addOverlay($body);
-        overlay = body.find('page-overlay');
-        addLoader(overlay, 'floating');
-        loader = $('loader').parent();
-        action = 'add-rating';
         id = $(this).data('json')[0].id;
         url = dynamicHost + "/ajax/content/productview/rate",
         
         $.ajax({
             
-            data: { action: action, id: id },
+            data: { id: id },
             url: url,
             method: 'POST',
             type: 'HTML',
             success: function(data) {
 
-                if(data !== 0) {
-                    loader.remove();
+                if(data == '3') {
+                    error = "Produkte können erst nach Kauf bewertet werden";
+                } else if(data == '2') {
+                    error = "Das Produkt scheint nicht mehr zu existieren";
+                } else if(data == '1') {
+                    error = "Bitte logge dich ein, um Bewertungen abzugeben";
+                } else {
+                    addOverlay($body);
+                    overlay = body.find('page-overlay');
                     overlay.append(data);
                 }
+
+                if(data == '1' || data !== '2' || data !== '1') {
+                    showDialer(error);
+                }
                 
+            },
+            error: function(data) {
+                console.error(data);
             }
             
         });
