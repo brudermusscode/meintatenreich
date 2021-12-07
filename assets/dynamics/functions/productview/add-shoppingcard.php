@@ -72,5 +72,6 @@ if (
         exit(json_encode($return)); // product doesn't exist
     }
 } else {
+    $return->message = "Bitte logge dich ein, bevor du Produkte zum Warenkorb hinzufügst";
     exit(json_encode($return));
 }

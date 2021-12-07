@@ -545,10 +545,12 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         $getCommentsVotes->execute([$cn->commentid]);
                                         $cv = $getCommentsVotes->fetch();
 
-                                        // check my comment's vote
-                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE uid = ? AND cid = ?");
-                                        $getMyCommentsVotes->execute([$my->id, $cn->commentid]);
-                                        $mcv = $getMyCommentsVotes->fetch();
+                                        if ($loggedIn) {
+                                            // check my comment's vote
+                                            $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE uid = ? AND cid = ?");
+                                            $getMyCommentsVotes->execute([$my->id, $cn->commentid]);
+                                            $mcv = $getMyCommentsVotes->fetch();
+                                        }
 
                                     ?>
 

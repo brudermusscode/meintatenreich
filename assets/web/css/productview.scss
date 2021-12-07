@@ -227,7 +227,14 @@
       cursor: zoom-in;
 
       img {
-        height: 100%;
+        display: block;
+        position: relative;
+        max-height: calc(100% - 2px);
+        max-width: calc(100% - 2px);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
       }
     }
   }

@@ -678,8 +678,7 @@ $(function(){
 
                 },
                 error: function(data) {
-                    
-                    console.log(data.responseText);
+                    console.error(data.responseText);
                 }
 
             });
@@ -712,8 +711,6 @@ $(function(){
             method: 'POST',
             type: 'HTML',
             success: function(data) {
-                
-                console.log(data);
 
                 switch (data) {
                     case "0":
@@ -1084,8 +1081,6 @@ $(function(){
             method: 'POST',
             success: function(data) {
 
-                console.log($.parseJSON(data));
-
                 switch(data) {
                     case "0":
                     case "1":
@@ -1117,8 +1112,6 @@ function loadShop(data, url, append) {
         method: 'POST',
         type: 'HTML',
         success: function(data) {
-
-            console.log(data);
 
             loader = append.find('loader').remove(),
             res;

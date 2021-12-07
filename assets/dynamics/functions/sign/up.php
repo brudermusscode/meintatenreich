@@ -2,11 +2,25 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// create debug array
-$debugArray = [];
+header('Content-Type: application/json; charset=utf-8');
+
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!"
+];
+
+// objectify response array
+$return = (object) $return;
 
 if (
-    isset($_REQUEST["mail"], $_REQUEST["password"], $_REQUEST["password2"], $_REQUEST["g-recaptcha-response"], $_REQUEST["agb"])
+    isset(
+        $_REQUEST["mail"],
+        $_REQUEST["password"],
+        $_REQUEST["password2"],
+        $_REQUEST["g-recaptcha-response"],
+        $_REQUEST["agb"]
+    )
     && !$loggedIn
 ) {
 
@@ -18,48 +32,27 @@ if (
     $remoteaddr = $_SERVER['REMOTE_ADDR'];
     $captcha = $_REQUEST["g-recaptcha-response"];
 
-    // add debug
-    $debugArray["requestComplete"] = true;
-
     // check if cookies are accepted
     if (isset($_COOKIE['cookies']) && $_COOKIE['cookies'] === 'true') {
-
-        // add debug
-        $debugArray["cookiesAccepted"] = true;
 
         // check if disclaimer box is checked
         if ($agb === 'on') {
 
-            // add debug
-            $debugArray["disclaimerAccepted"] = true;
-
             // check password matching
             if ($password === $password2) {
-
-                // add debug
-                $debugArray["passwordsMatch"] = true;
 
                 // check for password range
                 if (strlen($password) >= 8 && strlen($password) <= 32) {
 
-                    // add debug
-                    $debugArray["passwordValid"] = true;
-
                     // check for grecaptcha
                     $captchaResponse = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $conf["recaptcha_privatekey"] . "&response=" . $captcha . "&remoteip=" . $remoteaddr));
                     if ($captchaResponse->success) {
-
-                        // add debug
-                        $debugArray["gRecaptchaValid"] = true;
 
                         // check email format
                         if (filter_var($inputmail, FILTER_VALIDATE_EMAIL)) {
 
                             // start mysql transactions
                             $pdo->beginTransaction();
-
-                            // add debug
-                            $debugArray["emailValid"] = true;
 
                             // variablize
                             $httpxfor = $login->get_client_ip();
@@ -70,19 +63,13 @@ if (
                             $password = password_hash($password, PASSWORD_DEFAULT);
 
                             // insert new customer
-                            $insertCustomer = $pdo->prepare("
-                                INSERT INTO customer (displayname, mail, password, remoteaddr, httpx) 
-                                VALUES (?,?,?,?,?)
-                            ");
-                            $try = $shop->tryExecute($insertCustomer, [$displayname, $inputmail, $password, $remoteaddr, $httpxfor], $pdo);
+                            $insertCustomer = $pdo->prepare("INSERT INTO customer (displayname, mail, password, remoteaddr, httpx) VALUES (?,?,?,?,?)");
+                            $insertCustomer = $shop->tryExecute($insertCustomer, [$displayname, $inputmail, $password, $remoteaddr, $httpxfor], $pdo, false);
 
-                            if (is_array($try) && $try["status"] == true) {
-
-                                // add debug
-                                $debugArray["insertCustomer"] = true;
+                            if ($insertCustomer->status) {
 
                                 // get last inserted id
-                                $newid = $try["lastInsertId"];
+                                $newid = $insertCustomer->lastInsertId;
 
                                 // create login
                                 $token = $login->createString(64);
@@ -90,30 +77,21 @@ if (
 
                                 // create session
                                 $insertSession = $pdo->prepare("INSERT INTO system_sessions (uid,token,serial,remoteaddr,httpx) VALUES (?,?,?,?,?)");
-                                $try = $shop->tryExecute($insertSession, [$newid, $token, $serial, $remoteaddr, $httpxfor], $pdo);
+                                $insertSession = $shop->tryExecute($insertSession, [$newid, $token, $serial, $remoteaddr, $httpxfor], $pdo, false);
 
-                                if (is_array($try) && $try["status"] == true) {
-
-                                    // add debug
-                                    $debugArray["insertSession"] = true;
+                                if ($insertSession->status) {
 
                                     // insert admin log
                                     $insertAdminLog = $pdo->prepare("INSERT INTO admin_overview (rid, ttype) VALUES (?,'customer')");
-                                    $try = $shop->tryExecute($insertAdminLog, [$newid], $pdo);
+                                    $insertAdminLog = $shop->tryExecute($insertAdminLog, [$newid], $pdo, false);
 
-                                    if (is_array($try) && $try["status"] == true) {
-
-                                        // add debug
-                                        $debugArray["insertAdminLog"] = true;
+                                    if ($insertAdminLog->status) {
 
                                         // create verification key
                                         $insertVerification = $pdo->prepare("INSERT INTO customer_verifications (uid, vkey) VALUES (?,?)");
-                                        $try = $shop->tryExecute($insertVerification, [$newid, $key], $pdo);
+                                        $insertVerification = $shop->tryExecute($insertVerification, [$newid, $key], $pdo, true);
 
-                                        if (is_array($try) && $try["status"] == true) {
-
-                                            // add debug
-                                            $debugArray["insertVerification"] = true;
+                                        if ($insertVerification->status) {
 
                                             // prepare mail's body
                                             $mailbody = file_get_contents($url["main"] . '/assets/templates/mail/signup.html');
@@ -121,71 +99,77 @@ if (
                                             $mailbody = str_replace('%url%', $url["main"] . "/my/verification?id=" . $newid . "&key=" . $key, $mailbody);
 
                                             // send mail
-                                            $try = $shop->trySendMail(
+                                            $sendMail = $shop->trySendMail(
                                                 $inputmail,
                                                 "Deine Registrierung auf MeinTatenreich - Jetzt abschließen!",
                                                 $mailbody,
                                                 $mail["header"]
                                             );
 
-                                            if ($try) {
+                                            if ($sendMail) {
 
-                                                // add debug
-                                                $debugArray["success"] = true;
+                                                $getUserData = $pdo->prepare("SELECT * FROM customer WHERE id = ?");
+                                                $getUserData->execute([$newid]);
 
-                                                $login->createCookie($newid, $displayname, $token, $serial);
-                                                $login->createSession($newid, $displayname, $token, $serial);
+                                                if ($getUserData->rowCount() > 0) {
 
-                                                $pdo->commit();
-                                                exit(json_encode($debugArray));
+                                                    // fetch new user information
+                                                    $u = $getUserData->fetch();
+
+                                                    // create session
+                                                    $login->createCookie($token, $serial);
+                                                    $login->createSession($u, $token, $serial, 0);
+
+                                                    // return success for the customer
+                                                    $return->status = true;
+                                                    $return->message = 'Du hast Dich erfolgreich registriert. Eine E-Mail zur Bestätigung wurde an <span style="color:#F1D394;"><strong>' . $inputmail . '</strong></span> gesendet!';
+
+                                                    exit(json_encode($return));
+                                                } else {
+                                                    $return->message = "Du kannst dich jetzt mit deinem neuen Profil einloggen!";
+                                                    exit(json_encode($return));
+                                                }
                                             } else {
-                                                exit("0");
+                                                $return->message = "Es konnte keine Verifizierungsmail versendet werden. Bitte nutze unser <a href='/contact' target='_blank'>Kontaktformular</a>, um deine Registrierung abzuschließen";
+                                                exit(json_encode($return));
                                             }
                                         } else {
-                                            exit("0");
+                                            exit(json_encode($return));
                                         }
                                     } else {
-                                        exit("0");
+                                        exit(json_encode($return));
                                     }
                                 } else {
-                                    exit("0");
+                                    exit(json_encode($return));
                                 }
                             } else {
-
-                                // switch through error cases and give back
-                                // message to user
-                                switch ($try["code"]) {
-                                    case "23000": // duplicate key
-                                        exit("7");
-                                        break;
-                                    default:
-                                        exit("0");
-                                }
+                                exit(json_encode($return));
                             }
                         } else {
-                            exit('6');
-                        } // email has wrong format
-
+                            $return->message = 'Deine E-Mail hat ein falsches Format. Bitte nutze name@host.endung!';
+                            exit(json_encode($return));
+                        }
                     } else {
-                        exit('5');
-                    } // grecaptcha wrong
-
+                        $return->message = 'Der Captcha-Code scheint falsch zu sein, versuche es erneut';
+                        exit(json_encode($return));
+                    }
                 } else {
-                    exit('4');
-                } // passwords out of range
-
+                    $return->message = 'Bitte wähle ein Passwort zwischen 8 und 32 Zeichen';
+                    exit(json_encode($return));
+                }
             } else {
-                exit('3');
-            } // passwords not matching
-
+                $return->message = 'Die gewählten Passwörter stimmen nicht überein';
+                exit(json_encode($return));
+            }
         } else {
-            exit('2');
-        } // agb not accepted
-
+            $return->message = 'Bitte akzeptiere unsere <a href="/intern/index" target="_blank">AGB</a> und <a href="#" target="_blank">Datenschutzerklärung</a>!';
+            exit(json_encode($return));
+        }
     } else {
-        exit('1');
-    } // cookies not accepted
-
+        $return->message = 'Bitte akzeptiere die <a href="/intern/index#dsg-general-cookies" target="_blank">Cookie-Bedingungen</a>, um fortzufahren';
+        exit(json_encode($return));
+    }
 } else {
-    exit('0');
+    $return->message = 'Bitte fülle alle Felder aus';
+    exit(json_encode($return));
 }

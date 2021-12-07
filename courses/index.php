@@ -45,7 +45,7 @@ if (isset($_GET['cid'])) {
                     ORDER BY CONCAT(date, ' ', start, ':00')
                     ASC
                 ");
-                $getCourseDates->execute([$cid, $timestamp]);
+                $getCourseDates->execute([$cid, $main["fulldate"]]);
             } else {
 
                 header('location: /oops');

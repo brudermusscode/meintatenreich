@@ -42,90 +42,67 @@ $(function() {
     // sign >> up
     $(document).on('click', '[data-action="signup"]', function(){
 
-        let form = $('[data-form="signup"]');
-        let mail = form.find('input[name="mail"]').val();
-        let lc = $('login-container');
-        let checkInputs = checkFormInputEmpty(form);
-        let url = dynamicHost + "/ajax/functions/sign/up";
+        let form, mail, lc, checkInputs, url, formData, overlay, lcOverlay;
+
+        form = $('[data-form="signup"]');
+        mail = form.find('input[name="mail"]').val();
+        lc = $('login-container');
+        url = dynamicHost + "/ajax/functions/sign/up";
+
+        // add overlay
+        addOverlay(lc, dark = true);
+        overlay   = body.find('page-overlay');
+        lcOverlay = lc.find('page-overlay');
+        lcOverlay.find('close-overlay').remove();
+        addLoader(lcOverlay, 'floating');
         
-        if(checkInputs === false) {
-            showDialer('Bitte fülle alle Felder aus!');
-        } else {
+        // serialize form data
+        formData = $('[data-form="signup"]').serialize();
+        
+        // start ajax xhr request
+        $.ajax({
+            
+            data: formData,
+            url: url,
+            method: 'POST',
+            type: 'JSON',
+            success: function(data) {
 
-            if(!validateEmail(mail)) {
-                showDialer('Ihre E-Mail hat ein falsches Format. Bitte nutze name@host.endung');
-            } else {
+                console.log(data);
 
-                addOverlay(lc, dark = true);
-                let overlay   = body.find('page-overlay');
-                let lcOverlay = lc.find('page-overlay');
-                lcOverlay.find('close-overlay').remove();
-                addLoader(lcOverlay, 'floating');
-                
-                let formData = $('[data-form="signup"]').serialize();
-                
-                $.ajax({
-                    
-                    data: formData,
-                    url: url,
-                    method: 'POST',
-                    type: 'TEXT',
-                    success: function(data){
-                        
-                        grecaptcha.reset();
-                        let resp;
+                if(data.status) {
 
-                        switch(data) {
-                            case '0':
-                                resp = 'Ein unbekannter Fehler ist aufgetreten.';
-                                break;
-                            case '1':
-                                resp = 'Bitte akzeptiere die <a href="/intern/index#dsg-general-cookies" target="_blank">Cookie-Bedingungen</a>, um fortzufahren';
-                                break;
-                            case '2':
-                                resp = 'Bitte akzeptiere unsere <a href="/intern/index" target="_blank">AGB</a> und <a href="#" target="_blank">Datenschutzerklärung</a>!';
-                                break;
-                            case '3':
-                                resp = 'Die gewählten Passwörter stimmen nicht überein';
-                                break;
-                            case '4':
-                                resp = 'Bitte wähle ein Passwort zwischen 8 und 32 Zeichen';
-                                break;
-                            case '5':
-                                resp = 'Der Captcha-Code scheint falsch zu sein, versuche es erneut';
-                                break;
-                            case '6':
-                                resp = 'Deine E-Mail hat ein falsches Format. Bitte nutze name@host.endung!';
-                                break;
-                            case '7':
-                                resp = 'Diese E-Mail Adresse wird bereits verwendet';
-                                break;
-                            default:
+                    // remove overlay from login container
+                    lc.remove();
 
-                                console.log($.parseJSON(data));
-                                resp = 'Du hast Dich erfolgreich registriert. Eine E-Mail zur Bestätigung wurde an <span style="color:#F1D394;"><strong>'+mail+'</strong></span> gesendet!';
-                                lc.remove();
-                                addTextDialogue(overlay, 'Erfolg!');
+                    // add text dialogue over the login container with
+                    // success information (hopefully)
+                    addTextDialogue(overlay, 'Erfolg!');
 
-                                setTimeout(function(){
-                                    window.location.reload();
-                                }, 2000);
-                        }
-                        
-                        showDialer(resp);
-                        lcOverlay.css('opacity', '0');
-                        setTimeout(function(){
-                            lcOverlay.remove();
-                        }, 200);
-                        
-                    }
-                    
-                });
+                    // set a timeout for reloading the page and get the user logged in
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000);
 
+                } else {
+
+                    // reset google recaptchaa
+                    grecaptcha.reset();
+
+                    // remove login container overlay after timeout                    
+                    lcOverlay.css('opacity', '0');
+                    setTimeout(function(){
+                        lcOverlay.remove();
+                    }, 200);
+                }
+
+                // responsive dialer popup, to inform users
+                showDialer(data.message);
+            },
+            error: function(data) {
+                console.error(data);
             }
-
-        }
-
+        });
     })
 
     // sign >> in
