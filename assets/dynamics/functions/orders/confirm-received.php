@@ -2,14 +2,18 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"] . '/mysql/_.session.php';
 
-$pdo->beginTransaction();
+header('Content-Type: application/json; charset=utf-8');
 
-if (
-    isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])
-) {
+// response array
+$return = [
+    "status" => false,
+    "message" => "Oh nein! Ein Fehler!"
+];
 
-    // create debugging array
-    $debugArray = [];
+// objectify response array
+$return = (object) $return;
+
+if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
 
     // variablize
     $id = $_REQUEST['id'];
@@ -21,59 +25,41 @@ if (
 
     if ($getOrder->rowCount() > 0) {
 
-        // add debug-
-        $debugArray["orderExists"] = true;
-
         // fetch order information
         $o = $getOrder->fetch();
 
-        $pids = [];
-        $updateProducts = false;
-        $deleteReservations = false;
-        $loopedProducts = 0;
-        $loopedReservations = 0;
-
-        $getOrderProducts = $pdo->prepare("SELECT pid FROM customer_buys_products WHERE bid = ?");
-        $getOrderProducts->execute([$id]);
-
-        foreach ($getOrderProducts->fetchAll() as $op) {
-            $pids[] = $op->pid;
-
-            $updateProducts = $pdo->prepare("UPDATE products SET available = '0' WHERE id = ?");
-            $updateProducts->execute([$op->pid]);
-
-            if ($updateProducts) {
-                $loopedProducts++;
-            }
-
-            $deleteReservations = $pdo->prepare("DELETE FROM products_reserved WHERE pid = ?");
-            $deleteReservations->execute([$op->pid]);
-
-            if ($deleteReservations) {
-                $loopedReservations++;
-            }
-        }
-
-        // add debug
-        $debugArray["orderProductsUpdated"] = $loopedProducts . "/" . $getOrderProducts->rowCount();
-        $debugArray["orderProductsReservationsDeleted"] = $loopedReservations . "/" . $getOrderProducts->rowCount();
+        // start mysql transaction
+        $pdo->beginTransaction();
 
         // UPDATE ORDER
-        $updateOrder = $pdo->prepare("UPDATE customer_buys SET status = 'done', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
-        $updateOrder->execute([$id, $uid]);
+        $update = $pdo->prepare("UPDATE customer_buys SET status = 'done', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
+        $update = $shop->tryExecute($update, [$id, $uid], $pdo, true);
 
-        if ($updateOrder && $updateProducts && $deleteReservations) {
+        if ($update->status) {
 
-            $pdo->commit();
-            exit(json_encode($debugArray));
+            $mailUrl = '/assets/templates/mail/dashbrd/orderStatusDone.html';
+            $mailTopic = "Deine Bestellung auf MeinTatenReich ist nun abgeschlossen!";
+            $mailbody = file_get_contents($url["main"] . $mailUrl);
+            $mailbody = str_replace('%orderid%', $o->orderid, $mailbody);
+
+            // send mail
+            $sendMail = $shop->trySendMail(
+                $my->mail,
+                $mailTopic,
+                $mailbody,
+                $mail["header"]
+            );
+
+            $return->message = "Vielen Dank für die Bestätigung!";
+            $return->status = true;
+
+            exit(json_encode($return));
         } else {
-
-            $pdo->rollback();
-            exit('0');
+            exit(json_encode($return));
         }
     } else {
-        exit('1'); // order does not exist
+        exit(json_encode($return));
     }
 } else {
-    exit("0");
+    exit(json_encode($return));
 }

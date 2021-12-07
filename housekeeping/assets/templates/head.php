@@ -12,9 +12,9 @@
     <!-- STYLING -->
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/normalize.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/tipr.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_gen.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/_wide.container.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/css/responsiveness.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/_gen.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/_wide.container.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/responsiveness.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/animations.css">
 
@@ -23,15 +23,15 @@
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/de.jq.311.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/public.suffix.list.js"></script>
     <script type="text/javascript" src="<?php echo $url["js"]; ?>/tooltip/tipr.min.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.core.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/objects/Overlay.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.elements.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.app.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.orders.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.products.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.manage.customers.js"></script>
-    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/js/dashbrd.messages.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.core.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/objects/Overlay.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.elements.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.app.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.orders.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.products.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.customers.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.messages.min.js"></script>
 
     <script>
         $(function() {

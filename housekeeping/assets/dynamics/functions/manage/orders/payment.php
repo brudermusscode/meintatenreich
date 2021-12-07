@@ -40,13 +40,34 @@ if (
 
     if ($getOrders->rowCount() > 0) {
 
+        // fetch order/user information
+        $s = $getOrders->fetch();
+
         // update order and set payment status to 2 (payment confirmed)
         $updateOrder = $pdo->prepare("UPDATE customer_buys SET paid = ? WHERE id = ?");
         $updateOrder = $shop->tryExecute($updateOrder, [$st, $id], $pdo, $commit);
 
         if ($updateOrder->status) {
 
-            $return->message = "Zahlstatus aktualisiert";
+            $mailUrl = '/assets/templates/mail/dashbrd/orderStatusPayed.html';
+            $mailTopic = "Deine Bestellung auf MeinTatenReich ist nun bezahlt!";
+            $mailbody = file_get_contents($url["main"] . $mailUrl);
+            $mailbody = str_replace('%orderid%', $s->orderid, $mailbody);
+
+            // send mail
+            $sendMail = $shop->trySendMail(
+                $s->mail,
+                $mailTopic,
+                $mailbody,
+                $mail["header"]
+            );
+
+            if ($sendMail) {
+                $return->message = "Zahlungsstatus aktualisiert. der Kunde wurde informiert";
+            } else {
+                $return->message = "Zahlungsstatus aktualisiert";
+            }
+
             $return->set = $st;
             $return->status = true;
             exit(json_encode($return));

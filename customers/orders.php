@@ -163,15 +163,12 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                                             <?php
 
-                                            } else if (
-                                                ($o->status === 'got' || $o->status === 'sent')
-                                                && $o->cancability === '0'
-                                            ) {
+                                            } else if ($o->status === 'sent') {
 
                                             ?>
 
                                                 <button type="button" class="hellofresh hlf-green-s normal rd3 mshd-1" data-action="order:received,confirm" data-json='[{"id":"<?php echo $o->id; ?>"}]'>
-                                                    Ware erhalten
+                                                    Ware erhalten bestätigen
                                                 </button>
 
                                             <?php

@@ -81,9 +81,47 @@ if (
                 }
             }
 
+            // prepare mail's body
+
+            if ($st !== "got") {
+
+                if ($st == "sent") {
+
+                    $mailUrl = '/assets/templates/mail/dashbrd/orderStatusSend.html';
+                    $mailTopic = "Deine Bestellung auf MeinTatenReich wurde verschickt!";
+                } else if ($st == "canceled") {
+
+                    $mailUrl = '/assets/templates/mail/orderCanceled.html';
+                    $mailTopic = "Bestellung storniert - MeinTatenReich";
+                } else if ($st == "done") {
+
+                    $mailUrl = '/assets/templates/mail/dashbrd/orderStatusDone.html';
+                    $mailTopic = "Deine Bestellung auf MeinTatenReich ist nun abgeschlossen!";
+                }
+
+                $mailbody = file_get_contents($url["main"] . $mailUrl);
+                $mailbody = str_replace('%orderid%', $s->orderid, $mailbody);
+
+                // send mail
+                $sendMail = $shop->trySendMail(
+                    $s->mail,
+                    $mailTopic,
+                    $mailbody,
+                    $mail["header"]
+                );
+
+                if ($sendMail) {
+                    $return->message = "Status aktualisiert. Der Kunde wurde informiert";
+                } else {
+                    $return->message = "Status aktualisiert";
+                }
+            } else {
+
+                $return->message = "Status aktualisiert";
+            }
+
             $return->status = true;
             $return->set = $st;
-            $return->message = "Status aktualisiert";
             exit(json_encode($return));
         } else {
             $return->message = "[1] order error";
