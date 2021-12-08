@@ -1,0 +1,354 @@
+/* CC: CONTAINER */
+wide-container {
+  display: block;
+  width: 784px;
+  position: relative;
+  margin: 0 auto;
+}
+wide-container .bottom-distance {
+  display: block;
+  height: 1px;
+  margin-bottom: 82px;
+}
+
+@media screen and (max-width: 840px) {
+  wide-container {
+    width: calc(100% - 24px);
+  }
+}
+
+.head-text {
+  line-height: 42px;
+  text-transform: uppercase;
+}
+.head-text p {
+  color: #c84ebc;
+  font-size: 1em;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+}
+
+.pricing {
+  line-height: 1.2;
+  padding: 24px 32px;
+  border-radius: 6px;
+}
+.pricing p.del-m {
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.8em;
+}
+wide-container .statuses .delivery,
+wide-container .statuses .paid {
+  line-height: 62px;
+  padding: 0 32px;
+  height: 62px;
+  border-radius: 6px;
+}
+
+.pricing {
+  background: rgb(66, 83, 127);
+  background: linear-gradient(
+    20deg,
+    rgba(66, 83, 127, 1) 0%,
+    rgba(93, 31, 66, 1) 100%
+  );
+}
+.pricing p {
+  color: white;
+  font-size: 1em;
+  font-weight: 400;
+  text-align: right;
+}
+wide-container .statuses .delivery {
+  display: inline-block;
+  margin-right: 4px;
+  position: relative;
+  z-index: 2;
+}
+wide-container .statuses .delivery .inr p {
+  font-weight: 600;
+  color: white;
+}
+wide-container .statuses .delivery.got {
+  background: rgb(236, 152, 1);
+  background: linear-gradient(
+    49deg,
+    rgba(236, 152, 1, 1) 0%,
+    rgba(255, 222, 92, 1) 100%
+  );
+}
+wide-container .statuses .delivery.done {
+  background: rgb(68, 125, 70);
+  background: linear-gradient(
+    49deg,
+    rgba(68, 125, 70, 1) 0%,
+    rgba(133, 190, 69, 1) 100%
+  );
+}
+wide-container .statuses .delivery.canceled {
+  background: rgb(133, 0, 0);
+  background: linear-gradient(
+    49deg,
+    rgba(133, 0, 0, 1) 0%,
+    rgba(217, 16, 16, 1) 100%
+  );
+}
+wide-container .statuses .delivery.sent {
+  background: rgb(120, 120, 120);
+  background: linear-gradient(
+    49deg,
+    rgba(120, 120, 120, 1) 0%,
+    rgba(188, 189, 187, 1) 100%
+  );
+}
+wide-container .statuses .paid {
+  display: inline-block;
+  background: rgb(120, 120, 120);
+  background: linear-gradient(
+    49deg,
+    rgba(120, 120, 120, 1) 0%,
+    rgba(188, 189, 187, 1) 100%
+  );
+}
+wide-container .statuses .paid p {
+  color: white;
+  font-weight: 600;
+}
+wide-container .statuses .paid p.ic,
+wide-container .statuses .delivery p.ic {
+  padding-top: 5px;
+}
+wide-container .statuses .paid.ok {
+  background: rgb(68, 125, 70);
+  background: linear-gradient(
+    49deg,
+    rgba(68, 125, 70, 1) 0%,
+    rgba(133, 190, 69, 1) 100%
+  );
+}
+
+wide-container .statuses .delivery datalist ul li p,
+wide-container .statuses .paid datalist ul li p {
+  color: #5068a1;
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.product-overview {
+  position: relative;
+}
+.product-overview .item {
+  margin: 6px;
+  padding-top: 23%;
+  position: relative;
+  width: calc(25% - 12px);
+  cursor: pointer;
+}
+.product-overview .item .product-overview .item.add-new {
+  cursor: pointer;
+  border-radius: 6px;
+}
+.product-overview .item.add-new:hover {
+  border: 2px solid #5068a1;
+  width: calc(25% - 16px);
+  padding-top: calc(23% - 4px);
+  border-radius: 6px;
+}
+.product-overview .item .actual-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+}
+.product-overview .item.gal .actual-image {
+  border: 4px solid #c84ebc;
+  height: calc(100% - 8px);
+  width: calc(100% - 8px);
+}
+.product-overview .item .actual-image img {
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+content-card.half {
+  width: calc(50% - 6px);
+}
+content-card.half:nth-of-type(2n) {
+  margin-left: 12px;
+}
+content-card .adjust {
+  border-radius: 20px;
+  position: relative;
+}
+content-card .bg-orange-purple {
+  position: relative;
+  background: rgb(255, 134, 100);
+  background: linear-gradient(
+    20deg,
+    rgba(255, 134, 100, 1) 0%,
+    rgba(242, 73, 134, 1) 100%
+  );
+}
+content-card .bg-orange-purple::before {
+  content: "";
+  position: absolute;
+  display: block;
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  border-radius: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+}
+content-card .bg-blue-green {
+  position: relative;
+  background: rgb(27, 208, 193);
+  background: linear-gradient(
+    20deg,
+    rgba(27, 208, 193, 1) 0%,
+    rgba(0, 156, 206, 1) 100%
+  );
+}
+content-card .bg-blue-green::before {
+  content: "";
+  position: absolute;
+  display: block;
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+content-card .bg-blue-green .icon,
+content-card .bg-orange-purple .icon {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+content-card .bg-blue-green .icon p,
+content-card .bg-orange-purple .icon p {
+  position: absolute;
+  bottom: -42px;
+  right: -28px;
+  color: rgba(255, 255, 255, 0.24);
+}
+
+content-card .colorfields-inr {
+  color: white;
+  padding: 24px 32px;
+}
+content-card .colorfields-inr .type {
+  font-size: 0.8em;
+  font-weight: 400;
+}
+content-card .colorfields-inr .normal-field {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+wide-container .divide {
+  width: 100%;
+  margin: 42px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+wide-container .divide p {
+  text-align: center;
+  color: #b248bf;
+  height: 62px;
+  width: 62px;
+  border-radius: 50%;
+  background: white;
+}
+wide-container .divide p .material-icons {
+  line-height: 62px !important;
+}
+
+wide-container .normal-box {
+  background: white;
+  border-radius: 6px;
+  color: #383838;
+  font-weight: 400;
+}
+wide-container .normal-box strong {
+  font-weight: 700;
+}
+
+.input {
+  position: relative;
+}
+.input .input-outer input {
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: 20px;
+  height: 42px;
+  line-height: 42px;
+  padding: 0 32px;
+  width: calc(100% - 2 * 32px);
+  color: #383838;
+  outline: none;
+}
+.input .input-outer input:focus {
+  border: 1px solid #aa4abc;
+}
+
+wide-container .hidden-input {
+  overflow: hidden;
+  height: 0px;
+  width: 0px;
+  opacity: 0;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+}
+wide-container .hidden-input .input-outer {
+  width: calc(100% - 12px);
+  height: calc(42px);
+  line-height: 42px;
+  overflow: hidden;
+  border-radius: 20px;
+  position: relative;
+  margin: 6px;
+}
+wide-container .hidden-input .input-outer input {
+  border: 0;
+  outline: none;
+  height: 100%;
+  line-height: 42px;
+  width: calc(100% - 2 * 32px);
+  padding: 0 32px;
+}
+
+.textarea .textarea-outer {
+  position: relative;
+  height: auto;
+}
+.textarea .textarea-outer textarea {
+  padding: 24px 32px;
+  min-height: 92px;
+  resize: vertical;
+  border: 0;
+  outline: none;
+  width: calc(100% - 2 * 32px);
+  vertical-align: middle;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 20px;
+}
+.textarea .textarea-outer textarea:focus {
+  border: 1px solid #aa4abc;
+}
+
+.timestamp {
+  color: #5068a1;
+  font-size: 0.8em;
+}
+.timestamp p.ic {
+  margin-top: -2px;
+  margin-right: 6px;
+}

@@ -619,6 +619,7 @@ content-card .user {
   position: relative;
   border-radius: 20px;
 }
+
 content-card .user .user-icon {
   height: 100%;
   width: 138px;
@@ -627,6 +628,7 @@ content-card .user .user-icon {
   position: absolute;
   left: 0;
 }
+
 content-card .user .user-icon .actual {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -635,18 +637,20 @@ content-card .user .user-icon .actual {
   height: 62px;
   width: 62px;
 }
+
 content-card .user .user-icon .actual .img-outer {
   border-radius: 50%;
   padding: 4px;
   height: calc(100% - 8px);
   width: calc(100% - 8px);
 }
+
 content-card .user .user-icon .actual .img-outer .img {
   background: white url(https://statics.meintatenreich.de/img/elem/user.png)
     center no-repeat;
   background-size: cover;
   height: calc(100% - 6px);
-  width: clac(100% - 6px);
+  width: calc(100% - 6px);
   border-radius: 50%;
   border: 3px solid white;
 }
@@ -1218,6 +1222,19 @@ content-card .products .inr-content .av .av-outer.disabled p::before {
     rgba(144, 20, 20, 1) 0%,
     rgba(213, 29, 29, 1) 100%
   );
+}
+
+content-card .cc-overlay {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+}
+
+content-card .cc-overlay.white {
+  background: white;
 }
 
 /* MAIN: CARDS, ALL ORDERS */

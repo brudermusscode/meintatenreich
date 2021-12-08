@@ -24,7 +24,7 @@ include_once $sroot . "/assets/templates/global/header.php";
             <?php include_once $sroot . "/assets/templates/customers/menu.php"; ?>
 
 
-            <div class="main-overflow-scroll rt ph42">
+            <div class="main-overflow-scroll rt">
 
                 <?php
 

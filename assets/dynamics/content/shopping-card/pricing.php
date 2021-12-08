@@ -10,7 +10,6 @@ if (isset($_REQUEST['price'], $_REQUEST['delivery'])) {
         $deac = number_format($de * 4, 2, ',', '.') . ' €';
         $sum = number_format($pr + $de * 4, 2, ',', '.');
     } else {
-        $denew = ' &nbsp; <i class="icon-info-circled-1 posrel" style="cursor:pointer;color:#B88B56;" data-action="show-combi-pricing-info"></i>';
         $deac = 'ab 6 €';
         $sum = number_format($pr, 2, ',', '.') . ' +';
     }
@@ -31,14 +30,7 @@ if (isset($_REQUEST['price'], $_REQUEST['delivery'])) {
 
     <div>
         <div class="lt posrel">
-            <div class="opa0 vishid posabs tran-all-cubic" data-react="combi-pricing-info" style="z-index:2;right:0;bottom:24px;height:0px;overflow:hidden;width:420px;" class="rd3 mshd-2">
-                <div style="background:rgba(0,0,0,.84);width:100%;" class="rd3">
-                    <p class="p18 cf" style="font-size:.8em;">
-                        Durch den Combiversand müssen wir die Versandkosten manuell berechnen und lassen Dir diese dann per E-Mail zukommen. Der Artikel kann bis zu 12 Stunden nach Erhalt der Versandkosten storniert werden.
-                    </p>
-                </div>
-            </div>
-            <p style="color:#999">Versand<?php echo $denew; ?></p>
+            <p style="color:#999">Versand</p>
         </div>
         <div class="rt">
             <p class="trimall" style="font-size:1.2em;color:#D7A86A;"><?php echo $deac; ?></p>
@@ -46,6 +38,14 @@ if (isset($_REQUEST['price'], $_REQUEST['delivery'])) {
 
         <div class="cl"></div>
     </div>
+
+    <?php if ($de == "combi") { ?>
+        <div style="background:#fff8e1;width:100%;" class="rd3 mt12">
+            <p class="p18 cb" style="font-size:.8em;">
+                Bei Kombiversand müssen die Versandkosten manuell berechnet werden. Du erhälst im Anschluss deiner Bestellung eine E-Mail mit den Versandkosten. Nach erhalt hast du die Möglichkeit, deine Bestellung binnen 12 Std. zu stornieren.
+            </p>
+        </div>
+    <?php } ?>
 
     <div class="mt12" style="border-top:1px solid rgba(0,0,0,.12);padding-top:12px">
         <div class="lt">

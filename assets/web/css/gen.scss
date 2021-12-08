@@ -649,14 +649,13 @@ footer#ftr .adjust ul a:last-of-type {
 }
 .outer .inr {
   overflow: visible;
-  padding: 24px 120px 0;
+  padding: 24px 106px 0;
   height: calc(100% - 24px);
 }
 .main-overflow-scroll {
   height: calc(var(--main-content-height) - 24px);
   overflow-y: auto;
   overflow-x: visible;
-  width: calc(100% - (182px + 2 * 42px));
 }
 
 product-card {
@@ -739,44 +738,53 @@ product-card .pr-inr .pr-info .pr-price {
     margin: 0;
     margin-top: -24px;
     margin-left: -17px;
-  }
-  #hdr .inr {
-    padding: 44px 90px 0;
-    line-height: 90px;
-  }
-  #hdr .inr .logo {
-    margin-top: 42px;
-    height: 72px;
-  }
 
-  #rgr .inr .buttons {
-    margin-top: 42px;
-    margin-right: -42px;
-  }
-  #rgr .inr .buttons button {
-    line-height: 32px;
-    padding: 0 12px;
-  }
-  #rgr .inr .buttons button:hover {
-    line-height: 42px;
-    margin-top: -10px;
+    .inr {
+      padding: 44px 90px 0;
+      line-height: 90px;
+
+      .logo {
+        margin-top: 42px;
+        height: 72px;
+      }
+    }
   }
 
   #rgr {
     background-image: url(https://statics.meintatenreich.de/img/global/kk/s/kk-s-reg.svg);
-  }
-  #rgr .inr .ride-00 {
-    margin-top: 32px;
-    transform: rotate(4deg);
-    margin-left: -62px;
-  }
-  #rgr .inr .left-buttons {
-    margin-top: 32px;
-    padding-left: 142px;
-  }
-  #rgr .inr .left-buttons button {
-    padding: 0 12px;
-    line-height: 32px;
+
+    .inr {
+      .buttons {
+        margin-top: 42px;
+        margin-right: -42px;
+
+        button {
+          line-height: 32px;
+          padding: 0 12px;
+
+          &:hover {
+            line-height: 42px;
+            margin-top: -10px;
+          }
+        }
+      }
+
+      .ride-00 {
+        margin-top: 32px;
+        transform: rotate(4deg);
+        margin-left: -62px;
+      }
+
+      .left-buttons {
+        margin-top: 32px;
+        padding-left: 142px;
+
+        button {
+          padding: 0 12px;
+          line-height: 32px;
+        }
+      }
+    }
   }
 
   #main {
@@ -797,22 +805,6 @@ product-card .pr-inr .pr-info .pr-price {
     padding: 62px 82px;
   }
 
-  .main-overflow-scroll {
-    margin-top: 24px;
-    height: calc(var(--main-content-height) - 24px);
-  }
-  .main-overflow-scroll.ph42 {
-    padding: 0 !important;
-  }
-  .main-overflow-scroll.lt {
-    width: 75%;
-  }
-  .main-overflow-scroll.rt {
-    width: 75%;
-  }
-  .outer .inr {
-    padding: 0 80px;
-  }
   product-card {
     width: calc(
       33.33333333333333333333333333333333333333333333333333333333333333333333333% -

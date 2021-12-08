@@ -10,13 +10,7 @@
     <link rel="icon" href="<?php echo $url["img"]; ?>/global/logo-green.png" type="image/png" />
 
     <!-- STYLING -->
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/normalize.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/tipr.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/_gen.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/_wide.container.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["dashbrd"]; ?>/assets/web/css/responsiveness.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/animations.css">
 
 
     <!-- SCRIPTS -->

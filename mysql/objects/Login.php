@@ -75,7 +75,7 @@ class Login
                 $this->logout();
             }
         } else {
-            $this->logout();
+            return false;
         }
     }
 

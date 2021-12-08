@@ -1,9 +1,14 @@
+<!--
+           _
+       .__(.)< (MEOW)
+        \___)   
+ ~~~~~~~~~~~~~~~~~~-->
+
 <!DOCTYPE HTML>
 <html>
 
 <head>
 
-    <!-- NEEDED STUFF -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" />
 
@@ -12,22 +17,12 @@
         <link rel="shortcut icon" href="<?php echo $url["img"]; ?>/global/logo-green.png" type="image/png" />
         <link rel="icon" href="<?php echo $url["img"]; ?>/global/logo-green.png" type="image/png" />
 
-        <!-- STYLING -->
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/normalize.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/gen.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/animations.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/elements.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["icons"]; ?>/fontello/css/mtr-icons.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["icons"]; ?>/fontello/css/animation.css">
+        <!-- beauti -->
+        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/import.css">
+        <link rel="stylesheet" type="text/css" href="<?php echo $url["main"]; ?>/assets/web/fonts/fontello/css/fontello.css">
+        <link rel="stylesheet" type="text/css" href="<?php echo $url["main"]; ?>/assets/web/fonts/fontello/css/animation.css">
 
-        <?php if ($pid === 'productview') { ?>
-            <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/productview.css">
-        <?php } ?>
-
-        <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/responsiveness.css">
-
-        <!-- SCRIPTS -->
+        <!-- hacks -->
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/de.jq.311.js"></script>
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/thirdparty/public.suffix.list.js"></script>
         <script type="text/javascript" src="<?php echo $url["js"]; ?>/core.min.js"></script>
@@ -82,7 +77,7 @@
     <response-dialer id="response-dialer" class="tran-all-cubic mshd-3">
         <div class="inr disfl fldirrow">
             <div data-action="close-dialer" class="icon tran-all">
-                <i class="icon-cancel-7"></i>
+                <i class="icon-down-open"></i>
             </div>
             <p></p>
         </div>
@@ -124,26 +119,17 @@
         }
     </style>
 
-    <?php
+    <?php if ($admin->isAdmin()) { ?>
 
-    if (isset($loggedIn)) {
-        if ($admin->isAdmin()) {
-
-    ?>
-            <div data-element="dumper" class="mshd-4">
-                <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">
-                    <p class="title"><strong>SESSION dump</strong></p>
-                    <pre class="ovhid"><?php var_dump($admin->getDump("session")); ?></pre>
-                    <p class="mt24 title"><strong>REQUEST dump</strong></p>
-                    <pre class="ovhid"><?php var_dump($admin->getDump("request")); ?></pre>
-                </div>
+        <div data-element="dumper" class="mshd-4">
+            <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">
+                <p class="title"><strong>SESSION dump</strong></p>
+                <pre class="ovhid"><?php var_dump($admin->getDump("session")); ?></pre>
+                <p class="mt24 title"><strong>REQUEST dump</strong></p>
+                <pre class="ovhid"><?php var_dump($admin->getDump("request")); ?></pre>
             </div>
+        </div>
 
-    <?php
-
-        }
-    }
-
-    ?>
+    <?php } ?>
 
     <div id="app">

@@ -197,7 +197,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'scard-overview') {
 
         <!-- TOOLS -->
         <div class="toolery">
-            <div data-react="pricing-hint" class="mt14" style="font-size:.8em;color:#999;">
+            <div data-react="pricing-hint" class="mt18 mb12 tac" style="font-size:.8em;color:#999;">
                 <p>Wähle alle Einstellungen, um Kosten zu berechnen</p>
             </div>
 

@@ -9,6 +9,12 @@ if (isset($elementInclude) && $admin->isAdmin()) {
     <content-card class="mb24 lt tripple" data-json='[{"id":"<?php echo $id; ?>"}]'>
         <div class="products hd-shd adjust">
 
+            <div data-react="manage:products,delete" class="cc-overlay rd20 white">
+                <div class="cc-overlay--inr">
+
+                </div>
+            </div>
+
             <div class="image">
                 <div class="image-outer">
                     <div class="actual">

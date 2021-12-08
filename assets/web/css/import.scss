@@ -1,0 +1,34 @@
+// TODO: add stylesheet for each individual section of the website
+
+// variables
+@import "variables.scss";
+
+// standardize normalize
+@import "normalize.scss";
+
+// classes
+@import "classes.scss";
+
+// general styles
+@import "gen.scss";
+
+// elements
+@import "elements.scss";
+
+// animations
+@import "animations.scss";
+
+// tooltips
+@import "tipr.scss";
+
+// ! intern
+@import "intern.scss";
+
+// ! productview
+@import "productview.scss";
+
+// ! maintenance
+@import "maintenance.scss";
+
+// ? responsiveness
+@import "responsiveness.scss";
