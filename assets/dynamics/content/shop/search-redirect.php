@@ -39,6 +39,7 @@ if (
         AND products_images.isgal = '1' 
         AND products.available = '1' 
         AND products.name LIKE ? 
+        AND products.deleted = '0' 
         ORDER BY $order  
         LIMIT 10
     ");

@@ -1,14 +1,96 @@
+@import "../classes.scss";
+
+// select fields
+[data-element="admin-select"] {
+  cursor: pointer;
+  position: relative;
+  z-index: 4;
+
+  .outline {
+    line-height: 38px;
+    height: 38px;
+    border: 1px solid;
+    padding: 0 18px;
+    border-radius: 20px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    p.icon {
+      margin-top: 6px;
+    }
+  }
+
+  datalist {
+    display: block;
+    background: white;
+    border-radius: 100px 100px 100px 100px;
+    height: 0px;
+    width: 0px;
+    position: absolute;
+    top: 0;
+    box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.24);
+    height: 0px;
+    overflow: hidden;
+    opacity: 0;
+
+    &.left {
+      left: 0;
+    }
+
+    &.right {
+      right: 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 12px 0;
+      white-space: nowrap;
+
+      li {
+        padding: 0 38px;
+        line-height: 42px;
+        display: block;
+        height: 42px;
+        overflow: hidden;
+        font-weight: 400;
+        position: relative;
+
+        &:hover {
+          background: rgba(159, 70, 188, 0.24);
+        }
+
+        &.wic {
+          white-space: nowrap;
+          padding: 0 28px;
+
+          .ic {
+            width: 42px;
+            padding-top: 3px;
+          }
+
+          .ne {
+            width: calc(100% - 42px);
+          }
+        }
+      }
+    }
+  }
+}
+
 /* CC: CONTAINER */
 wide-container {
   display: block;
   width: 784px;
   position: relative;
   margin: 0 auto;
-}
-wide-container .bottom-distance {
-  display: block;
-  height: 1px;
-  margin-bottom: 82px;
+
+  .bottom-distance {
+    display: block;
+    height: 1px;
+    margin-bottom: 82px;
+  }
 }
 
 @media screen and (max-width: 840px) {
@@ -20,25 +102,30 @@ wide-container .bottom-distance {
 .head-text {
   line-height: 42px;
   text-transform: uppercase;
-}
-.head-text p {
-  color: #c84ebc;
-  font-size: 1em;
-  text-shadow: 0 1px rgba(0, 0, 0, 0.12);
-  font-weight: 600;
+
+  p {
+    color: #c84ebc;
+    font-size: 1em;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.12);
+    font-weight: 600;
+  }
 }
 
 .pricing {
   line-height: 1.2;
   padding: 24px 32px;
   border-radius: 6px;
+
+  p {
+    &.del-m {
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.8em;
+    }
+  }
 }
-.pricing p.del-m {
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.48);
-  font-size: 0.8em;
-}
+
 wide-container .statuses .delivery,
 wide-container .statuses .paid {
   line-height: 62px;
@@ -351,4 +438,94 @@ wide-container .hidden-input .input-outer input {
 .timestamp p.ic {
   margin-top: -2px;
   margin-right: 6px;
+}
+
+/*
+* content-cards
+*/
+content-card {
+  &.tripple {
+    width: calc(33.33% - 14px);
+    margin: 6px;
+  }
+
+  &.quad {
+    width: calc(25% - 14px);
+    margin: 6px;
+  }
+
+  .cc-overlay {
+    height: 10%;
+    width: 10%;
+    position: absolute;
+    z-index: 10;
+    top: 10%;
+    left: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+
+    @extend .tran-all-cubic;
+
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+      border-radius: 17px;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    // colors
+    &.white {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    &.red {
+      background: #fce4ec;
+    }
+
+    // delete overlay
+    .cc-overlay--delete {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 48px);
+
+      .dialogue {
+        &:first-of-type {
+          font-size: 1.2em;
+        }
+      }
+
+      .actions {
+        div {
+          transition: all 0.1s linear;
+
+          &:active {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+              0 1px 2px rgba(0, 0, 0, 0.24);
+          }
+
+          &:hover {
+            @extend .mshd-2;
+          }
+
+          &:first-of-type {
+            background: #c48b9f;
+            color: white;
+            font-size: 1em;
+          }
+
+          & :nth-of-type(2) {
+            color: var(--color-lila);
+            font-size: 1em;
+          }
+        }
+      }
+    }
+  }
 }

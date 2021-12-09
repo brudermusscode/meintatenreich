@@ -134,7 +134,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                 </div>
 
                 <!-- TOOLS -->
-                <div class="tools-outer mt24">
+                <div class="tools-outer mt48">
 
                     <div class="lt disfl fldirrow ph32">
 

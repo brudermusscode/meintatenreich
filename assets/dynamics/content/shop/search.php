@@ -24,8 +24,8 @@ if (
             FROM products, products_images 
             WHERE products.id = products_images.pid 
             AND products_images.isgal = '1' 
-            AND products.available = '1' 
-            AND products.name LIKE ?
+            AND products.name LIKE ? 
+            AND products.deleted = '0' 
             ORDER BY products.price
             DESC
             LIMIT 10
@@ -36,7 +36,7 @@ if (
             FROM products, products_images 
             WHERE products.id = products_images.pid 
             AND products_images.isgal = '1' 
-            AND products.available = '1' 
+            AND products.deleted = '0' 
             AND products.name LIKE ?
             ORDER BY products.id
             DESC
@@ -73,6 +73,15 @@ if (
                     <product-card class="mshd-1">
                         <div class="pr-inr">
                             <div class="pr-img-outer">
+
+                                <?php if ($p->available == "0") { ?>
+
+                                    <div class="posabs rd3" style="background:rgba(0,0,0,.84);padding:8px;bottom:8px;right:12px;">
+                                        <p style="color:white;font-size:.8em;font-weight:300;"><i class="icon-flash"></i> Nicht verfügbar</p>
+                                    </div>
+
+                                <?php } ?>
+
                                 <div class="img vishid opa0 tran-all" style="background:url(<?php echo $url["img"]; ?>/products/<?php echo $p->url; ?>) center no-repeat;background-size:cover;">
                                     <img class="vishid opa0 hw1 tran-all" onload="fadeInVisOpaBg($(this).parent())" src="<?php echo $url["img"]; ?>/products/<?php echo $p->url; ?>">
                                 </div>

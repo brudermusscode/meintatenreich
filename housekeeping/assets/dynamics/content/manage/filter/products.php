@@ -3,7 +3,7 @@
 // include everything needed to keep a session
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-$orderValid = ['all', 'available', 'unavailable', 'priceup', 'pricedown'];
+$orderValid = ['all', 'available', 'unavailable', 'priceup', 'pricedown', 'archived'];
 
 if (
     isset($_REQUEST['order'])
@@ -18,13 +18,14 @@ if (
     // in prepared statement down under
     switch ($o) {
 
-        case 'all':
         default:
+        case 'all':
             $q = "
                 SELECT *, products.id AS pid 
                 FROM products, products_images 
                 WHERE products.id = products_images.pid
                 AND products_images.isgal = '1'
+                AND products.deleted = '0' 
                 ORDER BY products.id DESC
             ";
             break;
@@ -35,6 +36,7 @@ if (
                 WHERE products.id = products_images.pid
                 AND products.available = '1'
                 AND products_images.isgal = '1'
+                AND products.deleted = '0' 
                 ORDER BY products.id DESC
             ";
             break;
@@ -45,6 +47,7 @@ if (
                 WHERE products.id = products_images.pid
                 AND products.available = '0'
                 AND products_images.isgal = '1'
+                AND products.deleted = '0' 
                 ORDER BY products.id DESC
             ";
             $unav = true;
@@ -55,6 +58,7 @@ if (
                 FROM products, products_images 
                 WHERE products.id = products_images.pid
                 AND products_images.isgal = '1'
+                AND products.deleted = '0' 
                 ORDER BY products.price ASC
             ";
             break;
@@ -64,6 +68,17 @@ if (
                 FROM products, products_images 
                 WHERE products.id = products_images.pid
                 AND products_images.isgal = '1'
+                AND products.deleted = '0' 
+                ORDER BY products.price DESC
+            ";
+            break;
+        case 'archived':
+            $q = "
+                SELECT *, products.id AS pid 
+                FROM products, products_images 
+                WHERE products.id = products_images.pid
+                AND products_images.isgal = '1'
+                AND products.deleted = '1' 
                 ORDER BY products.price DESC
             ";
             break;

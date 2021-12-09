@@ -87,6 +87,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                     WHERE products.id = products_images.pid
                     AND products_images.isgal = '1'
                     AND products.cid = ?
+                    AND products.deleted = '0' 
                     ORDER BY products.id DESC
                 ");
                 $getProducts->execute([$id]);
@@ -125,6 +126,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
                     foreach ($getProducts->fetchAll() as $elementInclude) {
 
+                        $tripple = true;
                         include $sroot . "/housekeeping/assets/dynamics/elements/products.php";
                     }
                 }

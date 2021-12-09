@@ -90,7 +90,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                     </div>
 
-                    <datalist class="tran-all-cubic">
+                    <datalist class="tran-all-cubic left">
                         <ul>
                             <li class="trimfull" data-json='[{"order":"#nofilter"}]'>Alle anzeigen</li>
                             <li class="trimfull" data-json='[{"order":"orders"}]'>Bestellungen</li>
@@ -156,7 +156,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                     </div>
 
-                    <datalist class="tran-all-cubic">
+                    <datalist class="tran-all-cubic left">
                         <ul>
                             <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
                             <li class="trimfull" data-json='[{"order":"got"}]'>Neue Bestellungen</li>
@@ -185,7 +185,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                     </div>
 
-                    <datalist class="tran-all-cubic">
+                    <datalist class="tran-all-cubic left">
                         <ul>
                             <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
                             <li class="trimfull" data-json='[{"order":"verified"}]'>Verifiziert</li>
@@ -216,8 +216,8 @@ if ($getAdminMailSettings->rowCount() > 0) {
                 ?>
 
                     <content-card class="lt mr8 mb8" data-id="<?php echo $s->id; ?>" data-element="products:category">
-                        <div class="normal-box adjust curpo" data-action="manage:products,category,edit" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
-                            <div class="ph24 lh36">
+                        <div class="normal-box adjust curpo lh36 ph12" data-action="manage:products,category,edit" data-json='[{"id":"<?php echo $s->id; ?>"}]'>
+                            <div>
                                 <p class="fw4" style="white-space:nowrap;"><?php echo $s->category_name; ?></p>
                             </div>
                         </div>
@@ -229,7 +229,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
 
                 <content-card class="lt mr8 posrel" data-action="manage:products,category,add">
                     <div class="normal-box adjust">
-                        <div class="ph24 lh36" style="height:36px;overflow:hidden;color:#A247C0;cursor:pointer;white-space:nowrap;">
+                        <div class="lh36 ph12" style="height:36px;overflow:hidden;color:#A247C0;cursor:pointer;white-space:nowrap">
                             <p class="lt mr8"><i class="material-icons md-18 lh36">add</i></p>
                             <p class="fw5 lt">Hinzufügen</p>
 
@@ -252,13 +252,14 @@ if ($getAdminMailSettings->rowCount() > 0) {
                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                     </div>
 
-                    <datalist class="tran-all-cubic">
+                    <datalist class="tran-all-cubic left">
                         <ul>
                             <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
                             <li class="trimfull" data-json='[{"order":"available"}]'>Verfügbare</li>
                             <li class="trimfull" data-json='[{"order":"unavailable"}]'>Nicht verfügbare</li>
                             <li class="trimfull" data-json='[{"order":"priceup"}]'>Preis aufwärts</li>
                             <li class="trimfull" data-json='[{"order":"pricedown"}]'>Preis abwärts</li>
+                            <li class="trimfull" data-json='[{"order":"archived"}]'>Archivierte</li>
                         </ul>
                     </datalist>
                 </div>
@@ -287,7 +288,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                     </div>
 
-                    <datalist class="tran-all-cubic">
+                    <datalist class="tran-all-cubic left">
                         <ul>
                             <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
                         </ul>

@@ -2,6 +2,7 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700");
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import "../classes.scss";
 
 /* GOOGLE ICON SET */
 .material-icons {
@@ -139,6 +140,7 @@ a:focus {
 
 :root {
   --menu-width: 282px;
+  --color-lila: #a247c0;
 }
 
 .lin-bg-purple {
@@ -187,8 +189,13 @@ a:focus {
     rgba(246, 242, 254, 1) 100%
   );
 }
+
 .hd-shd {
   box-shadow: 0 0 24px 1px rgba(0, 0, 0, 0.06);
+}
+
+.hd-shd-2 {
+  box-shadow: 0 0 24px 6px rgba(0, 0, 0, 0.16);
 }
 
 .btn-outline {
@@ -742,7 +749,7 @@ content-card .rating .user-icon .actual .img-outer .img {
     center no-repeat;
   background-size: cover;
   height: calc(100% - 6px);
-  width: clac(100% - 6px);
+  width: calc(100% - 6px);
   border-radius: 50%;
   border: 3px solid white;
 }
@@ -881,10 +888,6 @@ content-card .customer .user-info .mail .act {
 }
 
 /* PAGE: MANAGE CUSTOMERS */
-content-card.tripple {
-  width: calc(25% - 14px);
-  margin: 6px;
-}
 content-card .auser {
   background: white;
   border-radius: 20px;
@@ -1085,158 +1088,6 @@ content-card .apps .boolean-outer .bool:hover {
   );
 }
 
-/* PAGE: MANAGE PRODUCTS */
-content-card .products {
-  background: white;
-}
-content-card .products .image {
-  height: auto;
-  background: transparent;
-  position: relative;
-}
-content-card .products .image .image-outer {
-  position: relative;
-  height: 212px;
-  width: 100%;
-  border-radius: 20px 20px 0 0;
-  overflow: hidden;
-}
-content-card .products .image .image-outer .actual {
-  height: 100%;
-  width: 100%;
-}
-content-card .products .image .image-outer .actual img {
-  height: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-content-card .products .image .overlay {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  background: rgb(0, 0, 0);
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 67%,
-    rgba(0, 0, 0, 0.5032387955182073) 100%
-  );
-}
-content-card .products .image .overlay .top {
-  top: 0;
-  width: calc(100% - 24px);
-  position: absolute;
-  z-index: 3;
-  padding: 12px;
-}
-content-card .products .image .overlay .top .icon {
-  height: 42px;
-  width: 42px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-content-card .products .image .overlay:hover .top .icon {
-  background: rgba(0, 0, 0, 0.38);
-}
-content-card .products .image .overlay .top .icon:hover {
-  background: rgba(174, 73, 191, 0.38);
-}
-content-card .products .image .overlay .top .icon p.ac-ic {
-  text-align: center;
-  color: white;
-}
-content-card .products .image .overlay .top .icon p.ac-ic i {
-  line-height: 42px;
-}
-content-card .products .image .overlay .bottom {
-  bottom: 0;
-  width: calc(100% - 24px);
-  position: absolute;
-  z-index: 1;
-  padding: 12px;
-}
-content-card .products .image .overlay .bottom .price {
-  padding: 12px 24px 12px 0;
-}
-content-card .products .image .overlay .bottom .price p {
-  font-size: 1.4em;
-  color: white;
-  font-weight: 600;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.38);
-}
-
-content-card .products .inr-content {
-  padding: 18px 0 0;
-}
-content-card .products .inr-content .name {
-  padding: 0 24px;
-}
-content-card .products .inr-content .name p {
-  font-size: 1em;
-  font-weight: 600;
-}
-content-card .products .inr-content .artnr {
-  padding: 0 24px;
-  color: #999;
-}
-
-content-card .products .inr-content .artnr p {
-  font-size: 0.8em;
-}
-
-content-card .products .inr-content .av {
-  margin-top: 8px;
-}
-
-content-card .products .inr-content .av .av-outer p::before {
-  line-height: 32px;
-  padding: 0 12px;
-  border-radius: 6px 0 12px 0;
-  color: white;
-  font-size: 0.8em;
-  color: white;
-  font-weight: 600;
-  transition: all 2s linear;
-}
-
-content-card .products .inr-content .av .av-outer.enabled p::before {
-  display: block;
-  content: "VERFÜGRBAR";
-  background: rgb(20, 134, 23);
-  background: linear-gradient(
-    45deg,
-    rgba(20, 134, 23, 1) 0%,
-    rgba(38, 215, 16, 1) 100%
-  );
-}
-content-card .products .inr-content .av .av-outer.disabled p::before {
-  display: block;
-  content: "NICHT VERFÜGBAR";
-  background: rgb(144, 20, 20);
-  background: linear-gradient(
-    45deg,
-    rgba(144, 20, 20, 1) 0%,
-    rgba(213, 29, 29, 1) 100%
-  );
-}
-
-content-card .cc-overlay {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  z-index: 20;
-  top: 0;
-  left: 0;
-}
-
-content-card .cc-overlay.white {
-  background: white;
-}
-
 /* MAIN: CARDS, ALL ORDERS */
 .all-orders {
   position: relative;
@@ -1343,70 +1194,6 @@ page-overlay close:hover {
 }
 page-overlay close:hover .closer p {
   line-height: 48px;
-}
-
-/* CC: SELECTOR FIELDS */
-[data-element="admin-select"] {
-  cursor: pointer;
-  position: relative;
-  z-index: 4;
-}
-[data-element="admin-select"] .outline {
-  line-height: 38px;
-  height: 38px;
-  border: 1px solid;
-  padding: 0 18px;
-  border-radius: 20px;
-}
-[data-element="admin-select"] .outline:hover {
-  opacity: 0.8;
-}
-[data-element="admin-select"] .outline p.icon {
-  margin-top: 6px;
-}
-
-[data-element="admin-select"] datalist {
-  display: block;
-  background: white;
-  border-radius: 100px 100px 100px 100px;
-  height: 0px;
-  width: 0px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.24);
-  height: 0px;
-  overflow: hidden;
-  opacity: 0;
-}
-[data-element="admin-select"] datalist ul {
-  list-style: none;
-  padding: 12px 0;
-  white-space: nowrap;
-}
-[data-element="admin-select"] datalist ul li {
-  padding: 0 38px;
-  line-height: 42px;
-  display: block;
-  height: 42px;
-  overflow: hidden;
-  font-weight: 400;
-  position: relative;
-}
-[data-element="admin-select"] datalist ul li:hover {
-  background: rgb(159, 70, 188, 0.24);
-}
-
-[data-element="admin-select"] datalist ul li.wic {
-  white-space: nowrap;
-  padding: 0 28px;
-}
-[data-element="admin-select"] datalist ul li.wic .ic {
-  width: 42px;
-  padding-top: 3px;
-}
-[data-element="admin-select"] datalist ul li.wic .ne {
-  width: calc(100% - 42px);
 }
 
 /* CC: RESPONSE */

@@ -18,7 +18,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
 ?>
 
-    <content-card class="lt tripple">
+    <content-card class="lt quad">
         <div class="auser hd-shd adjust">
             <div class="user-icon">
                 <div class="image-outer">

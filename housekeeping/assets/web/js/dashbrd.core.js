@@ -77,11 +77,16 @@ $(function() {
         let mainMenu = $(document).find('[data-react="open:menu,main"]');
         let mainMenuBtn = $(document).find('[data-action="open:menu,main"]');
 
+        // close main menu in mobile mode
         if (!($(e.target).closest(mainMenu).is(mainMenu) || $(e.target).closest(mainMenuBtn).is(mainMenuBtn))) {
             mainMenu.removeClass('open');
             mainMenuBtn.removeClass('open');
         }
 
+        // close content card overlay
+        if (!($(e.target).closest("[data-element='overlay:content-card']").is("[data-element='overlay:content-card']"))) {
+            closeContentCardOverlay(this.$overlay);
+        }
     });
 
     // error responser keep showing on hover
@@ -98,6 +103,11 @@ $(function() {
         // find overlay and close it
         const closeOverlay = Overlay.close($body);
 
+    });
+
+    // close content card overlay
+    $(document).on("click", "[data-action='overlay:content-card,close']", function() {
+        closeContentCardOverlay(this);
     });
 
     // contantly check for messages, play sound if there are new ones
@@ -171,10 +181,16 @@ function showDialer(text) {
     dialerTimeout = setTimeout(function(){ rd.removeAttr('style'); }, 3000);
 }
 
+// close responser on click
 function closeDialer() {
     clearTimeout(dialerTimeout);
     var rd = $('response-dialer');
     dialerTimeout = rd.removeAttr('style');
+}
+
+// close content card overlay amk
+let closeContentCardOverlay = function(cc) {
+    $(cc).closest("[data-element='overlay:content-card']").removeClass("visible");
 }
 
 // fade images in

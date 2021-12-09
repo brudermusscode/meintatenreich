@@ -6,11 +6,28 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
 ?>
 
-    <content-card class="mb24 lt tripple" data-json='[{"id":"<?php echo $id; ?>"}]'>
+    <content-card class="mb24 lt <?php if (isset($tripple)) echo "tripple";
+                                    else echo "quad"; ?> tran-all" data-json='[{"id":"<?php echo $id; ?>"}]'>
         <div class="products hd-shd adjust">
 
-            <div data-react="manage:products,delete" class="cc-overlay rd20 white">
+            <div data-element="overlay:content-card" data-react="manage:products,delete" class="cc-overlay red rd18">
                 <div class="cc-overlay--inr">
+
+                    <div class="cc-overlay--delete">
+                        <p class="dialogue fw7 mb38 tac">Bist du sicher?</p>
+
+                        <div class="actions disfl flcenter fldircol posrel">
+                            <div data-action="manage:products,delete,confirm" class="rd24 lh38 ph32 mr6 ml6 curpo fw6 mb24">
+                                <p>Ja!</p>
+                            </div>
+
+                            <div data-action="overlay:content-card,close" class="rd24 lh38 ph24 mr6 ml6 curpo fw5">
+                                <p>Abbrechen</p>
+                            </div>
+
+                            <div class="cl"></div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -32,29 +49,40 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
                                 <datalist class="tran-all-cubic">
                                     <ul>
-                                        <li class="wic" data-action="manage:products,edit" data-json='[{"id":"<?php echo $id; ?>"}]'>
-                                            <p class="ic lt"><i class="material-icons md-18">edit</i></p>
-                                            <p class="lt ne trimfull">Bearbeiten</p>
 
-                                            <div class="cl"></div>
-                                        </li>
+                                        <?php if (!$elementInclude->deleted) { ?>
 
-                                        <li class="wic" data-action="manage:products,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
-                                            <?php if ($elementInclude->available == "1") { ?>
-                                                <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
-                                                <p class="lt ne trimfull">Deaktivieren</p>
+                                            <li class="wic" data-action="manage:products,edit" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                                <p class="ic lt"><i class="material-icons md-18">edit</i></p>
+                                                <p class="lt ne trimfull">Bearbeiten</p>
+
+                                                <div class="cl"></div>
+                                            </li>
+
+                                            <li class="wic" data-action="manage:products,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
+                                                <?php if ($elementInclude->available == "1") { ?>
+                                                    <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
+                                                    <p class="lt ne trimfull">Deaktivieren</p>
+                                                <?php } else { ?>
+                                                    <p class="ic lt"><i class="material-icons md-18">visibility_on</i></p>
+                                                    <p class="lt ne trimfull">Aktivieren</p>
+                                                <?php } ?>
+
+                                                <div class="cl"></div>
+                                            </li>
+
+                                            <div class="dist" style="width:100%;margin:12px 0;border-bottom:1px solid rgba(0,0,0,.04);"></div>
+
+                                        <?php } ?>
+
+                                        <li class="wic" data-action="manage:products,delete">
+                                            <?php if ($elementInclude->deleted == "1") { ?>
+                                                <p class="ic lt"><i class="material-icons md-18">refresh</i></p>
+                                                <p class="lt ne trimfull">Wiederherstellen</p>
                                             <?php } else { ?>
-                                                <p class="ic lt"><i class="material-icons md-18">visibility_on</i></p>
-                                                <p class="lt ne trimfull">Aktivieren</p>
+                                                <p class="ic lt"><i class="material-icons md-18">archive</i></p>
+                                                <p class="lt ne trimfull">Archivieren</p>
                                             <?php } ?>
-                                            <div class="cl"></div>
-                                        </li>
-
-                                        <div class="dist" style="width:100%;margin:12px 0;border-bottom:1px solid rgba(0,0,0,.04);"></div>
-
-                                        <li class="wic" data-action="manage:product,delete" data-json='[{"id":"<?php echo $id; ?>"}]'>
-                                            <p class="ic lt"><i class="material-icons md-18">clear</i></p>
-                                            <p class="lt ne trimfull">Löschen</p>
 
                                             <div class="cl"></div>
                                         </li>

@@ -108,7 +108,7 @@ if ($admin->isAdmin()) {
                                         <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
                                     </div>
 
-                                    <datalist class="tran-all-cubic">
+                                    <datalist class="tran-all-cubic left">
                                         <ul>
                                             <?php
 

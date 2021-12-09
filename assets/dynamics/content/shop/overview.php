@@ -51,6 +51,7 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
                 FROM products, products_images 
                 WHERE products.id = products_images.pid 
                 AND products_images.isgal = '1' 
+                AND products.deleted = '0' 
                 ORDER BY $order
             ");
             $getProducts->execute();

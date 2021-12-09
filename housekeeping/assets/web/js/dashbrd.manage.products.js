@@ -547,6 +547,61 @@ $(function(){
         });
 
     })
+
+    // toggle archive
+    .on("click", "[data-action='manage:products,delete']", function(e) {
+
+        let $t, overlay;
+
+        $t = $(this);
+        $contentCard = $t.closest("content-card");
+        $overlay = $contentCard.find("[data-react='manage:products,delete']");
+
+        $overlay.addClass("visible");
+
+    })
+
+    // confirm archive
+    .on("click", "[data-action='manage:products,delete,confirm']", function(e) {
+
+        let $t, $overlay, url, id, $contentCard;
+
+        $t = $(this);
+        $contentCard = $t.closest("content-card");
+        id = $contentCard.data("json")[0].id;
+        url = dynamicHost + "/_magic_/ajax/functions/manage/products/delete";
+
+        $.ajax({
+
+            url: url,
+            data: {
+                id: id
+            },
+            method: "POST",
+            dataType: "JSON",
+            success: function(data) {
+
+                if (data.status) {
+                    $contentCard.addClass("tran-all-cubic").css({
+                        opacity: "0",
+                        visibility: "hidden"
+                    });
+
+                    setTimeout(function() {
+                        $contentCard.remove();
+                    }, 400);
+                }
+
+                showDialer(data.message);
+
+            },
+            error: function(data) {
+                console.error(data);
+            }
+
+        });
+
+    })
 });
 
 function uploadProductImages(uri, input, react, overlay = null, store = null) {

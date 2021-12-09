@@ -46,13 +46,22 @@ $margin-size-classes: 0;
     padding-top: #{$margin-size-classes}px;
   }
   .ph#{$margin-size-classes} {
-    padding: #{$margin-size-classes}px 0;
+    padding-left: #{$margin-size-classes}px;
+    padding-right: #{$margin-size-classes}px;
   }
   .pv#{$margin-size-classes} {
-    padding: 0 #{$margin-size-classes}px;
+    padding-top: #{$margin-size-classes}px;
+    padding-bottom: #{$margin-size-classes}px;
   }
 
   $margin-size-classes: $margin-size-classes + 2;
+}
+
+// flexbox
+.flcenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .distance {
