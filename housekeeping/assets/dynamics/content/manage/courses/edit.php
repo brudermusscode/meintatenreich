@@ -1,8 +1,7 @@
 <?php
 
-
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 
 if (isset($_REQUEST['id']) && $admin->isAdmin()) {
@@ -11,40 +10,29 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     // CHECK IF ORDER EXISTS
     $sel = $pdo->prepare("
-            SELECT *
-            FROM courses 
-            WHERE courses.id = ?
-            LIMIT 1
-        ");
-    $sel->bind_param('s', $oid);
-    $sel->execute();
+        SELECT * 
+        FROM courses, courses_content 
+        WHERE courses.id = courses_content.cid 
+        AND courses.id = ? 
+        LIMIT 1
+    ");
+    $sel->execute([$oid]);
 
 
     if ($sel->rowCount() > 0) {
 
         // FETCH COURSE
         $o = $sel->fetch();
-        $sel->close();
-
 
         // CONVERT TIMESTAMP
         $timeAgoObject = new convertToAgo;
-        $ts = $o['timestamp'];
+        $ts = $o->timestamp;
         $convertedTime = ($timeAgoObject->convert_datetime($ts));
         $when = ($timeAgoObject->makeAgo($convertedTime));
 
-
-        // SELECT COURSE CONTENT
-        $selGal = $pdo->prepare("SELECT * FROM courses_content WHERE couid = ?");
-        $selGal->bind_param('s', $oid);
-        $selGal->execute();
-        $selGal_r = $selGal->get_result();
-        $selGal->close();
-        $sg = $selGal_r->fetch();
-
 ?>
 
-        <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $o['id']; ?>"}]'>
+        <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $o->id; ?>"}]'>
 
 
             <!-- INFORMATON BOX -->
@@ -53,13 +41,11 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
             </div>
 
 
-            <form data-form="manage:course,edit">
+            <form data-form="manage:courses,edit" method="POST" action>
 
                 <content-card class="mb24 posrel">
                     <div class="mshd-1 normal-box">
                         <div style="padding:28px 42px;">
-
-                            <input type="hidden" name="gallery" data-react="manage:products,edit,addImage,gallery" value="<?php echo $sg['id']; ?>">
 
                             <div class="fw6 mb12">
                                 <p style="color:#5068A1;">Kursname</p>
@@ -67,7 +53,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                             <div class="input tran-all-cubic mb42">
                                 <div class="input-outer">
-                                    <input type="text" autocomplete="off" name="name" placeholder="Wie möchtest du den Kurs nennen?" value="<?php echo $o['name']; ?>" class="tran-all">
+                                    <input type="text" autocomplete="off" name="name" placeholder="Wie möchtest du den Kurs nennen?" value="<?php echo $o->name; ?>" class="tran-all">
                                 </div>
                             </div>
 
@@ -77,7 +63,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                             <div class="textarea mb42">
                                 <div class="textarea-outer">
-                                    <textarea name="content" placeholder="Gebe eine genaue Beschreibung zu deinem Kurs an..." class="tran-all"><?php echo $sg['content']; ?></textarea>
+                                    <textarea name="content" placeholder="Gebe eine genaue Beschreibung zu deinem Kurs an..." class="tran-all"><?php echo $o->content; ?></textarea>
                                 </div>
                             </div>
 
@@ -92,7 +78,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                         <div style="color:rgba(166,88,246,1);right:18px;padding-left:12px;line-height:42px;height:32px;top:5px;font-size:1.2em;border-left:1px solid rgba(0,0,0,.12);" class="fw6 posabs">
                                             <p><i class="material-icons md-24">person</i></p>
                                         </div>
-                                        <input type="text" autocomplete="off" name="size" placeholder="z. B. 15..." class="tran-all" value="<?php echo $o['size']; ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
+                                        <input type="text" autocomplete="off" name="size" placeholder="z. B. 15..." class="tran-all" value="<?php echo $o->size; ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +94,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                         <div style="color:green;right:18px;padding-left:12px;line-height:32px;top:5px;font-size:1.2em;border-left:1px solid rgba(0,0,0,.12);" class="fw6 posabs">
                                             <p>€</p>
                                         </div>
-                                        <input type="text" autocomplete="off" name="price" placeholder="Preis in EURO..." class="tran-all" value="<?php echo number_format($o['price'], 2, ',', '.'); ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
+                                        <input type="text" autocomplete="off" name="price" placeholder="Preis in EURO..." class="tran-all" value="<?php echo number_format($o->price, 2, ',', '.'); ?>" style="padding-right:62px;width:calc(100% - 32px - 62px);">
                                     </div>
                                 </div>
                             </div>
@@ -117,8 +103,6 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
 
                             <style>
-                                .boolean-great {}
-
                                 .boolean-great .outer {
                                     background: rgba(0, 0, 0, .24);
                                     border-radius: 100px;
@@ -177,7 +161,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     <p class="lt text">Verwalte und stelle ein, ob dieser Kurs im Moment angeboten wird oder nicht.</p>
 
                                     <div class="bool rt">
-                                        <div class="boolean-great <?php if ($o['active'] === '1') {
+                                        <div class="boolean-great <?php if ($o->active === '1') {
                                                                         echo 'on';
                                                                     } ?>" data-element="boolean-great">
                                             <div class="outer tran-all">
@@ -186,7 +170,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                                 </div>
                                             </div>
 
-                                            <input type="hidden" name="active" value="<?php echo $o['active']; ?>">
+                                            <input type="hidden" name="active" value="<?php echo $o->active; ?>">
                                         </div>
                                     </div>
 
@@ -196,9 +180,9 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                             </div>
 
 
-                            <div data-action="manage:course,edit,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
+                            <button type="submit" data-action="manage:course,edit,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
                                 <p>Speichern</p>
-                            </div>
+                            </button>
 
                             <div class="cl"></div>
 

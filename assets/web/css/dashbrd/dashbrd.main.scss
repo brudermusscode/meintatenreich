@@ -127,6 +127,7 @@ body {
   font-size: 100%;
   font-weight: 300;
   line-height: 18px;
+  overflow-x: hidden;
 }
 
 a,
@@ -355,7 +356,6 @@ main-content {
   left: var(--menu-width);
   width: calc(100% - (var(--menu-width) + 2 * 32px));
   font-size: 1em;
-  overflow-x: hidden;
   padding: 0 32px;
   color: #5068a1;
 }

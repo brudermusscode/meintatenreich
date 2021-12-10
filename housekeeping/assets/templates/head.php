@@ -31,6 +31,7 @@
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.orders.min.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.products.min.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.customers.min.js"></script>
+    <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.manage.courses.min.js"></script>
     <script type="text/javascript" src="<?php echo $url["dashbrd"]; ?>/assets/web/js/dashbrd.messages.min.js"></script>
 
     <script>

@@ -1,26 +1,43 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
+// set JSON output format
+header('Content-Type: application/json; charset=utf-8');
 
+// error output
+$return = [
+    "status" => false,
+    "message" => "Da ist wohl ein Oopsie passiert",
+    "REQUEST" => $_REQUEST
+];
+
+// objectify return array
+$return = (object) $return;
 
 function clean($string)
 {
     $string = str_replace(' ', '', $string);
-    return preg_replace('/[^0-9\,]/', '', $string);
+    return preg_replace('/[^0-9\,]/i', '', $string);
 }
 
 if (
-    isset($_REQUEST['id'], $_REQUEST['name'], $_REQUEST['content'], $_REQUEST['price'], $_REQUEST['active'], $_REQUEST['size'])
-    && is_numeric($_REQUEST['id'])
+    isset(
+        $_REQUEST['id'],
+        $_REQUEST['name'],
+        $_REQUEST['content'],
+        $_REQUEST['price'],
+        $_REQUEST['active'],
+        $_REQUEST['size']
+    )
     && strlen($_REQUEST['name']) > 0
     && strlen($_REQUEST['content']) > 0
     && strlen($_REQUEST['price'])  > 0
+    && is_numeric($_REQUEST['id'])
     && is_numeric($_REQUEST['active'])
     && is_numeric($_REQUEST['size'])
-    && $loggedIn
-    && $user['admin'] === '1'
+    && $admin->isAdmin()
 ) {
 
     // CLEAR VARS
@@ -29,8 +46,11 @@ if (
     $content = htmlspecialchars($_REQUEST['content']);
 
     $price = clean($_REQUEST['price']);
+
+    // check if price is valid format
     if (strlen($price) < 1) {
-        exit('2'); // Price is invalid
+        $return->message = "Der eingegebene Preis ist ungültig";
+        exit(json_encode($return));
     }
 
     $price = str_replace(',', '.', $price);
@@ -40,76 +60,68 @@ if (
     $size = htmlspecialchars($_REQUEST['size']);
 
     // CHECK IF COURSE EXISTS
-    $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
-    $sel->bind_param('s', $id);
-    $sel->execute();
-    $sr = $sel->get_result();
-    $sel->close();
+    $sel = $pdo->prepare("
+        SELECT * 
+        FROM courses, courses_content  
+        WHERE courses.id = courses_content.cid 
+        AND courses.id = ?
+    ");
+    $sel->execute([$id]);
 
-    if ($sr->rowCount() > 0) {
+    if ($sel->rowCount() > 0) {
 
         // COURSE QUERY
-        $s = $sr->fetch();
-
-        // GET COURSE CONTENT
-        $selD = $pdo->prepare("SELECT * FROM courses_content WHERE couid = ?");
-        $selD->bind_param('s', $id);
-        $selD->execute();
-        $selD_r = $selD->get_result();
-        $selD->close();
-
-        // CONTENT QUERY
-        $sc = $selD_r->fetch();
-
-        $curcont = $sdesc['text'];
+        $s = $sel->fetch();
 
         if (strlen($name) < 1) {
-            $name = $s['name'];
+            $name = $s->name;
         }
 
         if (strlen($content) < 1) {
-            $content = $sc['content'];
+            $content = $s->content;
         }
 
         if (strlen($price) < 1) {
-            $price = $s['price'];
+            $price = $s->price;
         }
 
         if (strlen($ac) < 1 || ($ac !== '0' && $ac !== '1')) {
-            $ac = $s['active'];
+            $ac = $s->active;
         }
 
         if (strlen($size) < 1) {
-            $size = $s['size'];
+            $size = $s->size;
         }
+
+        // start mysql transaction
+        $pdo->beginTransaction();
 
         $upd = $pdo->prepare("
-                UPDATE courses INNER JOIN courses_content 
-                ON (courses.id = courses_content.couid)
-                SET courses.name = ?, 
-                    courses.price = ?, 
-                    courses_content.content = ?,
-                    courses.active = ?,
-                    courses.updated = ?, 
-                    courses.size = ?
-                WHERE courses.id = ?
-            ");
-        $upd->bind_param('sssssss', $name, $price, $content, $ac, $timestamp, $size, $id);
-        $upd->execute();
+            UPDATE courses INNER JOIN courses_content 
+            ON (courses.id = courses_content.cid)
+            SET courses.name = ?, 
+                courses.price = ?, 
+                courses_content.content = ?,
+                courses.active = ?,
+                courses.updated = CURRENT_TIMESTAMP, 
+                courses.size = ?
+            WHERE courses.id = ?
+        ");
+        $upd = $shop->tryExecute($upd, [$name, $price, $content, $ac, $size, $id], $pdo, true);
 
+        if ($upd->status) {
 
-        if ($upd) {
-            $pdo->commit();
-            $pdo->close();
-            exit('success');
+            $return->status = true;
+            $return->message = "Kurs [" . $id . "] bearbeitet";
+
+            exit(json_encode($return));
         } else {
-            $pdo->rollback();
-            $pdo->close();
-            exit('0');
+            exit(json_encode($return));
         }
     } else {
-        exit('1');
+        exit(json_encode($return));
     }
 } else {
-    exit;
+    $return->message = "Bitte fülle alle Felder aus";
+    exit(json_encode($return));
 }

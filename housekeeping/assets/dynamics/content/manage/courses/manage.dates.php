@@ -1,10 +1,6 @@
 <?php
 
 
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
-
-
 if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $oid = $_REQUEST['id'];

@@ -45,7 +45,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
                             <datalist class="tran-all-cubic">
                                 <ul>
-                                    <li class="wic" data-action="manage:course" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                    <li class="wic" data-action="manage:courses,edit" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
                                         <p class="ic lt"><i class="material-icons md-18">build</i></p>
                                         <p class="lt ne trimfull">Kurs verwalten</p>
 

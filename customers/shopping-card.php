@@ -31,7 +31,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                         <div class="">
                             <div class="rdcir" style="background:green;border-radius:50%;height:120px;width:120px;margin:0 auto;text-align:center;line-height:120px;">
-                                <p style="font-size:4em;color:#fff;"><i class="icon-ok-1"></i></p>
+                                <p style="font-size:4em;color:#fff;"><i class="icon-ok"></i></p>
                             </div>
                             <div class="tac">
                                 <p class="mt42 lh24" style="font-size:1.4em;">Deine Bestellung über <strong style="font-weight:700;font-size:1.6em;"><?php echo $_GET['pr']; ?> €</strong> wurde erfolgreich entgegen genommen<br>und Du solltest bereits eine E-Mail zur Bestätigung erhalten haben!</p>

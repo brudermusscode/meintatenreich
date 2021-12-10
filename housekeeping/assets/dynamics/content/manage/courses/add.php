@@ -1,8 +1,7 @@
 <?php
 
-
-// ERROR CODE :: 0
-require_once "../../../../../../mysql/_.session.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 
 if ($admin->isAdmin()) {
@@ -18,13 +17,11 @@ if ($admin->isAdmin()) {
             <p>Kurs hinzufügen</p>
         </div>
 
-        <form data-form="manage:course,add">
+        <form data-form="manage:courses,add" method="POST" action>
 
             <content-card class="mb42 posrel">
                 <div class="mshd-1 normal-box">
                     <div style="padding:28px 42px;">
-
-                        <input type="hidden" name="gallery" data-react="manage:products,edit,addImage,gallery" value="<?php echo $sg['id']; ?>">
 
                         <div class="fw6 mb12">
                             <p style="color:#5068A1;">Kursname</p>
@@ -99,8 +96,6 @@ if ($admin->isAdmin()) {
 
 
                         <style>
-                            .boolean-great {}
-
                             .boolean-great .outer {
                                 background: rgba(0, 0, 0, .24);
                                 border-radius: 100px;
@@ -176,9 +171,9 @@ if ($admin->isAdmin()) {
                         </div>
 
 
-                        <div data-action="manage:course,add,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
+                        <button type="submit" data-action="manage:course,add,save" class="btn-outline rt mt32" style="border-color:#AC49BD;color:#AC49BD;">
                             <p>Hinzufügen</p>
-                        </div>
+                        </button>
 
                         <div class="cl"></div>
 

@@ -1,106 +1,91 @@
 $(function(){
 
+    let $body = $("body"), $t, url, overlay, $append, formData;
     
-    // courses > add
-    $(document).on('click', '[data-action="manage:course,add"]', function(){
+    // add ~ works
+    $(document).on('click', '[data-action="manage:courses,add"]', function(){
 
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
+        // add new overlay
+        overlay = Overlay.add($body, true);
+
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/content/manage/courses/add';
         
-        let $t = $(this);
-        let url = '/hk/get/manage/course/add';
-        
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             method: 'POST',
             type: 'HTML',
             success: function(data) {
                 
-                $lo.remove();
-                $ov.append(data);
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("Nothing");
+                }
                 
             },
             error: function(data) {
-                // SET ERROR TEXT
+                console.error(data);
             }
             
         });
 
     })  
     
-    // courses > add > save
-    .on('click', '[data-action="manage:course,add,save"]', function(){
+    // add > submit ~ works
+    .on('submit', '[data-form="manage:courses,add"]', function(){
 
-        // HANDLE OVERLAY
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
-        
-        let $t = $(this);
-        let res;
-        let url = '/hk/ajax/manage/course/add';
-        let dS = $('[data-form="manage:course,add"]').serialize();
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
+
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/functions/manage/courses/add';
+        formData = new FormData(this);
         
         showDialer('Speichern...');
         
-        let ajax = $.ajax({
+        $.ajax({
 
             url: url,
-            data: dS,
+            data: formData,
             method: 'POST',
-            type: 'HTML',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
             success: function(data){
                 
-                console.log(data);
-                
-                switch(data){
-                    case '0':
-                    case '1':
-                    default:
-                        res = 'Ein unbekannter Fehler ist aufgetreten...';
-                        break;
-                    case '2':
-                        res = 'Der Preis konnte nicht formatiert werden...';
-                        break;
-                    case '3':
-                        res = 'Die Teilnehmerzahl muss nummerisch sein...';
-                        break;
-                    case 'success':
-                        res = 'Hinzugefügt!';
-                        setTimeout(function(){
-                            window.location.replace(window.location);
-                        }, 1000);
+                if(data.status) {
+                    setTimeout(function(){
+                        window.location.replace(window.location);
+                    }, 1000);
+                } else {
+                    Overlay.close(overlay.overlay.parent());
                 }
                 
-                closeOverlay($ccOv, false);
-                
-                showDialer(res);
-
+                showDialer(data.message);
+            },
+            error: function(data) {
+                console.error(data);
             }
-
         });
-
     })
     
-    // courses > edit
-    .on('click', '[data-action="manage:course"]', function(){
+    // courses > edit ~ works
+    .on('click', '[data-action="manage:courses,edit"]', function(){
 
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
+        // add new overlay
+        overlay = Overlay.add($body, true);
+
+        $t = $(this);
+        id = $t.data('json')[0].id;
+        url = dynamicHost + '/_magic_/ajax/content/manage/courses/edit';
         
-        let $t = $(this);
-        let id = $t.data('json')[0].id;
-        let url = '/hk/get/manage/course';
-        
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             data: { id: id },
@@ -108,20 +93,69 @@ $(function(){
             type: 'HTML',
             success: function(data) {
                 
-                $lo.remove();
-                $ov.append(data);
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    showDialer("Nothing");
+                }
                 
             },
             error: function(data) {
-                // SET ERROR TEXT
+                console.error(data);
             }
             
         });
 
     })
+
+    // edit > submit
+    .on('submit', '[data-form="manage:courses,edit"]', function(){
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
+        
+        $t = $(this);
+        id = $t.closest('wide-container').data('json')[0].id;
+        url = dynamicHost + "/_magic_/ajax/functions/manage/courses/edit";
+        formData = new FormData(this);
+        formData.append("id", id);
+        
+        showDialer('Speichern...');
+        
+        $.ajax({
+
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(data){
+                
+                console.log(data);
+
+                if(data.status) {
+                    setTimeout(function(){
+                        window.location.replace(window.location);
+                    }, 1000);
+                } else {
+                    Overlay.close(overlay.overlay.parent());
+                }
+                
+                showDialer(data.message);
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
+    })
     
     // switch I/O
-    .on('click', '[data-action="manage:course,toggle"]', function(){
+    .on('click', '[data-action="manage:courses,toggle"]', function(){
 
         // HANDLE OVERLAY
         addOverlay('255,255,255', $bod);
@@ -358,54 +392,6 @@ $(function(){
                 // SET ERROR REPORT
             }
             
-        });
-
-    })
-
-    // dates > edit > save
-    .on('click', '[data-action="manage:course,edit,save"]', function(){
-
-        // HANDLE OVERLAY
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
-        
-        let $t = $(this);
-        let res;
-        let id = $t.closest('wide-container').data('json')[0].id;
-        let url = '/hk/ajax/manage/course/edit';
-        let dS = $('[data-form="manage:course,edit"]').serialize() + '&id=' + id;
-        
-        showDialer('Speichern...');
-        
-        let ajax = $.ajax({
-
-            url: url,
-            data: dS,
-            method: 'POST',
-            type: 'HTML',
-            success: function(data){
-                
-                switch(data){
-                    case '0':
-                    case '1':
-                    default:
-                        res = 'Ein unbekannter Fehler ist aufgetreten...';
-                        break;
-                    case '2':
-                        res = 'Die gewählte Kategorie existiert nicht...';
-                        break;
-                    case 'success':
-                        res = 'Gespeichert!';
-                }
-                
-                closeOverlay($ccOv, false);
-                
-                showDialer(res);
-
-            }
-
         });
 
     })
