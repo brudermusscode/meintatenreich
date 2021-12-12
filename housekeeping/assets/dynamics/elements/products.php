@@ -8,7 +8,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
     <content-card class="mb24 lt <?php if (isset($tripple)) echo "tripple";
                                     else echo "quad"; ?> tran-all" data-json='[{"id":"<?php echo $id; ?>"}]'>
-        <div class="products hd-shd adjust">
+        <div class="products slideUp hd-shd adjust">
 
             <div data-element="overlay:content-card" data-react="manage:products,delete" class="cc-overlay red rd18">
                 <div class="cc-overlay--inr">
@@ -47,26 +47,22 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                                     <i class="material-icons md-24">more_vert</i>
                                 </p>
 
-                                <datalist class="tran-all-cubic">
+                                <datalist class="tran-all-cubic right">
                                     <ul>
 
                                         <?php if (!$elementInclude->deleted) { ?>
 
                                             <li class="wic" data-action="manage:products,edit" data-json='[{"id":"<?php echo $id; ?>"}]'>
                                                 <p class="ic lt"><i class="material-icons md-18">edit</i></p>
-                                                <p class="lt ne trimfull">Bearbeiten</p>
+                                                <p class="lt ne">Bearbeiten</p>
 
                                                 <div class="cl"></div>
                                             </li>
 
-                                            <li class="wic" data-action="manage:products,toggle" data-json='[{"id":"<?php echo $id; ?>"}]'>
-                                                <?php if ($elementInclude->available == "1") { ?>
-                                                    <p class="ic lt"><i class="material-icons md-18">visibility_off</i></p>
-                                                    <p class="lt ne trimfull">Deaktivieren</p>
-                                                <?php } else { ?>
-                                                    <p class="ic lt"><i class="material-icons md-18">visibility_on</i></p>
-                                                    <p class="lt ne trimfull">Aktivieren</p>
-                                                <?php } ?>
+                                            <li class="wic <?php if ($elementInclude->available == '0') echo "activate";
+                                                            else echo "deactivate"; ?>" data-action="manage:products,toggle" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                                <p class="ic lt"><i class="material-icons md-18"></i></p>
+                                                <p class="lt ne trimfull"></p>
 
                                                 <div class="cl"></div>
                                             </li>
@@ -78,10 +74,10 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                                         <li class="wic" data-action="manage:products,delete">
                                             <?php if ($elementInclude->deleted == "1") { ?>
                                                 <p class="ic lt"><i class="material-icons md-18">refresh</i></p>
-                                                <p class="lt ne trimfull">Wiederherstellen</p>
+                                                <p class="lt ne">Wiederherstellen</p>
                                             <?php } else { ?>
                                                 <p class="ic lt"><i class="material-icons md-18">archive</i></p>
-                                                <p class="lt ne trimfull">Archivieren</p>
+                                                <p class="lt ne">Archivieren</p>
                                             <?php } ?>
 
                                             <div class="cl"></div>
@@ -109,11 +105,26 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                     <p class="trimfull"><?php echo $elementInclude->name; ?></p>
                 </div>
 
-                <div class="artnr">
-                    <p class="ttup tac fw4 lt mr8">
-                        <i class="material-icons md-18 lh32">bookmark</i>
-                    </p>
-                    <p class="ttup tac fw4 lh32 lt"><?php echo $elementInclude->artnr; ?></p>
+                <div class="information">
+                    <div class="artnr">
+                        <p class="ttup tac fw4 lt mr8 ic">
+                            <i class="material-icons md-18">bookmark</i>
+                        </p>
+                        <p class="ttup tac fw4 lt"><?php echo $elementInclude->artnr; ?></p>
+
+                        <div class="cl"></div>
+                    </div>
+
+                    <div class="cl"></div>
+
+                    <div class="artnr">
+                        <p class="ttup tac fw4 lt mr8 ic">
+                            <i class="material-icons md-18">category</i>
+                        </p>
+                        <p class="ttup tac fw4 lt"><?php echo $elementInclude->category_name; ?></p>
+
+                        <div class="cl"></div>
+                    </div>
 
                     <div class="cl"></div>
                 </div>

@@ -27,7 +27,7 @@ $(function() {
 
                         setTimeout(function(){
                             // redirect to message center
-                            window.location.replace('messages');
+                            window.location.replace(dynamicHost + '/_coffee_corner_//messages');
                         }, 600);
                     } else {
 

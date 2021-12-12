@@ -28,55 +28,57 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
 ?>
 
-
-
-    <content-card class="mb24">
-        <div class="order hd-shd adjust" style="background:url(<?php echo $url["img"]; ?>/global/bggreen.jpg) repeat;background-size:42%;">
+    <content-card class="mb24 courses <?php if ($elementInclude->active == "0") echo "deactivated";
+                                        else echo "activated"; ?>" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+        <div class="courses slideUp hd-shd adjust" style="background:#fff;">
             <div class="top" style="position:absolute;top:24px;right:32px;">
 
                 <!-- CONTENT -->
                 <div class="top-right">
 
                     <div class="rt status">
-                        <div data-element="admin-select" data-list-align="right" data-list-size="328" style="height:42px;width:42px;position:relative;overflow:hdden;" class="tran-all">
-                            <div class="outline disfl fldirrow" style="border:0;width:100%;height:100%;padding:0;margin:0;">
-                                <p class="icon cf"><i class="material-icons md-24 lh42">more_vert</i></p>
+                        <div data-element="admin-select" data-list-align="right" data-list-size="328" class="tran-all">
+                            <div class="outline">
+                                <p class="icon"><i class="material-icons md-24">more_vert</i></p>
                             </div>
 
-                            <datalist class="tran-all-cubic">
+                            <datalist class="tran-all-cubic right">
                                 <ul>
-                                    <li class="wic" data-action="manage:courses,edit" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
-                                        <p class="ic lt"><i class="material-icons md-18">build</i></p>
-                                        <p class="lt ne trimfull">Kurs verwalten</p>
 
-                                        <div class="cl"></div>
-                                    </li>
+                                    <?php if ($elementInclude->deleted == '0') { ?>
 
-                                    <li class="wic" data-action="manage:course,dates" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
-                                        <p class="ic lt"><i class="material-icons md-18">event_note</i></p>
-                                        <p class="lt ne trimfull">Termine verwalten</p>
+                                        <li class="wic" data-action="manage:courses,edit" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                            <p class="ic lt"><i class="material-icons md-18">build</i></p>
+                                            <p class="lt ne trimfull">Kurs verwalten</p>
 
-                                        <div class="cl"></div>
-                                    </li>
+                                            <div class="cl"></div>
+                                        </li>
 
-                                    <div style="border-bottom:1px solid rgba(0,0,0,.08);margin-top:12px;margin-bottom:12px;"></div>
+                                        <li class="wic" data-action="manage:course,dates" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                            <p class="ic lt"><i class="material-icons md-18">event_note</i></p>
+                                            <p class="lt ne trimfull">Termine verwalten</p>
 
-                                    <li class="wic" data-action="manage:course,toggle" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                            <div class="cl"></div>
+                                        </li>
 
-                                        <?php if ($elementInclude->active === '0') { ?>
-                                            <p class="ic lt"><i class="material-icons md-18">blur_on</i></p>
-                                            <p class="lt ne trimfull">Aktivieren</p>
-                                        <?php } else { ?>
-                                            <p class="ic lt"><i class="material-icons md-18">blur_off</i></p>
-                                            <p class="lt ne trimfull">Deaktivieren</p>
-                                        <?php } ?>
+                                        <div style="border-bottom:1px solid rgba(0,0,0,.08);margin-top:12px;margin-bottom:12px;"></div>
 
-                                        <div class="cl"></div>
-                                    </li>
+                                        <li class="wic <?php if ($elementInclude->active == '0') echo "activate";
+                                                        else echo "deactivate"; ?>" data-action="manage:courses,toggle" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                            <p class="ic lt"><i class="material-icons md-18"></i></p>
+                                            <p class="lt ne trimfull"></p>
 
-                                    <li class="wic" data-action="manage:course,delete" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
-                                        <p class="ic lt"><i class="material-icons md-18">close</i></p>
-                                        <p class="lt ne trimfull">Löschen</p>
+                                            <div class="cl"></div>
+                                        </li>
+
+                                        <div style="border-bottom:1px solid rgba(0,0,0,.08);margin-top:12px;margin-bottom:12px;"></div>
+
+                                    <?php } ?>
+
+                                    <li class="wic <?php if ($elementInclude->deleted == '0') echo "archive";
+                                                    else echo "unarchive"; ?>" data-action="manage:courses,archive">
+                                        <p class="ic lt"><i class="material-icons md-18"></i></p>
+                                        <p class="lt ne"></p>
 
                                         <div class="cl"></div>
                                     </li>
@@ -93,58 +95,48 @@ if (isset($elementInclude) && $admin->isAdmin()) {
             </div>
 
             <div class="course-content">
-                <div style="padding:32px 54px;">
+                <div style="padding:32px 54px;color:#333;">
                     <div>
-                        <p class="trimfull cf" style="width:calc(100% - 42px);font-size:1.4em;line-height:1.2em;text-shadow:1px 1px 1px rgba(0,0,0,.32);">
+                        <p class="trimfull cf" style="width:calc(100% - 42px);font-size:1.4em;line-height:1.2em;color:#333;font-weight:600;">
                             <?php echo $elementInclude->name; ?>
                         </p>
                     </div>
 
                     <div class="mt24">
-                        <div class="lt mr32" style="color:rgba(0,0,0,.24);background:rgba(255,255,255,.82);height:32px;width:32px;border-radius:50%;">
-                            <p class="tac course-status" style="line-height:44px;">
-                                <?php if ($elementInclude->active === '1') { ?>
-                                    <i class="material-icons md-21 cgreen">trip_origin</i>
-                                <?php } else { ?>
-                                    <i class="material-icons md-21 cred">trip_origin</i>
-                                <?php } ?>
+                        <div class="lt mr32" style="background:rgba(0,0,0,.12);height:42px;width:42px;border-radius:50%;">
+                            <p class="tac course-status" style="line-height:58px;">
+                                <i class="material-icons md-28">trip_origin</i>
                             </p>
 
                             <div class="cl"></div>
                         </div>
 
-                        <div class="lt mr24 lh32" style="color:rgba(255,255,255,.68);">
-                            <p class="lt mr4">
-                                <i class="material-icons md-21 lh32">event_note</i>
+                        <div class="info lt mr24 disfl fldirrow">
+                            <p class="icon">
+                                <i class="material-icons md-24">event_note</i>
                             </p>
-                            <p class="lt fs21"><?php echo $sdacount; ?></p>
-
-                            <div class="cl"></div>
+                            <p class="text"><?php echo $sdacount; ?></p>
                         </div>
 
-                        <div class="lt mr24 lh32" style="color:rgba(0,0,0,.24);color:rgba(255,255,255,.68);">
-                            <p class="lt mr4">
-                                <i class="material-icons md-21 lh32">person</i>
+                        <div class="info lt mr24 disfl fldirrow">
+                            <p class="icon">
+                                <i class="material-icons md-24">person</i>
                             </p>
-                            <p class="lt fs21"><?php echo $elementInclude->size; ?></p>
-
-                            <div class="cl"></div>
+                            <p class="text"><?php echo $elementInclude->size; ?></p>
                         </div>
 
-                        <div class="lt lh32" style="color:rgba(255,255,255,.24);color:rgba(255,255,255,.68);">
-                            <p class="lt mr4">
-                                <i class="material-icons md-21 lh32">euro_symbol</i>
+                        <div class="info lt disfl fldirrow posrel">
+                            <p class="icon">
+                                <i class="material-icons md-24">euro_symbol</i>
                             </p>
-                            <p class="lt fs21"><?php echo number_format($elementInclude->price, 2, ',', '.'); ?></p>
-
-                            <div class="cl"></div>
+                            <p class="text"><?php echo number_format($elementInclude->price, 2, ',', '.'); ?></p>
                         </div>
 
                         <div class="cl"></div>
                     </div>
 
                     <!-- NEXT DATE -->
-                    <div class="next-date <?php if ($elementInclude->active === '0') echo 'disn'; ?>">
+                    <div class="course-dates">
                         <?php
 
                         // GET DATES

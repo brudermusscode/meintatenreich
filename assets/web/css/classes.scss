@@ -57,6 +57,82 @@ $margin-size-classes: 0;
   $margin-size-classes: $margin-size-classes + 2;
 }
 
+// backgrounds
+.linear-background {
+  &.purple {
+    background: rgb(166, 88, 246);
+    background: -webkit-linear-gradient(
+      left,
+      rgba(166, 88, 246, 1) 0%,
+      rgba(228, 79, 213, 1) 100%
+    );
+    background: -o-linear-gradient(
+      left,
+      rgba(166, 88, 246, 1) 0%,
+      rgba(228, 79, 213, 1) 100%
+    );
+    background: linear-gradient(
+      to right,
+      rgba(166, 88, 246, 1) 0%,
+      rgba(228, 79, 213, 1) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#a658f6",endColorstr="#e44fd5",GradientType=1);
+  }
+
+  &.orange-white {
+    background: rgb(252, 219, 217);
+    background: -moz-linear-gradient(
+      90deg,
+      rgba(252, 219, 217, 1) 0%,
+      rgba(255, 255, 255, 1) 29%
+    );
+    background: -webkit-linear-gradient(
+      90deg,
+      rgba(252, 219, 217, 1) 0%,
+      rgba(255, 255, 255, 1) 29%
+    );
+    background: linear-gradient(
+      90deg,
+      rgba(252, 219, 217, 1) 0%,
+      rgba(255, 255, 255, 1) 29%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcdbd9",endColorstr="#ffffff",GradientType=1);
+  }
+
+  &.grey {
+    background: rgb(245, 239, 252);
+    background: linear-gradient(
+      90deg,
+      rgba(245, 239, 252, 1) 0%,
+      rgba(246, 242, 254, 1) 100%
+    );
+  }
+
+  &.white-purple {
+    background: rgb(216, 229, 253);
+    background: -moz-linear-gradient(
+      45deg,
+      rgba(216, 229, 253, 1) 0%,
+      rgba(240, 229, 248, 1) 100%
+    );
+    background: -webkit-linear-gradient(
+      45deg,
+      rgba(216, 229, 253, 1) 0%,
+      rgba(240, 229, 248, 1) 100%
+    );
+    background: linear-gradient(
+      45deg,
+      rgba(216, 229, 253, 1) 0%,
+      rgba(240, 229, 248, 1) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d8e5fd",endColorstr="#f0e5f8",GradientType=1);
+  }
+
+  &.light-purple {
+    background: linear-gradient(90deg, #f5effc 0%, #f6f2fe 100%);
+  }
+}
+
 // flexbox
 .flcenter {
   display: flex;
@@ -68,6 +144,7 @@ $margin-size-classes: 0;
   height: 77px;
   width: 100%;
 }
+
 .page-overlay {
   z-index: 100000;
   visibility: hidden;
@@ -162,6 +239,15 @@ $margin-size-classes: 0;
 /* SHADOWS > LEFT */
 .mshd-l-4 {
   box-shadow: -14px 0 28px rgba(0, 0, 0, 0.25), -10px 0 18px rgba(0, 0, 0, 0.22);
+}
+
+// dashboard
+.hd-shd {
+  box-shadow: 0 0 24px 1px rgba(0, 0, 0, 0.06);
+}
+
+.hd-shd-2 {
+  box-shadow: 0 0 24px 6px rgba(0, 0, 0, 0.16);
 }
 
 /* BACKGROUND-COLORS */

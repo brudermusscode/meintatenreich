@@ -1,0 +1,112 @@
+@import "../classes.scss";
+
+wide-container .statuses .delivery,
+wide-container .statuses .paid {
+  line-height: 62px;
+  padding: 0 32px;
+  height: 62px;
+  border-radius: 6px;
+}
+
+wide-container {
+  &.order {
+    .statuses {
+      @extend .disfl, .fldirrow;
+
+      [data-element="admin-select"] {
+        margin-right: 4px;
+        position: relative;
+        z-index: 2;
+
+        .inr {
+          p {
+            font-weight: 600;
+            color: white;
+          }
+
+          .ic,
+          .te {
+            display: block;
+          }
+        }
+
+        // set background colors and icons
+        &.got {
+          background: rgb(236, 152, 1);
+          background: linear-gradient(
+            49deg,
+            rgba(236, 152, 1, 1) 0%,
+            rgba(255, 222, 92, 1) 100%
+          );
+
+          .inr {
+            .ic i::before {
+              content: "new_releases";
+            }
+
+            .te::before {
+              content: "Neu";
+            }
+          }
+        }
+
+        &.sent {
+          background: rgb(120, 120, 120);
+          background: linear-gradient(
+            49deg,
+            rgba(120, 120, 120, 1) 0%,
+            rgba(188, 189, 187, 1) 100%
+          );
+
+          .inr {
+            .ic i::before {
+              content: "flight_takeoff";
+            }
+
+            .te::before {
+              content: "Versandt";
+            }
+          }
+        }
+
+        &.done {
+          background: rgb(68, 125, 70);
+          background: linear-gradient(
+            49deg,
+            rgba(68, 125, 70, 1) 0%,
+            rgba(133, 190, 69, 1) 100%
+          );
+
+          .inr {
+            .ic i::before {
+              content: "task_alt";
+            }
+
+            .te::before {
+              content: "Abgeschlossen";
+            }
+          }
+        }
+
+        &.canceled {
+          background: rgb(133, 0, 0);
+          background: linear-gradient(
+            49deg,
+            rgba(133, 0, 0, 1) 0%,
+            rgba(217, 16, 16, 1) 100%
+          );
+
+          .inr {
+            .ic i::before {
+              content: "do_not_disturb";
+            }
+
+            .te::before {
+              content: "Storniert";
+            }
+          }
+        }
+      }
+    }
+  }
+}

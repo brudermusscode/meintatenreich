@@ -65,30 +65,26 @@ $(function(){
 
                     $btn.removeClass('got done canceled sent');
 
+                    /*
+                       !looks like shit, please smooth out
+                    */
+
                     switch(data.set) {
                         case 'got':
                             $btn.addClass('got');
-                            $btn.find('.inr .ic:first-of-type i').html('new_releases');
-                            $btn.find('.te').html('Neu');
                             break;
                         case 'done':
                             $btn.addClass('done');
-                            $btn.find('.inr .ic:first-of-type i').html('done');
-                            $btn.find('.te').html('Abgeschlossen');
                             break;
                         case 'sent':
                             $btn.addClass('sent');
-                            $btn.find('.inr .ic:first-of-type i').html('watch_later');
-                            $btn.find('.te').html('Unterwegs');
                             break;
                         case 'canceled':
                             $btn.addClass('canceled');
-                            $btn.find('.inr .ic:first-of-type i').html('clear');
-                            $btn.find('.te').html('Storniert');
                     }
                 }
 
-                showDialer(data.message + " ~ " + data.set);
+                showDialer(data.message + " (" + data.set + ")", "euro", "Bestellungen");
     
     
             },
@@ -136,7 +132,7 @@ $(function(){
                     $btn.find('.te').html('Bezahlt');
                 }
     
-                showDialer(data.message);
+                showDialer(data.message, "euro", "Bestellungen");
             },
             error: function(data) {
                 console.error(data);

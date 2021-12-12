@@ -62,7 +62,7 @@ if ($getAdminMailSettings->rowCount() > 0) {
     <div class="rt right-content">
         <div class="rt">
 
-            <div class="user-image lin-bg-purple hd-shd tran-all posrel" data-action="overview:messages,check">
+            <div class="user-image lin-bg-purple hd-shd tran-all posrel linear-background purple" data-action="overview:messages,check">
                 <div style="height:calc(100% - 4px);width:calc(100% - 4px);position:absolute;top:0;left:0;border-radius:20px;border:2px solid rgba(255,255,255,.32);"></div>
                 <div class="pulse <?php if ($mailsCh === false) echo 'active'; ?>"></div>
 
@@ -310,6 +310,21 @@ if ($getAdminMailSettings->rowCount() > 0) {
 
         <div class="mm-heading">
             <p class="title lt lh42">Kurse</p>
+            <div class="tools lt ml32">
+                <div data-element="admin-select" data-action="manage:filter" data-page="courses" data-list-size="212" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
+                    <div class="outline disfl fldirrow">
+                        <p class="text">Filtern</p>
+                        <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
+                    </div>
+
+                    <datalist class="tran-all-cubic left">
+                        <ul>
+                            <li class="trimfull" data-json='[{"order":"all"}]'>Alle anzeigen</li>
+                            <li class="trimfull" data-json='[{"order":"archived"}]'>Archivierte</li>
+                        </ul>
+                    </datalist>
+                </div>
+            </div>
 
             <div class="rt">
                 <div class="mshd-1" style="color:#A247C0;border-radius:50px;background:white;cursor:pointer;padding:0 18px;" data-action="manage:courses,add">

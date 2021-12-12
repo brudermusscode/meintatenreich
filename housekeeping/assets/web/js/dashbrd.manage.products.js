@@ -35,7 +35,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
+                    responser("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
                 }
             }
         });
@@ -79,7 +79,7 @@ $(function(){
                     closeOverlay = Overlay.close(overlay.overlay.parent());
                 }
 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -115,7 +115,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("WOOH BRRRRA");
+                    responser("WOOH BRRRRA");
                     overlay = Overlay.close($body);
                 }
 
@@ -161,7 +161,7 @@ $(function(){
                     closeOverlay = Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -237,7 +237,7 @@ $(function(){
                     closeOverlay = Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -269,7 +269,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
+                    responser("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
                 }
             }
         });
@@ -345,7 +345,7 @@ $(function(){
                     Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -412,7 +412,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
+                    responser("BRRRRRA! Bruder wieso? Wieso, wieso, wieso?");
                 }
             }
         });
@@ -488,7 +488,7 @@ $(function(){
                     Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -509,10 +509,8 @@ $(function(){
         $t = $(this);
         id = $t.closest("content-card").data("json")[0].id;
         url = dynamicHost + "/_magic_/ajax/functions/manage/products/toggle";
-        contentCard = $t.closest("content-card");
-        react = contentCard.find('[data-react="manage:products,toggle"]');
-        buttonIcon = $t.find(".material-icons");
-        buttonText = $t.find(".trimfull");
+        $contentCard = $t.closest("content-card");
+        $react = $contentCard.find('[data-react="manage:products,toggle"]');
 
         $.ajax({
 
@@ -522,22 +520,10 @@ $(function(){
             type: "JSON",
             success: function(data) {
 
-                console.log(data.message);
-                console.log(data);
-
                 if(data.status) {
-                    react.toggleClass("enabled disabled");
-
-                    if(data.toggle == 0) {
-                        buttonIcon.html("visibility_on");
-                        buttonText.html("Aktivieren");
-                    } else {
-                        buttonIcon.html("visibility_off");
-                        buttonText.html("Deaktivieren");
-                    }
+                    $react.toggleClass("enabled disabled");
+                    $t.toggleClass("activate deactivate");
                 }
-
-                showDialer(data.message);
 
             },
             error: function(data) {
@@ -592,7 +578,7 @@ $(function(){
                     }, 400);
                 }
 
-                showDialer(data.message);
+                responser(data.message);
 
             },
             error: function(data) {
@@ -601,7 +587,11 @@ $(function(){
 
         });
 
-    })
+    });
+
+    function responser(text) {
+        return showDialer(text, "casino", "Produkte");
+    }
 });
 
 function uploadProductImages(uri, input, react, overlay = null, store = null) {
@@ -628,7 +618,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
             progress = "Hochgeladen: " + parseInt(data.loaded / data.total * 100, 10) + " %";
 
             // stay responsive
-            showDialer(progress);
+            responser(progress);
         },
         done: function(e, data) {
 
@@ -678,7 +668,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
                     }
                 });
             } else {
-                showDialer(data._response.result.message);
+                responser(data._response.result.message);
             }
         },
         stop: function(e, data) {
@@ -694,7 +684,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
         },
         fail: function(e, data) {
 
-            showDialer("Ein oder mehrere Bilder wurden nicht hochgeladen");
+            responser("Ein oder mehrere Bilder wurden nicht hochgeladen");
         }
     });
 

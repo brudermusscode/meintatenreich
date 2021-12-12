@@ -24,10 +24,10 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
-        <div class="wide">
+        <div class="lt left-content">
 
             <content-card>
-                <div class="adjust apps hd-shd" style="background:#fff8e1;">
+                <div class="adjust slideUp apps hd-shd" style="background:#fff8e1;">
                     <div class="inr">
                         <p class="fw4">Nehme verschiedenste Einstellungen zu der Applikation vor. Diese Einstellungen sollten einem administrierenden Entwickler vorbehalten werden, da sie Sektionen der gesamten Webpräsenz verändern und bei falscher Bearbeitung Probleme erzeugen können.</p>
                     </div>
@@ -49,7 +49,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             <form id="data-form-manage-app-display" data-form="manage:app,display">
 
                 <content-card class="mb42">
-                    <div class="adjust apps hd-shd">
+                    <div class="adjust slideUp apps hd-shd">
                         <div class="inr">
 
                             <div class="boolean-input">
@@ -175,7 +175,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             <form data-form="manage:app">
 
                 <content-card>
-                    <div class="adjust apps hd-shd">
+                    <div class="adjust slideUp apps hd-shd">
 
                         <div class="inr">
 
@@ -406,6 +406,8 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             </form>
 
         </div>
+
+        <div class="cl"></div>
     </div>
 </main-content>
 

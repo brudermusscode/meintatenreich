@@ -15,6 +15,8 @@
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.main.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.elements.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.products.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.courses.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.orders.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.import.css">
 
@@ -119,11 +121,23 @@
 
 <body>
 
-    <response-dialer id="response-dialer" class="tran-all-cubic mshd-3">
-        <div class="inr disfl fldirrow">
-            <div onclick="closeDialer()" class="icon tran-all">
-                <i class="material-icons md-18 lh24">clear</i>
+    <response-dialer id="response-dialer" class="tran-all-cubic">
+        <div class="rd-head ph24 pv12">
+            <div class="lt">
+                <p class="icon">
+                    <i class="material-icons md-18">notifications</i>
+                </p>
+                <p class="title">Kurse</p>
             </div>
-            <p class="fw4"></p>
+            <div class="rt">
+                <p class="close curpo" onclick="closeDialer()">
+                    <i class="material-icons md-18">clear</i>
+                </p>
+            </div>
+
+            <div class="cl"></div>
+        </div>
+        <div class="inr">
+            <p class="text">abcdefg</p>
         </div>
     </response-dialer>

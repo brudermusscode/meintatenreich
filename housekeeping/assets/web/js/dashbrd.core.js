@@ -171,14 +171,30 @@ let loadContent = function(content, url, data) {
 }
 
 var dialerTimeout;
-function showDialer(text) {
-    var t  = text;
-    clearTimeout(dialerTimeout);
-    var rd = $('response-dialer');
-    rd.find('.inr p').html(text);
-    rd.css('bottom', '12px');
+function showDialer(text, icon = false, section = false) {
 
-    dialerTimeout = setTimeout(function(){ rd.removeAttr('style'); }, 3000);
+    let $dialer = $('response-dialer');
+
+    // set icon to default if none was commited
+    if(!icon) {
+        icon = "notifications";
+    }
+
+    if(!section) {
+        section = "Allgemein";
+    }
+
+    clearTimeout(dialerTimeout);
+
+    $dialer.find(".lt .icon i").html(icon);
+    $dialer.find(".lt .title").html(section);
+    $dialer.find(".inr .text").html(text);
+
+    $dialer.css('right', '24px');
+
+    dialerTimeout = setTimeout(function(){ 
+        $dialer.removeAttr('style'); 
+    }, 6000);
 }
 
 // close responser on click

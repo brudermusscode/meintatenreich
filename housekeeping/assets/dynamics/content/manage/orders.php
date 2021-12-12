@@ -39,7 +39,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
 ?>
 
-        <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $o->oid; ?>"}]'>
+        <wide-container class="order" style="padding-top:62px;" data-json='[{"id":"<?php echo $o->oid; ?>"}]'>
 
 
             <!-- INFORMATON BOX -->
@@ -107,55 +107,40 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                 <div class="statuses lt">
 
                     <div data-element="admin-select" data-action="manage:order,changestatus" data-list-size="262" class="delivery mshd-1 tran-all-cubic 
-                <?php
+                    <?php
 
-                // CHECK STATUS
-                if ($o->status == 'got') {
-                    echo 'got';
-                } else if ($o->status == 'sent') {
-                    echo 'sent';
-                } else if ($o->status == 'done') {
-                    echo 'done';
-                } else if ($o->status == 'canceled') {
-                    echo 'canceled';
-                }
+                    // CHECK STATUS
+                    switch ($o->status) {
+                        default:
+                        case "got":
+                            echo 'got';
+                            break;
 
-                ?>
-               ">
-                        <div class="inr">
-                            <?php
+                        case "sent":
+                            echo 'sent';
+                            break;
 
-                            // CHECK STATUS
-                            if ($o->status == 'got') {
-                                echo '
-                                <p class="ic lt mr12"><i class="material-icons md-24">new_releases</i></p>
-                                <p class="lt te">Neu</p>
-                            ';
-                            } else if ($o->status == 'sent') {
-                                echo '
-                                <p class="ic lt mr12"><i class="material-icons md-24">watch_later</i></p>
-                                <p class="lt te">Unterwegs</p>
-                            ';
-                            } else if ($o->status == 'done') {
-                                echo '
-                                <p class="ic lt mr12"><i class="material-icons md-24">done</i></p>
-                                <p class="lt te">Abgeschlossen</p>
-                            ';
-                            } else if ($o->status == 'canceled') {
-                                echo '
-                                <p class="ic lt mr12"><i class="material-icons md-24">clear</i></p>
-                                <p class="lt te">Storniert</p>
-                            ';
-                            }
+                        case "done":
+                            echo 'done';
+                            break;
 
-                            ?>
+                        case "canceled":
+                            echo 'canceled';
+                            break;
+                    }
 
-                            <p class="ic lt ml12"><i class="material-icons md-24">arrow_drop_down</i></p>
+                    ?>
+                    ">
+                        <div class="inr disfl fldirrow">
+                            <p class="ic mr12"><i class="material-icons md-24"></i></p>
+                            <p class="te"></p>
+
+                            <p class="dropdown-ic lt ml18 pt6"><i class="material-icons md-24">expand_more</i></p>
 
                             <div class="cl"></div>
                         </div>
 
-                        <datalist class="tran-all-cubic">
+                        <datalist class="tran-all-cubic left">
                             <ul>
                                 <li class="wic" data-json='[{"status":"canceled"}]'>
                                     <p class="ic lt" style="color:#EA363A;"><i class="material-icons md-18">clear</i></p>
@@ -170,13 +155,13 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     <div class="cl"></div>
                                 </li>
                                 <li class="wic" data-json='[{"status":"sent"}]'>
-                                    <p class="ic lt" style="color:#1178CC;"><i class="material-icons md-18">watch_later</i></p>
-                                    <p class="lt" style="color:#1178CC;">Unterwegs</p>
+                                    <p class="ic lt" style="color:#1178CC;"><i class="material-icons md-18">flight_takeoff</i></p>
+                                    <p class="lt" style="color:#1178CC;">Versandt</p>
 
                                     <div class="cl"></div>
                                 </li>
                                 <li class="wic" data-json='[{"status":"done"}]'>
-                                    <p class="ic lt" style="color:#3EAF5C;"><i class="material-icons md-18">done</i></p>
+                                    <p class="ic lt" style="color:#3EAF5C;"><i class="material-icons md-18">task_alt</i></p>
                                     <p class="lt" style="color:#3EAF5C;">Abgeschlossen</p>
 
                                     <div class="cl"></div>
@@ -212,12 +197,12 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                 ?>
 
 
-                                <p class="ic lt ml12"><i class="material-icons md-24">arrow_drop_down</i></p>
+                                <p class="dropdown-ic lt ml18 pt6"><i class="material-icons md-24">expand_more</i></p>
 
                                 <div class="cl"></div>
                             </div>
 
-                            <datalist class="tran-all-cubic">
+                            <datalist class="tran-all-cubic left">
                                 <ul>
                                     <li class="wic" data-json='[{"status":"2"}]'>
                                         <p class="ic lt"><i class="material-icons md-18">check_box</i></p>

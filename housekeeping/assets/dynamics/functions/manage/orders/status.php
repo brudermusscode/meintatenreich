@@ -111,7 +111,7 @@ if (
                 );
 
                 if ($sendMail) {
-                    $return->message = "Status aktualisiert. Der Kunde wurde informiert";
+                    $return->message = "Status wurde aktualisiert und der Kunde wurde informiert";
                 } else {
                     $return->message = "Status aktualisiert";
                 }

@@ -12,7 +12,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
     <content-card class="mb24">
 
-        <div class="rating hd-shd">
+        <div class="rating slideUp hd-shd">
 
             <!-- USER ICON -->
             <div class="user-icon">

@@ -83,8 +83,9 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
                 // GET ALL ORDERS & USER INFORMATION
                 $getProducts = $pdo->prepare("
                     SELECT *, products.id AS pid 
-                    FROM products, products_images 
+                    FROM products, products_images, products_categories  
                     WHERE products.id = products_images.pid
+                    AND products.cid = products_categories.id
                     AND products_images.isgal = '1'
                     AND products.cid = ?
                     AND products.deleted = '0' 

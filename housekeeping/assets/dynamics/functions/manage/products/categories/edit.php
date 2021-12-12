@@ -41,7 +41,7 @@ if (
         if ($upd->status) {
 
             $return->status = true;
-            $return->message = "Gespeichert";
+            $return->message = "Kategorie bearbeitet";
             exit(json_encode($return));
         } else {
             $return->message = "update error";

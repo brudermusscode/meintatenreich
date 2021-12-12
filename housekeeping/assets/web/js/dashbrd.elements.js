@@ -117,16 +117,20 @@
     // chooser element > open ~ manage
     .on('click', '[data-element="admin-select"]', function () {
 
-        var $t = $(this);
-        var $dl = $t.find('datalist');
-        var dlh = $dl.find('ul').height();
-        var dlw = $dl.find('ul').width();
-        var seh = $t.height();
+        let $t, $dl, dlh, dlw, seh, lal, wid, $contentCard;
 
-        var lal = $t.data('list-align');
-        var wid = $t.data('list-size');
+        $t = $(this);
+        $contentCard = $t.closest("content-card");
+        $dl = $t.find('datalist');
+        dlh = $dl.find('ul').height();
+        dlw = $dl.find('ul').width();
+        seh = $t.height();
+
+        lal = $t.data('list-align');
+        wid = $t.data('list-size');
 
         if (!$t.hasClass('open')) {
+
             $t.addClass('open');
             $dl.css({
                 'top': seh + 'px',
@@ -135,18 +139,7 @@
                 'height': 'calc(' + dlh + 'px + 24px)',
                 'border-radius': '4px'
             });
-            if (lal === 'right') {
-                $dl.css({
-                    right: '0'
-                });
-            } else {
-                $dl.css({
-                    left: '0'
-                });
-            }
-
         }
-
     })
 
     // chooser element > click ~ manage

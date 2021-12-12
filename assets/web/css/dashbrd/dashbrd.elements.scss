@@ -1,10 +1,70 @@
 @import "../classes.scss";
 
+// response dialer
+response-dialer {
+  display: block;
+  position: fixed;
+  bottom: 24px;
+  right: -432px;
+  z-index: 99999999999999;
+  max-width: 400px;
+  background: #333;
+
+  @extend .rd12, .mshd-2;
+
+  .rd-head {
+    @extend .ph18, .pv12;
+
+    .lt,
+    .rt {
+      @extend .disfl, .fldirrow;
+    }
+
+    .lt {
+      .icon,
+      .title {
+        line-height: 1;
+        padding: 2px 4px;
+        color: #ffcdd2;
+      }
+
+      .title {
+        margin-top: 1px;
+
+        @extend .mr42;
+      }
+    }
+
+    .rt {
+      p {
+        line-height: 1;
+        padding: 2px 4px;
+        color: rgba(255, 255, 255, 0.48);
+
+        @extend .rd4, .tran-all;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+      }
+    }
+  }
+
+  .inr {
+    @extend .ph24, .pb24;
+
+    p {
+      color: #fff;
+      font-size: 0.9em;
+      line-height: 1.2;
+    }
+  }
+}
+
 // select fields
 [data-element="admin-select"] {
   cursor: pointer;
   position: relative;
-  z-index: 4;
 
   .outline {
     line-height: 38px;
@@ -61,6 +121,72 @@
           background: rgba(159, 70, 188, 0.24);
         }
 
+        // activate button state
+        &.activate {
+          p {
+            &.ic {
+              i::before {
+                display: block;
+                content: "toggle_on";
+              }
+            }
+
+            &.ne::before {
+              display: block;
+              content: "Aktivieren";
+            }
+          }
+        }
+
+        // deactivate button state
+        &.deactivate {
+          p {
+            &.ic {
+              i::before {
+                display: block;
+                content: "toggle_off";
+              }
+            }
+
+            &.ne::before {
+              display: block;
+              content: "Deaktivieren";
+            }
+          }
+        }
+
+        &.archive {
+          p {
+            &.ic {
+              i::before {
+                display: block;
+                content: "archive";
+              }
+            }
+
+            &.ne::before {
+              display: block;
+              content: "Archivieren";
+            }
+          }
+        }
+
+        &.unarchive {
+          p {
+            &.ic {
+              i::before {
+                display: block;
+                content: "refresh";
+              }
+            }
+
+            &.ne::before {
+              display: block;
+              content: "Wiederherstellen";
+            }
+          }
+        }
+
         &.wic {
           white-space: nowrap;
           padding: 0 28px;
@@ -79,12 +205,13 @@
   }
 }
 
-/* CC: CONTAINER */
+// wide popup container
 wide-container {
   display: block;
   width: 784px;
   position: relative;
   margin: 0 auto;
+  color: #5068a1;
 
   .bottom-distance {
     display: block;
@@ -126,14 +253,6 @@ wide-container {
   }
 }
 
-wide-container .statuses .delivery,
-wide-container .statuses .paid {
-  line-height: 62px;
-  padding: 0 32px;
-  height: 62px;
-  border-radius: 6px;
-}
-
 .pricing {
   background: rgb(66, 83, 127);
   background: linear-gradient(
@@ -148,48 +267,7 @@ wide-container .statuses .paid {
   font-weight: 400;
   text-align: right;
 }
-wide-container .statuses .delivery {
-  display: inline-block;
-  margin-right: 4px;
-  position: relative;
-  z-index: 2;
-}
-wide-container .statuses .delivery .inr p {
-  font-weight: 600;
-  color: white;
-}
-wide-container .statuses .delivery.got {
-  background: rgb(236, 152, 1);
-  background: linear-gradient(
-    49deg,
-    rgba(236, 152, 1, 1) 0%,
-    rgba(255, 222, 92, 1) 100%
-  );
-}
-wide-container .statuses .delivery.done {
-  background: rgb(68, 125, 70);
-  background: linear-gradient(
-    49deg,
-    rgba(68, 125, 70, 1) 0%,
-    rgba(133, 190, 69, 1) 100%
-  );
-}
-wide-container .statuses .delivery.canceled {
-  background: rgb(133, 0, 0);
-  background: linear-gradient(
-    49deg,
-    rgba(133, 0, 0, 1) 0%,
-    rgba(217, 16, 16, 1) 100%
-  );
-}
-wide-container .statuses .delivery.sent {
-  background: rgb(120, 120, 120);
-  background: linear-gradient(
-    49deg,
-    rgba(120, 120, 120, 1) 0%,
-    rgba(188, 189, 187, 1) 100%
-  );
-}
+
 wide-container .statuses .paid {
   display: inline-block;
   background: rgb(120, 120, 120);

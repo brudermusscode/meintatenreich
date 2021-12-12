@@ -2,12 +2,30 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
-if ($admin->isAdmin()) {
+$orderValid = ["all", "archived"];
 
-    $getCourses = $pdo->prepare("SELECT * FROM courses WHERE deleted != '1' ORDER BY id DESC");
-    $getCourses->execute();
+if (
+    isset($orderValid, $_REQUEST["order"]) &&
+    in_array($_REQUEST["order"], $orderValid) &&
+    $admin->isAdmin()
+) {
 
-    if ($getCourses->rowCount() < 1) {
+    $o = htmlspecialchars($_REQUEST['order']);
+
+    switch ($o) {
+        case 'all':
+        default:
+            $q = "SELECT * FROM courses WHERE deleted != '1' ORDER BY id DESC";
+            break;
+        case 'archived':
+            $q = "SELECT * FROM courses WHERE deleted = '1' ORDER BY id DESC";
+            break;
+    }
+
+    $sel = $pdo->prepare($q);
+    $sel->execute();
+
+    if ($sel->rowCount() < 1) {
 
 ?>
 
@@ -24,7 +42,7 @@ if ($admin->isAdmin()) {
 
     }
 
-    foreach ($getCourses->fetchAll() as $elementInclude) {
+    foreach ($sel->fetchAll() as $elementInclude) {
 
         include $sroot . "/housekeeping/assets/dynamics/elements/courses.php";
     }

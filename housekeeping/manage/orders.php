@@ -80,7 +80,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
-        <div class="wide">
+        <div class="lt left-content">
 
             <color-loader class="almid-h mt24 mb42">
                 <inr>
@@ -92,6 +92,10 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             <div data-react="manage:filter"></div>
 
         </div>
+
+        <div class="rt right content"></div>
+
+        <div class="cl"></div>
     </div>
 </main-content>
 

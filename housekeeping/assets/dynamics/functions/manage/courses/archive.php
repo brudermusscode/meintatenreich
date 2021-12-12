@@ -24,7 +24,7 @@ if (
 ) {
 
     // CLEAR VARS
-    $id = $_REQUEST['id'];
+    $id = htmlspecialchars($_REQUEST['id']);
 
     // CHECK IF COURSE EXISTS
     $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
@@ -32,37 +32,42 @@ if (
 
     if ($sel->rowCount() > 0) {
 
-        // start mysql transaction
+        // bstart mysql transaction
         $pdo->beginTransaction();
 
-        // INSERTION
-        $upd = $pdo->prepare("UPDATE courses SET active = CASE WHEN active = '0' THEN '1' ELSE '0' END, updated = CURRENT_TIMESTAMP WHERE id = ?");
+        // update current course
+        $upd = $pdo->prepare("
+            UPDATE courses 
+            SET deleted = CASE WHEN deleted = '1' THEN '0' ELSE '1' END, 
+            updated = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        ");
         $upd = $shop->tryExecute($upd, [$id], $pdo, true);
 
         if ($upd->status) {
 
-            // get set status
+            // get archived or unarchived
             $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
             $sel->execute([$id]);
 
-            // fetch information
-            $set = $sel->fetch()->active;
+            // fetch course information
+            $s = $sel->fetch()->deleted;
 
-            // set messages for activated
-            if ($set == 0) {
-                $return->set = "0";
-                $return->message = "Kurs [" . $id . "] deaktiviert";
+            // set output messages for each case
+            if ($s == '1') {
 
-                // .. or deactivated
+                $return->message = "Kurs [" . $id . "] wurde erfolgreich archiviert";
             } else {
-                $return->set = "1";
-                $return->message = "Kurs [" . $id . "] aktiviert";
+
+                $return->message = "Kurs [" . $id . "] wurde erfolgreich wiederhergestellt";
             }
 
             $return->status = true;
+            $return->set = $s;
 
             exit(json_encode($return));
         } else {
+            $return->message = "Query error. Updating table threw an error";
             exit(json_encode($return));
         }
     } else {

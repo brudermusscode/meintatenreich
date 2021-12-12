@@ -45,7 +45,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
             }
 
             $return->status = true;
-            $return->message = "Gelöscht";
+            $return->message = "Kategorie gelöscht";
 
             $pdo->commit();
 

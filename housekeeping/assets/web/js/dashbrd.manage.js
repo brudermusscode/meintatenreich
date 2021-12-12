@@ -145,6 +145,11 @@ $(function() {
                 Manage.loadPage(url, order, react, loader);
                 break;
 
+            case 'courses':
+                url = dynamicHost + '/_magic_/ajax/content/manage/filter/courses';
+                Manage.loadPage(url, order, react, loader);
+                break;
+
             case 'overview':
 
                 switch(order) {

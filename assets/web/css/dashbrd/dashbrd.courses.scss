@@ -1,0 +1,83 @@
+@import "../classes.scss";
+
+// card styles
+content-card {
+  .courses {
+    @extend .tran-all;
+
+    &:hover {
+      @extend .hd-shd-2;
+    }
+
+    [data-element="admin-select"] {
+      height: 42px;
+      width: 42px;
+      position: relative;
+      overflow: hdden;
+      padding: 0;
+
+      .outline {
+        color: #333;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+
+        @extend .disfl, .flcenter, .tran-all;
+
+        .icon {
+          @extend .almid-w, .posabs;
+        }
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.12);
+        }
+      }
+    }
+  }
+
+  @extend .tran-all-cubic;
+
+  &.courses {
+    .course-status,
+    .course-dates {
+      @extend .tran-all;
+    }
+
+    &.activated {
+      .course-status {
+        color: green;
+      }
+    }
+
+    &.deactivated {
+      .course-status {
+        color: rgba(0, 0, 0, 0.08);
+      }
+
+      .course-dates {
+        overflow: hidden;
+        visibility: hidden;
+        height: 0px;
+        opacity: 0;
+      }
+    }
+  }
+
+  .info {
+    background: rgba(0, 0, 0, 0.12);
+    padding: 0 12px;
+    line-height: 2.8em;
+
+    @extend .rd24, .posrel;
+
+    .icon {
+      @extend .almid-w, .posabs, .mt6;
+    }
+
+    .text {
+      @extend .ml32;
+    }
+  }
+}

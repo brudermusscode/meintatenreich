@@ -154,21 +154,15 @@ $(function(){
         });
     })
     
-    // switch I/O
+    // toggle activated/deactivated
     .on('click', '[data-action="manage:courses,toggle"]', function(){
-
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
         
-        let $t = $(this);
-        let id = $t.data('json')[0].id;
-        let url = '/hk/ajax/manage/course/toggle';
-        let res;
+        $t = $(this);
+        id = $t.data('json')[0].id;
+        url = dynamicHost + '/_magic_/ajax/functions/manage/courses/toggle';
+        let $contentCard = $t.closest("content-card");
         
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             data: { id: id },
@@ -176,73 +170,60 @@ $(function(){
             type: 'HTML',
             success: function(data) {
                 
-                if(data === 'on') {
-                    $t.find('.ic i').html('blur_off');
-                    $t.find('.ne').html('Deaktivieren');
-                    $t.closest('.order').find('.course-status i').removeClass('cred').addClass('cgreen');
-                    $t.closest('.order').find('.next-date').slideDown();
-                    res = 'Kurs aktiviert!';
-                } else if(data === 'off') {
-                    $t.find('.ic i').html('blur_on');
-                    $t.find('.ne').html('Aktivieren');
-                    $t.closest('.order').find('.course-status i').removeClass('cgreen').addClass('cred');
-                    $t.closest('.order').find('.next-date').slideUp();
-                    res = 'Kurs deaktiviert!';
-                } else {
-                    res = 'Ein unbekannter Fehler ist aufgetreten...';
+                if(data.status) {
+
+                    if(data.set == '0') {
+                        $t.addClass("activate").removeClass("deactivate");
+                        $contentCard.removeClass("activated").addClass("deactivated");
+                    } else {
+                        $t.addClass("deactivate").removeClass("activate");
+                        $contentCard.removeClass("deactivated").addClass("activated");
+                    }
                 }
-                
-                closeOverlay($ov, true);
-                showDialer(res);
-                
+
+                showDialer(data.message);
             },
             error: function(data) {
-                // SET ERROR TEXT
+                console.error(data);
             }
             
         });
 
     })
     
-    // courses > delete
-    .on('click', '[data-action="manage:course,delete"]', function(){
+    // courses > archive/unarchive
+    .on('click', '[data-action="manage:courses,archive"]', function(){
 
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/functions/manage/courses/archive';
+        let $contentCard = $t.closest("content-card");
+        id = $contentCard.data('json')[0].id;
         
-        let $t = $(this);
-        let $courseCont = $t.closest('content-card');
-        let courseContH = $courseCont.height();
-        let id = $t.data('json')[0].id;
-        let url = '/hk/ajax/manage/course/delete';
-        let res;
-        
-        showDialer('Lösche...');
-        
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             data: { id: id },
             method: 'POST',
-            type: 'HTML',
+            type: 'JSON',
             success: function(data) {
                 
-                if(data === 'success') {
-                    res = 'Kurs gelöscht!';
-                    $courseCont.slideUp(300, 'swing');
-                } else {
-                    res = 'Ein unbekannter Fehler ist aufgetreten...';
+                if(data.status) {
+
+                    $t.toggleClass("archive unarchive");
+                    $contentCard.css({
+                        opacity: "0",
+                        visibility: "hidden"
+                    });
+
+                    setTimeout(function() {
+                        $contentCard.remove();
+                    }, 400);
                 }
-                
-                closeOverlay($ov, true);
-                showDialer(res);
-                
+
+                showDialer(data.message);
             },
             error: function(data) {
-                // SET ERROR TEXT
+                console.error(data);
             }
             
         });

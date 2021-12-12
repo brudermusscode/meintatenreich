@@ -5,7 +5,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 ?>
 
     <content-card class="mb24">
-        <div class="order hd-shd adjust">
+        <div class="order slideUp hd-shd adjust">
 
             <!-- USER ICON -->
             <div class="user-icon lt disn">
@@ -49,7 +49,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                                     <p class="icon"><i class="material-icons md-24 lh42">more_vert</i></p>
                                 </div>
 
-                                <datalist class="tran-all-cubic">
+                                <datalist class="tran-all-cubic right">
                                     <ul>
                                         <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $elementInclude->orderid; ?>"}]'>
                                             <p class="ic lt"><i class="material-icons md-18">build</i></p>

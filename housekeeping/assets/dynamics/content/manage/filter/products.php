@@ -22,8 +22,9 @@ if (
         case 'all':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories 
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products_images.isgal = '1'
                 AND products.deleted = '0' 
                 ORDER BY products.id DESC
@@ -32,8 +33,9 @@ if (
         case 'available':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories 
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products.available = '1'
                 AND products_images.isgal = '1'
                 AND products.deleted = '0' 
@@ -43,8 +45,9 @@ if (
         case 'unavailable':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories 
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products.available = '0'
                 AND products_images.isgal = '1'
                 AND products.deleted = '0' 
@@ -55,8 +58,9 @@ if (
         case 'priceup':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories 
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products_images.isgal = '1'
                 AND products.deleted = '0' 
                 ORDER BY products.price ASC
@@ -65,8 +69,9 @@ if (
         case 'pricedown':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories  
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products_images.isgal = '1'
                 AND products.deleted = '0' 
                 ORDER BY products.price DESC
@@ -75,8 +80,9 @@ if (
         case 'archived':
             $q = "
                 SELECT *, products.id AS pid 
-                FROM products, products_images 
+                FROM products, products_images, products_categories  
                 WHERE products.id = products_images.pid
+                AND products.cid = products_categories.id 
                 AND products_images.isgal = '1'
                 AND products.deleted = '1' 
                 ORDER BY products.price DESC
