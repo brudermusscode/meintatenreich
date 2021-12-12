@@ -42,12 +42,16 @@ content-card {
   &.courses {
     .course-status,
     .course-dates {
-      @extend .tran-all;
+      @extend .tran-all-cubic;
     }
 
     &.activated {
       .course-status {
         color: green;
+      }
+
+      .course-dates {
+        margin-top: 24px;
       }
     }
 
@@ -61,6 +65,7 @@ content-card {
         visibility: hidden;
         height: 0px;
         opacity: 0;
+        margin-top: 0px;
       }
     }
   }

@@ -54,7 +54,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                                             <div class="cl"></div>
                                         </li>
 
-                                        <li class="wic" data-action="manage:course,dates" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
+                                        <li class="wic" data-action="manage:courses,dates" data-json='[{"id":"<?php echo $elementInclude->id; ?>"}]'>
                                             <p class="ic lt"><i class="material-icons md-18">event_note</i></p>
                                             <p class="lt ne trimfull">Termine verwalten</p>
 
@@ -95,44 +95,11 @@ if (isset($elementInclude) && $admin->isAdmin()) {
             </div>
 
             <div class="course-content">
-                <div style="padding:32px 54px;color:#333;">
+                <div style="padding:32px 54px 24px;color:#333;">
                     <div>
                         <p class="trimfull cf" style="width:calc(100% - 42px);font-size:1.4em;line-height:1.2em;color:#333;font-weight:600;">
                             <?php echo $elementInclude->name; ?>
                         </p>
-                    </div>
-
-                    <div class="mt24">
-                        <div class="lt mr32" style="background:rgba(0,0,0,.12);height:42px;width:42px;border-radius:50%;">
-                            <p class="tac course-status" style="line-height:58px;">
-                                <i class="material-icons md-28">trip_origin</i>
-                            </p>
-
-                            <div class="cl"></div>
-                        </div>
-
-                        <div class="info lt mr24 disfl fldirrow">
-                            <p class="icon">
-                                <i class="material-icons md-24">event_note</i>
-                            </p>
-                            <p class="text"><?php echo $sdacount; ?></p>
-                        </div>
-
-                        <div class="info lt mr24 disfl fldirrow">
-                            <p class="icon">
-                                <i class="material-icons md-24">person</i>
-                            </p>
-                            <p class="text"><?php echo $elementInclude->size; ?></p>
-                        </div>
-
-                        <div class="info lt disfl fldirrow posrel">
-                            <p class="icon">
-                                <i class="material-icons md-24">euro_symbol</i>
-                            </p>
-                            <p class="text"><?php echo number_format($elementInclude->price, 2, ',', '.'); ?></p>
-                        </div>
-
-                        <div class="cl"></div>
                     </div>
 
                     <!-- NEXT DATE -->
@@ -157,7 +124,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
                         ?>
 
-                            <content-card class="mt24 posrel" style="opacity:.6;">
+                            <content-card class="posrel" style="opacity:.6;">
                                 <div class="mshd-1 normal-box">
                                     <div style="padding:24px 12px;">
 
@@ -231,6 +198,40 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                         <?php } ?>
                     </div>
 
+                </div>
+
+
+                <div class="pv18 ph32" style="background:rgba(0,0,0,.04);">
+                    <div class="lt mr32" style="background:rgba(0,0,0,.12);height:42px;width:42px;border-radius:50%;">
+                        <p class="tac course-status" style="line-height:58px;">
+                            <i class="material-icons md-28">trip_origin</i>
+                        </p>
+
+                        <div class="cl"></div>
+                    </div>
+
+                    <div class="info lt mr24 disfl fldirrow">
+                        <p class="icon">
+                            <i class="material-icons md-24">event_note</i>
+                        </p>
+                        <p class="text"><?php echo $sdacount; ?></p>
+                    </div>
+
+                    <div class="info lt mr24 disfl fldirrow">
+                        <p class="icon">
+                            <i class="material-icons md-24">person</i>
+                        </p>
+                        <p class="text"><?php echo $elementInclude->size; ?></p>
+                    </div>
+
+                    <div class="info lt disfl fldirrow posrel">
+                        <p class="icon">
+                            <i class="material-icons md-24">euro_symbol</i>
+                        </p>
+                        <p class="text"><?php echo number_format($elementInclude->price, 2, ',', '.'); ?></p>
+                    </div>
+
+                    <div class="cl"></div>
                 </div>
             </div>
         </div>

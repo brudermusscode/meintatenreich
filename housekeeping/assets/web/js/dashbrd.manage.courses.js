@@ -22,7 +22,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("Nothing");
+                    responser("Nothing");
                 }
                 
             },
@@ -47,7 +47,7 @@ $(function(){
         url = dynamicHost + '/_magic_/ajax/functions/manage/courses/add';
         formData = new FormData(this);
         
-        showDialer('Speichern...');
+        responser('Speichere...');
         
         $.ajax({
 
@@ -67,7 +67,7 @@ $(function(){
                     Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
             },
             error: function(data) {
                 console.error(data);
@@ -97,7 +97,7 @@ $(function(){
                     overlay.loader.remove();
                     overlay.overlay.append(data);
                 } else {
-                    showDialer("Nothing");
+                    responser("Nothing");
                 }
                 
             },
@@ -109,7 +109,7 @@ $(function(){
 
     })
 
-    // edit > submit
+    // edit > submit ~ works
     .on('submit', '[data-form="manage:courses,edit"]', function(){
 
         // get current overlay
@@ -124,7 +124,7 @@ $(function(){
         formData = new FormData(this);
         formData.append("id", id);
         
-        showDialer('Speichern...');
+        responser('Speichere...');
         
         $.ajax({
 
@@ -146,7 +146,7 @@ $(function(){
                     Overlay.close(overlay.overlay.parent());
                 }
                 
-                showDialer(data.message);
+                responser(data.message);
             },
             error: function(data) {
                 console.error(data);
@@ -154,7 +154,7 @@ $(function(){
         });
     })
     
-    // toggle activated/deactivated
+    // toggle activated/deactivated ~ works
     .on('click', '[data-action="manage:courses,toggle"]', function(){
         
         $t = $(this);
@@ -171,17 +171,11 @@ $(function(){
             success: function(data) {
                 
                 if(data.status) {
-
-                    if(data.set == '0') {
-                        $t.addClass("activate").removeClass("deactivate");
-                        $contentCard.removeClass("activated").addClass("deactivated");
-                    } else {
-                        $t.addClass("deactivate").removeClass("activate");
-                        $contentCard.removeClass("deactivated").addClass("activated");
-                    }
+                    $t.toggleClass("activate deactivate");
+                    $contentCard.toggleClass("activated deactivated");
                 }
 
-                showDialer(data.message);
+                responser(data.message);
             },
             error: function(data) {
                 console.error(data);
@@ -191,7 +185,7 @@ $(function(){
 
     })
     
-    // courses > archive/unarchive
+    // courses > archive/unarchive ~ works
     .on('click', '[data-action="manage:courses,archive"]', function(){
 
         $t = $(this);
@@ -220,7 +214,7 @@ $(function(){
                     }, 400);
                 }
 
-                showDialer(data.message);
+                responser(data.message);
             },
             error: function(data) {
                 console.error(data);
@@ -229,135 +223,18 @@ $(function(){
         });
 
     })
-    
-    // dates > add
-    .on('click', '[data-action="manage:course,dates,add"]', function(){
 
-        // HANDLE OVERLAY
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
-        
-        let $t = $(this);
-        let res;
-        let id = $t.closest('wide-container').data('json')[0].id;
-        let url = '/hk/ajax/manage/course/dates/add';
-        let dS = $('[data-form="manage:course,edit"]').serialize() + '&id=' + id;
-        
-        showDialer('Speichern...');
-        
-        let ajax = $.ajax({
+    // dates > edit ~ works
+    .on('click', '[data-action="manage:courses,dates"]', function(){
 
-            url: url,
-            data: dS,
-            method: 'POST',
-            type: 'HTML',
-            success: function(data){
-                
-                console.log(data);
-                
-                switch(data){
-                    case '0':
-                    case '1':
-                    default:
-                        res = 'Ein unbekannter Fehler ist aufgetreten...';
-                        break;
-                    case '2':
-                        res = 'Das Datum hat ein falsches Format: Y-m-d...';
-                        break;
-                    case '3':
-                        res = 'Die Zeit hat ein falsches Format: 00:00...';
-                        break;
-                    case 'success':
-                        
-                            let $c = $(document).find('[data-react="manage:courses,date,add"]');
-                            let ajax2 = $.ajax({
-                            url: '/hk/get/elements/manage/courses/date',
-                            data: dS,
-                            method: 'POST',
-                            type: 'HTML',
-                            success: function(data){
-                                
-                                $c.prepend(data);
-                                
-                                console.log(data);
-                                
-                            }
-                        });
-                        res = 'Hinzugefügt!';
-                }
-                
-                closeOverlay($ccOv, false);
-                
-                showDialer(res);
+        // add new overlay
+        overlay = Overlay.add($body, true);
 
-            }
-
-        });
-
-    })
-    
-    // dates > delete
-    .on('click', '[data-action="manage:course,dates,delete"]', function(){
-
-        // HANDLE OVERLAY
-        let $cc = $(this).closest('content-card');
-        addOverlay('255,255,255', $cc, '%', false);
-        let $ccOv = $cc.find('page-overlay');
-        addLoader('color', $ccOv);
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/content/manage/courses/dates/add';
+        let id = $t.closest("content-card").data("json")[0].id;
         
-        let $t = $(this);
-        let $courseCont = $t.closest('content-card');
-        let courseContH = $courseCont.height();
-        let id = $t.data('json')[0].id;
-        let couid = $t.closest('wide-container').data('json')[0].id;
-        let url = '/hk/ajax/manage/course/dates/delete';
-        let res;
-        
-        showDialer('Lösche...');
-        
-        let ajax = $.ajax({
-            
-            url: url,
-            data: { id: id, couid: couid },
-            method: 'POST',
-            type: 'HTML',
-            success: function(data) {
-                
-                if(data === 'success') {
-                    res = 'Termin gelöscht!';
-                    $courseCont.slideUp(300, 'swing');
-                } else {
-                    res = 'Ein unbekannter Fehler ist aufgetreten...';
-                }
-                
-                closeOverlay($ccOv, false);
-                showDialer(res);
-                
-            },
-            error: function(data) {
-                // SET ERROR TEXT
-            }
-            
-        });
-
-    })
-    
-    // dates > edit
-    .on('click', '[data-action="manage:course,dates"]', function(){
-
-        // HANDLE OVERLAY
-        addOverlay('255,255,255', $bod);
-        let $ov = $bod.find('page-overlay');
-        addLoader('color', $ov);
-        let $lo = $ov.find('color-loader');
-        
-        let $t = $(this);
-        let id = $t.data('json')[0].id;
-        let url = '/hk/get/manage/course/dates';
-        
-        let ajax = $.ajax({
+        $.ajax({
             
             url: url,
             data: { id: id },
@@ -365,16 +242,126 @@ $(function(){
             type: 'HTML',
             success: function(data) {
                 
-                $lo.remove();
-                $ov.append(data);
+                if(data !== 0) {
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+                    responser("Nothing");
+                }
                 
             },
             error: function(data) {
-                // SET ERROR REPORT
+                console.error(data);
             }
             
         });
 
     })
+
+    // dates > edit > submit ~ works
+    .on('submit', '[data-form="manage:courses,dates"]', function(){
+
+        let $c;
+
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
+
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/functions/manage/courses/dates/add';
+        formData = new FormData(this);
+        
+        responser('Speichere...');
+        
+        $.ajax({
+
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(data){
+                
+                if(data.status) {
+
+                    $c = $(document).find('[data-react="manage:courses,dates"]');
+                    url = dynamicHost + "/_magic_/ajax/elements/courses/date";
+
+                    $.ajax({
+
+                        url: url,
+                        data: formData,
+                        method: 'POST',
+                        type: 'HTML',
+                        contentType: false,
+                        processData: false,
+                        success: function(data){
+
+                            if(data !== 0) {
+                                $c.prepend(data);
+                            } else {
+                                responser("Etwas lief schief, dennoch wurde der Termin hinzugefügt");
+                            }
+
+                            Overlay.close(overlay.overlay.parent());
+                        }
+                    });
+
+                } else {
+                    Overlay.close(overlay.overlay.parent());
+                }
+                
+                responser(data.message);
+            },
+            error: function(data) {
+                console.error(data);
+                Overlay.close(overlay.overlay.parent());
+            }
+        });
+    })
+    
+    // dates > edit > delete
+    .on('click', '[data-action="manage:courses,dates,delete"]', function(){
+        
+        let id, cid, $courseCont, courseContH;
+
+        $t = $(this);
+        $courseCont = $t.closest('content-card');
+        courseContH = $courseCont.height();
+        id = $t.data('json')[0].id;
+        cid = $t.closest('wide-container').data('json')[0].id;
+        url = dynamicHost + '/_magic_/ajax/functions/manage/courses/dates/delete';
+        
+        responser('Lösche...');
+        
+        $.ajax({
+        
+            url: url,
+            data: { id: id, cid: cid },
+            method: 'POST',
+            type: 'JSON',
+            success: function(data) {
+
+                console.log(data);
+
+                if(data.status) {
+
+                    $courseCont.slideUp(300, 'swing');
+                }
+
+                responser(data.message);
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
+    });
+
+    function responser(text) {
+        return showDialer(text, "golf_course", "Kurse");
+    }
 
 });

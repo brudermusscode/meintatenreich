@@ -1,4 +1,5 @@
 @import "../classes.scss";
+@import "../animations.scss";
 
 // response dialer
 response-dialer {
@@ -65,6 +66,7 @@ response-dialer {
 [data-element="admin-select"] {
   cursor: pointer;
   position: relative;
+  z-index: 3;
 
   .outline {
     line-height: 38px;
@@ -213,6 +215,8 @@ wide-container {
   margin: 0 auto;
   color: #5068a1;
 
+  @extend .slideUp;
+
   .bottom-distance {
     display: block;
     height: 1px;
@@ -342,6 +346,17 @@ wide-container .statuses .paid datalist ul li p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+content-card {
+  .products,
+  .courses,
+  .auser,
+  .order,
+  .normal-box,
+  .adjust {
+    @extend .slideUp;
+  }
 }
 
 content-card.half {

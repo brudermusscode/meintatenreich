@@ -1,37 +1,31 @@
 <?php
 
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
 
 if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $oid = $_REQUEST['id'];
 
-    // CHECK IF ORDER EXISTS
-    $sel = $pdo->prepare("
-            SELECT *
-            FROM courses 
-            WHERE courses.id = ?
-            LIMIT 1
-        ");
-    $sel->bind_param('s', $oid);
-    $sel->execute();
-    
+    // check if course exists
+    $sel = $pdo->prepare("SELECT * FROM courses WHERE courses.id = ? LIMIT 1");
+    $sel->execute([$oid]);
+
 
     if ($sel->rowCount() > 0) {
 
-        // FETCH COURSE
+        // fetch course information
         $o = $sel->fetch();
-        $sel->close();
 
-
-        // CONVERT TIMESTAMP
+        // convert timestamp for proper readability
         $timeAgoObject = new convertToAgo;
-        $ts = $o['timestamp'];
+        $ts = $o->timestamp;
         $convertedTime = ($timeAgoObject->convert_datetime($ts));
         $when = ($timeAgoObject->makeAgo($convertedTime));
 
 ?>
 
-        <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $o['id']; ?>"}]'>
+        <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $o->id; ?>"}]'>
 
 
             <!-- INFORMATON BOX -->
@@ -40,12 +34,13 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
             </div>
 
 
-            <form data-form="manage:course,edit">
+            <form data-form="manage:courses,dates" method="POST" action>
 
                 <content-card class="mb24 posrel">
                     <div class="mshd-1 normal-box" style="background:url(<?php echo $url["img"]; ?>/global/bggreen.jpg) repeat;background-size:42%;">
                         <div style="padding:28px 42px;">
 
+                            <input type="hidden" name="id" value="<?php echo $o->id; ?>" />
 
                             <div style="width:calc(50% - 12px);" class="lt">
                                 <div class="fw6 mb12">
@@ -57,7 +52,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                         <div style="color:#009688;right:18px;padding-left:12px;line-height:42px;height:32px;top:5px;font-size:1.2em;border-left:1px solid rgba(0,0,0,.12);" class="fw6 posabs">
                                             <p><i class="material-icons md-24">date_range</i></p>
                                         </div>
-                                        <input type="text" autocomplete="off" name="date" placeholder="Format: JAHR-MONAT-TAG" class="tran-all" value style="padding-right:62px;width:calc(100% - 32px - 62px);">
+                                        <input type="text" autocomplete="off" name="date" placeholder="Format: JAHR-MONAT-TAG" class="tran-all" value="2021-12-24" style="padding-right:62px;width:calc(100% - 32px - 62px);">
                                     </div>
                                 </div>
                             </div>
@@ -118,9 +113,9 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     <p style="color:#5068A1;">&nbsp;</p>
                                 </div>
 
-                                <div class="fa-inr" data-action="manage:course,dates,add">
+                                <button class="fa-inr" type="submit">
                                     <p><i class="material-icons md-24">add</i></p>
-                                </div>
+                                </button>
                             </div>
 
 
@@ -133,7 +128,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                                     <div class="input tran-all-cubic mb62">
                                         <div class="input-outer">
-                                            <input type="text" autocomplete="off" name="start" placeholder="08:00" class="tran-all">
+                                            <input type="text" autocomplete="off" name="start" placeholder="08:00" class="tran-all" value="08:00">
                                         </div>
                                     </div>
                                 </div>
@@ -145,7 +140,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                                     <div class="input tran-all-cubic mb62">
                                         <div class="input-outer">
-                                            <input type="text" autocomplete="off" name="end" placeholder="16:00" class="tran-all">
+                                            <input type="text" autocomplete="off" name="end" placeholder="16:00" class="tran-all" value="16:00">
                                         </div>
                                     </div>
                                 </div>
@@ -160,27 +155,24 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                     </div>
                 </content-card>
 
-                <div data-react="manage:courses,date,add"></div>
+                <div data-react="manage:courses,dates"></div>
 
                 <?php
 
                 // GET DATES
                 $sel = $pdo->prepare("
-                SELECT *
-                FROM courses_dates 
-                WHERE couid = ? 
-                AND archived != '1' 
-                AND deleted != '1' 
-                AND CONCAT(date, ' ', start, ':00') >= ? 
-                ORDER BY CONCAT(date, ' ', start, ':00') 
-                DESC 
-            ");
-                $sel->bind_param('ss', $oid, $timestamp);
-                $sel->execute();
-                $selr = $sel->get_result();
-                $sel->close();
+                    SELECT *
+                    FROM courses_dates 
+                    WHERE cid = ? 
+                    AND archived != '1' 
+                    AND deleted != '1' 
+                    AND CONCAT(date, ' ', start, ':00') >= ? 
+                    ORDER BY CONCAT(date, ' ', start, ':00') 
+                    DESC 
+                ");
+                $sel->execute([$oid, $main["fulldate"]]);
 
-                if ($selr->rowCount() < 1) {
+                if ($sel->rowCount() < 1) {
 
                 ?>
 
@@ -207,7 +199,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                 }
 
-                foreach ($sda = $selr->fetchAll() as ) {
+                foreach ($sel->fetchAll() as $sda) {
 
                 ?>
 
@@ -222,7 +214,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                         <p class="lt c3">
                                             <?php
 
-                                            $newdate = date_create($sda['date']);
+                                            $newdate = date_create($sda->date);
                                             echo $newdate->format('d. M y');
 
                                             ?>
@@ -233,8 +225,8 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                 </div>
 
                                 <div class="rt">
-                                    <div class="delete tran-all" data-action="manage:course,dates,delete" data-json='[{"id":"<?php echo $sda['id']; ?>"}]'>
-                                        <p><i class="material-icons md-24">close</i></p>
+                                    <div class="delete tran-all" data-action="manage:courses,dates,delete" data-json='[{"id":"<?php echo $sda->id; ?>"}]'>
+                                        <p><i class="material-icons md-24">remove_circle</i></p>
                                     </div>
                                 </div>
 
@@ -242,7 +234,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     <div class="lt mr24">
                                         <p class="ttup fs12 c9 mb8">Start</p>
                                         <div class="lt lh24">
-                                            <p class="lt c3"><?php echo $sda['start']; ?></p>
+                                            <p class="lt c3"><?php echo $sda->start; ?></p>
 
                                             <div class="cl"></div>
                                         </div>
@@ -251,7 +243,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                     <div class="lt">
                                         <p class="ttup fs12 c9 mb8">Ende</p>
                                         <div class="lt lh24">
-                                            <p class="lt c3"><?php echo $sda['end']; ?></p>
+                                            <p class="lt c3"><?php echo $sda->end; ?></p>
 
                                             <div class="cl"></div>
                                         </div>
@@ -277,7 +269,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     }
 } else {
-    exit;
+    exit(0);
 }
 
 
