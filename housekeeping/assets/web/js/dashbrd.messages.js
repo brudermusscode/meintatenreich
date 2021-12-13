@@ -11,7 +11,7 @@ $(function() {
         
         let url, $t = $(this);
         
-        url = dynamicHost + "/_magic_/ajax/functions/mail/check";
+        url = dynamicHost + "/_magic_/ajax/functions/overview/messages/check";
 
         if(!$('main-content').hasClass('messages')) {
             
@@ -121,7 +121,7 @@ $(function() {
         }
 
         let $f = $m.find('[data-form="overview:messages,actions"]');
-        let url = dynamicHost + '/_magic_/ajax/functions/messages/actions';
+        let url = dynamicHost + '/_magic_/ajax/functions/overview/messages/actions';
         let id = $t.closest('content-card').data('json')[0].id;
         let dS  = $f.serialize() + '&id=' + id;
 
@@ -152,13 +152,90 @@ $(function() {
         }
 
         let $f = $m.find('[data-form="overview:messages,actions"]');
-        let url = dynamicHost + '/_magic_/ajax/functions/messages/actions';
+        let url = dynamicHost + '/_magic_/ajax/functions/overview/messages/actions';
         let id = $t.closest('content-card').data('json')[0].id;
         let dS  = $f.serialize() + '&id=' + id;
 
         msgAction($f, url, dS);
 
     })
+
+    // send custom mail ~ works
+    .on('click', '[data-action="mail:custom"]', function(){
+
+        // add new overlay
+        overlay = Overlay.add($body, true);
+
+        $t = $(this);
+        let rel = $t.data('json')[0].rel;
+        let which = $t.data('json')[0].which;
+        url = dynamicHost + '/_magic_/ajax/content/overview/messages/mail';
+        let dS;
+        
+        if(which === 'customer'){
+            dS = { rel: rel };
+        } else {
+            dS = { rel: rel };
+        }
+        
+        $.ajax({
+            
+            url: url,
+            data: dS,
+            method: 'POST',
+            type: 'HTML',
+            success: function(data) {
+                
+                if(data !== 0) {
+
+                    overlay.loader.remove();
+                    overlay.overlay.append(data);
+                } else {
+
+                    showDialer("Da ist was schief gelaufen");
+                }
+            }
+        });
+    })
+
+    // send custom mail >> submit ~ works
+    .on('submit', '[data-form="messages:mail"]', function(){
+        
+        // get current overlay
+        $append = $body.find("page-overlay").find("content-card");
+
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
+
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/functions/overview/messages/mail';
+        formData = new FormData(this);
+
+        $.ajax({
+            
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function(data,) {
+
+                if(data.status) {
+
+                    Overlay.close($body);
+                } else {
+                    
+                    Overlay.close(overlay.overlay.parent());
+                }
+
+                showDialer(data.message);
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
+    });
 });
 
 // read/favorize ~ works

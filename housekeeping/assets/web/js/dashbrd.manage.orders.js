@@ -48,9 +48,9 @@ $(function(){
         formData.append("status", $t.data('json')[0].status);
         url = dynamicHost + "/_magic_/ajax/functions/manage/orders/status";
 
-        showDialer('Status wird geändert...');
+        showDialer('Status wird geändert', "hourglass_top", "Bitte warten");
 
-        let ajax = $.ajax({
+        $.ajax({
             url: url,
             data: formData,
             method: 'POST',
@@ -64,10 +64,6 @@ $(function(){
                 if(data.status) {
 
                     $btn.removeClass('got done canceled sent');
-
-                    /*
-                       !looks like shit, please smooth out
-                    */
 
                     switch(data.set) {
                         case 'got':
@@ -84,9 +80,7 @@ $(function(){
                     }
                 }
 
-                showDialer(data.message + " (" + data.set + ")", "euro", "Bestellungen");
-    
-    
+                responser(data.message + " (" + data.set + ")");
             },
             error: function(data) {
                 console.error(data);
@@ -113,7 +107,7 @@ $(function(){
             console.log(key, value);
         }
 
-        showDialer('Zahlungsstatus wird geändert...');
+        showDialer('Zahlungsstatus wird geändert', "hourglass_top", "Bitte warten");
     
         let ajax = $.ajax({
             url: url,
@@ -132,89 +126,58 @@ $(function(){
                     $btn.find('.te').html('Bezahlt');
                 }
     
-                showDialer(data.message, "euro", "Bestellungen");
+                responser(data.message);
             },
             error: function(data) {
                 console.error(data);
             }
         });
-    
-    })
-
-    // TODO: set delivery costs
-    .on('click', '[data-action="mail:deliverycosts"]', function(){
-
-        let $t = $(this);
-        let $r = $('[data-react="mail:deliverycosts"]');
-        let th = $r.find('.input-outer').height();
-
-        $r.css({ opacity:'1', height:'calc(' + th + 'px + 12px)', width:'100%', borderRadius:'20px' });
-
-        $t.find('p').text('E-Mail versenden');
-        $t.attr('data-action', 'mail:deliverycosts,send');
-
     })
     
-    // TODO: set delivery costs >> submit
-    .on('click', '[data-action="mail:deliverycosts,send"]', function(){
+    // set delivery costs >> submit
+    .on('submit', '[data-form="orders:deliverycosts"]', function(){
 
-        let $t = $(this);
-        let res;
-        let $wc = $('wide-container[data-json]');
-        let $co = $t.closest('content-card');
-        let url = '/hk/ajax/mail/dc';
-        let id = $wc.data('json')[0].id;
-        let co = $wc.find('[data-form="mail:deliverycosts"]').serialize();
-        let dS = co + '&id=' + id;
+        let $t, url, formData, $append;
 
-        // RESET
-        let $btn = $('[data-react="mail:deliverycosts"]');
-        let $inp = $('[data-action="mail:deliverycosts,send"]');
+        // get current overlay
+        $append = $body.find("page-overlay wide-container content-card").first("content-card");
 
-        if($.trim($('[data-form="mail:deliverycosts"]').find('input').val()).length < 1) {
-            
-            showDialer('Bitte gib einen Preis ein...');
-            
-        } else {
-        
-            addOverlay('255,255,255', $co, '%', false);
-            let $wcOv = $co.find('page-overlay');
-            addLoader('color', $wcOv);
-            let $wcLo = $wcOv.find('color-loader');
+        console.log($append);
 
-            showDialer('E-Mail wird gesendet...');
+        // add new overlay
+        overlay = Overlay.add($append, true, true);
 
-            // AJAX CALL
-            let ajax = $.ajax({
-                url: url,
-                data: dS,
-                type: 'TEXT',
-                method: 'POST',
-                success: function(data){
+        $t = $(this);
+        url = dynamicHost + '/_magic_/ajax/functions/manage/orders/deliverycosts';
+        formData = new FormData(this);
 
-                    switch(data) {
-                        case '0':
-                        default:
-                            res = 'Ein unbekannter Fehler ist aufgetreten';
-                            break;
-                        case '1':
-                            res = 'Diese Bestellung existiert nicht'
-                            break;
-                        case 'success':
-                            res = 'E-Mail wurde erfolgreich versandt';
-                            $btn.remove();
-                            $inp.remove();
-                            
-                            closeOverlay($wcOv);
-                    }
+        showDialer("Nachricht wird gesendet", "hourglass_top", "Bitte warten");
 
-                    showDialer(res);
+        $.ajax({
+            url: url,
+            data: formData,
+            method: 'POST',
+            type: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(data){
 
+                if(data.status) {
 
+                    $t.remove();
                 }
-            });
 
-        }
-
+                closeOverlay = Overlay.close(overlay.overlay.parent());
+                responser(data.message);
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
     });
+
+    const responser = function(text) {
+        return showDialer(text, "euro", "Bestellungen");
+    }
+    
 });

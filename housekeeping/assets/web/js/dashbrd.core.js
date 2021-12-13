@@ -110,37 +110,8 @@ $(function() {
         closeContentCardOverlay(this);
     });
 
-    // contantly check for messages, play sound if there are new ones
-    let msgSound = new Audio('https://statics.meintatenreich.de/sounds/notify.mp3');
-    let requestMsg = function() {
-        $.ajax({
-            url: '/hk/ajax/global/messages',
-            method: 'POST',
-            type: 'TEXT',
-            success: function(data) {
-                
-                switch(data){
-                    case '0':
-                        return false;
-                        break;
-                    case '1':
-                        if(!$body.hasClass('has-new-msgs')) {
-                            msgSound.play();
-                        }
-                        $('[data-action="overview:messages,check"]').find('.pulse').addClass('active');
-                        $body.addClass('has-new-msgs');
-                }
-            }
-        });
-    }
-
-    requestMsg();
-    
-    // set the interval for message checking request
-    setInterval(function(){
-        //requestMsg();
-    }, 4000);
-
+    // TODO: contantly check for messages, play sound if there are new ones
+    // ! here
 });
 
 // load the content

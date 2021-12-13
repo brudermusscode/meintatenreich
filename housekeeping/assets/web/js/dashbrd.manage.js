@@ -76,8 +76,6 @@ class Manage {
                 type: "HTML",
                 success: function(data){
 
-                    console.log(data);
-
                     // if we successfully got content from the other
                     // PHP file, ...
                     if(data !== 0) {

@@ -75,16 +75,23 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                         </div>
 
                         <?php if ($o->price_delivery == '0') { ?>
-                            <div class="hidden-input tran-all-cubic mb12 mt12" data-react="mail:deliverycosts">
-                                <div class="input-outer">
-                                    <form data-form="mail:deliverycosts">
-                                        <input type="text" autocomplete="off" name="deliverycosts" placeholder="Versandkosten (Dezimalzahlen mit Kommata trennen)">
-                                    </form>
+
+                            <form data-form="orders:deliverycosts" method="POST" action>
+                                <div class="input mb12 mt24" data-react="mail:deliverycosts">
+                                    <div class="input-outer">
+
+                                        <input type="text" autocomplete="off" name="deliverycosts" placeholder="Versandkosten (Dezimalzahlen mit Komma (,) trennen)">
+                                        <input type="hidden" name="id" value="<?php echo $o->oid; ?>" />
+
+                                    </div>
                                 </div>
-                            </div>
-                            <div data-action="mail:deliverycosts" class="btn-outline rt mt12" style="border-color:#AC49BD;color:#AC49BD;">
-                                <p>Versandkosten mitteilen</p>
-                            </div>
+
+                                <button type="submit" class="btn-outline rt mt12 bgf" style="border-color:#AC49BD;color:#AC49BD;">
+                                    <p>Versandkosten mitteilen</p>
+                                </button>
+
+                            </form>
+
                         <?php } ?>
 
                         <div class="lt timestamp lh32 mt12">
