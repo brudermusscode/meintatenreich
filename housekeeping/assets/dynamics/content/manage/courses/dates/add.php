@@ -107,107 +107,114 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                 <div data-react="manage:courses,dates"></div>
 
-                <?php
+                <div class="all-dates">
+                    <?php
 
-                // GET DATES
-                $sel = $pdo->prepare("
-                    SELECT *
-                    FROM courses_dates 
-                    WHERE cid = ? 
-                    AND archived != '1' 
-                    AND deleted != '1' 
-                    AND CONCAT(date, ' ', start, ':00') >= ? 
-                    ORDER BY CONCAT(date, ' ', start, ':00') 
-                    DESC 
-                ");
-                $sel->execute([$oid, $main["fulldate"]]);
+                    // GET DATES
+                    $sel = $pdo->prepare("
+                        SELECT *
+                        FROM courses_dates 
+                        WHERE cid = ? 
+                        AND archived != '1' 
+                        AND deleted != '1' 
+                        AND CONCAT(date, ' ', start, ':00') >= ? 
+                        ORDER BY CONCAT(date, ' ', start, ':00') 
+                        DESC 
+                    ");
+                    $sel->execute([$oid, $main["fulldate"]]);
 
-                if ($sel->rowCount() < 1) {
+                    if ($sel->rowCount() < 1) {
 
-                ?>
+                    ?>
 
-                    <content-card class="mb24 posrel">
-                        <div class="mshd-1 normal-box">
-                            <div style="padding:42px 42px;">
+                        <content-card class="mb24 posrel isEmpty">
+                            <div class="mshd-1 normal-box">
+                                <div style="padding:42px 42px;">
 
-                                <div class="mb12">
-                                    <p style="text-align:center;">
-                                        <i class="material-icons md-42">event</i>
-                                    </p>
-                                </div>
-                                <div>
-                                    <p style="font-size:18px;font-weight:400;text-align:center;" class="c8">
-                                        Keine Termine für diesen Kurs
-                                    </p>
-                                </div>
-
-                            </div>
-                        </div>
-                    </content-card>
-
-                <?php
-
-                }
-
-                foreach ($sel->fetchAll() as $sda) {
-
-                ?>
-
-                    <content-card class="mb8 posrel">
-                        <div class="mshd-1 normal-box">
-                            <div style="padding:18px 42px;">
-
-                                <div class="lt mr42">
-                                    <p class="ttup fs12 c9 mb8">Datum</p>
-                                    <div class="lt lh24">
-                                        <p class="lt c3 mr4"><i class="material-icons md24">event</i></p>
-                                        <p class="lt c3">
-                                            <?php
-
-                                            $newdate = date_create($sda->date);
-                                            echo $newdate->format('d. M y');
-
-                                            ?>
+                                    <div class="mb12">
+                                        <p style="text-align:center;">
+                                            <i class="material-icons md-42">event</i>
                                         </p>
+                                    </div>
+                                    <div>
+                                        <p style="font-size:18px;font-weight:400;text-align:center;" class="c8">
+                                            Keine Termine für diesen Kurs
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </content-card>
+
+                        <?php
+
+                    } else {
+
+                        foreach ($sel->fetchAll() as $sda) {
+
+                        ?>
+
+                            <content-card class="mb8 posrel">
+                                <div class="mshd-1 normal-box">
+                                    <div style="padding:18px 42px;">
+
+                                        <div class="lt mr42">
+                                            <p class="ttup fs12 c9 mb8">Datum</p>
+                                            <div class="lt lh24">
+                                                <p class="lt c3 mr4"><i class="material-icons md24">event</i></p>
+                                                <p class="lt c3">
+                                                    <?php
+
+                                                    $newdate = date_create($sda->date);
+                                                    echo $newdate->format('d. M y');
+
+                                                    ?>
+                                                </p>
+
+                                                <div class="cl"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="rt">
+                                            <div class="delete tran-all" data-action="manage:courses,dates,delete" data-json='[{"id":"<?php echo $sda->id; ?>"}]'>
+                                                <p><i class="material-icons md-24">remove_circle</i></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="rt mr42">
+                                            <div class="lt mr24">
+                                                <p class="ttup fs12 c9 mb8">Start</p>
+                                                <div class="lt lh24">
+                                                    <p class="lt c3"><?php echo $sda->start; ?></p>
+
+                                                    <div class="cl"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="lt">
+                                                <p class="ttup fs12 c9 mb8">Ende</p>
+                                                <div class="lt lh24">
+                                                    <p class="lt c3"><?php echo $sda->end; ?></p>
+
+                                                    <div class="cl"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="cl"></div>
+                                        </div>
 
                                         <div class="cl"></div>
                                     </div>
                                 </div>
+                            </content-card>
 
-                                <div class="rt">
-                                    <div class="delete tran-all" data-action="manage:courses,dates,delete" data-json='[{"id":"<?php echo $sda->id; ?>"}]'>
-                                        <p><i class="material-icons md-24">remove_circle</i></p>
-                                    </div>
-                                </div>
+                    <?php
 
-                                <div class="rt mr42">
-                                    <div class="lt mr24">
-                                        <p class="ttup fs12 c9 mb8">Start</p>
-                                        <div class="lt lh24">
-                                            <p class="lt c3"><?php echo $sda->start; ?></p>
+                        }
+                    }
 
-                                            <div class="cl"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="lt">
-                                        <p class="ttup fs12 c9 mb8">Ende</p>
-                                        <div class="lt lh24">
-                                            <p class="lt c3"><?php echo $sda->end; ?></p>
-
-                                            <div class="cl"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="cl"></div>
-                                </div>
-
-                                <div class="cl"></div>
-                            </div>
-                        </div>
-                    </content-card>
-
-                <?php } ?>
+                    ?>
+                </div>
 
             </form>
 

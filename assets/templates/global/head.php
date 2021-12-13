@@ -119,7 +119,7 @@
         }
     </style>
 
-    <?php if ($admin->isAdmin()) { ?>
+    <?php if ($admin->isAdmin() && $main["displayerrors"] == "1") { ?>
 
         <div data-element="dumper" class="mshd-4">
             <div style="padding:12px;font-size:.6em;color:rgba(51,51,51);">

@@ -78,7 +78,7 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                     <div class="point posrel" data-element="admin-select" data-list-size="234" data-list-align="right">
                         <p class="alt pin" data-tip="Mehr..."><i class="material-icons md32">more_vert</i></p>
 
-                        <datalist class="tran-all-cubic">
+                        <datalist class="tran-all-cubic right">
                             <ul>
                                 <li class="wic" data-action="manage:customers,overview" data-json='[{"id":"<?php echo $id; ?>"}]'>
                                     <p class="ic lt"><i class="material-icons md-18">tab</i></p>

@@ -170,7 +170,7 @@ $(function() {
                         res = 'Produkt gemerkt!'
                         t.toggleClass('white brown');
                         t.find('p:nth-of-type(2)').html('Gemerkt');
-                        t.find('p:first-of-type i').attr('class', 'icon-star-filled');
+                        t.find('p:first-of-type i').attr('class', 'icon-star');
                         break;
                     case '2':
                         t.toggleClass('white brown');
@@ -331,7 +331,7 @@ $(function() {
     })
 
     // vote for ratings
-    // ! TODO: will suck, make better too pls
+    // ! TODO: sucks, make better too pls
     .on('click', '[data-action="productview:ratings,vote"] .button', function() {
 
         let $t, $actionCard, url, vote, rid, pid;

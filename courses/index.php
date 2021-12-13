@@ -36,13 +36,15 @@ if (isset($_GET['cid'])) {
 
                 // GET COURSE CONTENT
                 $getCourseDates = $pdo->prepare("
-                    SELECT * 
-                    FROM courses_dates 
+                    SELECT *, courses.active, courses.id  
+                    FROM courses_dates, courses 
                     WHERE cid = ? 
-                    AND deleted != '1' 
-                    AND archived != '1'
-                    AND CONCAT(date, ' ', start, ':00') >= ?
-                    ORDER BY CONCAT(date, ' ', start, ':00')
+                    AND courses_dates.cid = courses.id 
+                    AND courses.active != '0' 
+                    AND courses_dates.deleted != '1' 
+                    AND courses_dates.archived != '1'
+                    AND CONCAT(courses_dates.date, ' ', courses_dates.start, ':00') >= ?
+                    ORDER BY CONCAT(courses_dates.date, ' ', courses_dates.start, ':00')
                     ASC
                 ");
                 $getCourseDates->execute([$cid, $main["fulldate"]]);

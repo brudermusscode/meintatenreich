@@ -10,6 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 $return = [
     "status" => false,
     "message" => "Da ist wohl ein Oopsie passiert",
+    "id" => 0,
     "request" => $_REQUEST
 ];
 
@@ -66,6 +67,7 @@ if (
 
                             $course = $sel->fetch()->name;
 
+                            $return->id = $ins->lastInsertId;
                             $return->status = true;
                             $return->message = "Der Termin wurde am <strong>" . $date . "</strong> um <strong>" . $start . "</strong> zum Kurs <strong>" . $course . "</strong> hinzugefügt";
 

@@ -68,12 +68,10 @@ $(function(){
             contentType: false,
             processData: false,
             success: function(data){
-                
-                console.log(data);
 
                 if(data.status) {
                     res = 'Hinzugefügt!';
-                    $r.prepend('<content-card class="lt mr8 mb8"><div class="normal-box adjust"><div class="ph24 lh36"><p class="fw4" style="white-space:nowrap;">' + $t.find('input[name="name"]').val() + '</p></div></div></content-card>');
+                    $r.prepend('<content-card class="lt mr8 mb8" data-id="' + data.id + '" data-element="products:category"><div class="normal-box adjust curpo lh36 ph12" data-json=\'[{"id":"' + data.id + '"}]\' data-action="manage:products,category,edit"><div><p class="fw4" style="white-space:nowrap;">' + $t.find('input[name="name"]').val() + '</p></div></div></content-card>');
                     closeOverlay = Overlay.close($body);
                 } else {
                     closeOverlay = Overlay.close(overlay.overlay.parent());
@@ -231,7 +229,9 @@ $(function(){
                     });
 
                     setTimeout(function(){
-                        $card.fadeOut(400);
+                        $card.fadeOut(400, function(){
+                            $(this).parent().remove();
+                        });
                     }, 1000);
 
                 } else {

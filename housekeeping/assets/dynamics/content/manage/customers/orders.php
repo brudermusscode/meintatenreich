@@ -98,7 +98,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                                     <p class="icon"><i class="material-icons md-24 lh42">more_vert</i></p>
                                                 </div>
 
-                                                <datalist class="tran-all-cubic">
+                                                <datalist class="tran-all-cubic right">
                                                     <ul>
                                                         <li class="wic" data-action="manage:order" data-json='[{"id":"<?php echo $so->orderid; ?>"}]'>
                                                             <p class="ic lt"><i class="material-icons md-18">build</i></p>

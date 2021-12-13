@@ -110,19 +110,6 @@
   --main-content-height: 404px;
 }
 
-@media screen and (max-width: 1466px) {
-  :root {
-    --main-content-width: 1190px;
-    --main-content-height: 360px;
-  }
-}
-@media screen and (max-width: 1200px), screen and (max-height: 900px) {
-  :root {
-    --main-content-width: 900px;
-    --main-content-height: 338px;
-  }
-}
-
 /* GENERAL STYLING */
 * {
   padding: 0;
@@ -352,8 +339,11 @@ text-dialogue {
 /* MAIN PAGE ELEMENTS */
 #app {
   width: var(--main-content-width);
-  margin: 0 auto;
-  position: relative;
+  height: 768px;
+  position: absolute;
+  top: calc(50% - 80px);
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #hdr {
@@ -458,86 +448,101 @@ text-dialogue {
         }
       }
     }
-  }
-}
 
-#hdr .inr hdr-menu {
-  display: block;
-  min-width: 100%;
-  white-space: nowrap;
-}
-#hdr .inr hdr-menu a {
-  font-weight: 300;
-}
-#hdr .inr hdr-menu .hm-inr {
-  list-style: none;
-  display: flex;
-  flex-direction: row;
-  border-radius: 3px;
-}
-#hdr .inr hdr-menu .hm-inr li {
-  color: #c0925a;
-  background: white;
-  line-height: 32px;
-  padding: 0 12px;
-  display: flex;
-  flex-direction: row;
-  cursor: pointer;
-  position: relative;
-  border-radius: 3px;
-  margin-left: 4px;
-}
-#hdr .inr hdr-menu .hm-inr li:last-of-type:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-#hdr .inr hdr-menu .hm-inr li .shopping-cart-amt {
-  background: #c62828;
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  height: 24px;
-  width: 24px;
-  text-align: center;
-  border-radius: 50%;
-}
-#hdr .inr hdr-menu .hm-inr li .shopping-cart-amt p {
-  line-height: 24px;
-  color: white;
-  font-size: 0.8em;
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  background: white;
-  min-width: 200px;
-  z-index: 2;
-  opacity: 0;
-  visibility: hidden;
-}
-#hdr .inr hdr-menu .hm-inr li[data-hover="usermenu"]:hover .user-dropdown {
-  top: 0px;
-  opacity: 1;
-  visibility: visible;
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown a {
-  border: 0;
-  display: flex;
-  flex-direction: row;
-  padding: 0 18px;
-  line-height: 42px;
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown a:hover {
-  background: rgba(241, 211, 148, 0.24);
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown a:last-of-type {
-  border-top: 1px solid rgba(241, 211, 148, 0.34);
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown a:last-of-type:hover {
-  background: rgba(198, 40, 40, 0.24);
-}
-#hdr .inr hdr-menu .hm-inr li .user-dropdown a p.um-icon {
-  margin-right: 8px;
+    hdr-menu {
+      display: block;
+      min-width: 100%;
+      white-space: nowrap;
+
+      a {
+        font-weight: 300;
+      }
+
+      .hm-inr {
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+        border-radius: 3px;
+
+        li {
+          color: #c0925a;
+          background: white;
+          line-height: 32px;
+          padding: 0 12px;
+          display: flex;
+          flex-direction: row;
+          cursor: pointer;
+          position: relative;
+          border-radius: 3px;
+          margin-left: 4px;
+
+          &:last-of-type:hover {
+            background: rgba(255, 255, 255, 0.6);
+          }
+
+          .shopping-cart-amt {
+            background: #c62828;
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            height: 24px;
+            width: 24px;
+            text-align: center;
+            border-radius: 50%;
+
+            p {
+              line-height: 24px;
+              color: white;
+              font-size: 0.8em;
+            }
+          }
+
+          .user-dropdown {
+            position: absolute;
+            top: 8px;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            z-index: 2;
+            opacity: 0;
+            visibility: hidden;
+
+            a {
+              border: 0;
+              display: flex;
+              flex-direction: row;
+              padding: 0 18px;
+              line-height: 42px;
+
+              &:hover {
+                background: rgba(241, 211, 148, 0.24);
+              }
+
+              &:last-of-type {
+                border-top: 1px solid rgba(241, 211, 148, 0.34);
+
+                &:hover {
+                  background: rgba(198, 40, 40, 0.24);
+                }
+              }
+
+              p {
+                &.um-icon {
+                  margin-right: 8px;
+                }
+              }
+            }
+          }
+
+          &[data-hover="usermenu"]:hover .user-dropdown {
+            top: 0px;
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
 }
 
 #rgr {
@@ -627,7 +632,7 @@ text-dialogue {
   margin-left: -9px;
 }
 footer#ftr .adjust {
-  padding: 52px 82px;
+  padding: 46px 82px;
 }
 footer#ftr .adjust ul {
   list-style: none;
@@ -656,6 +661,11 @@ footer#ftr .adjust ul a:last-of-type {
   height: calc(var(--main-content-height) - 24px);
   overflow-y: auto;
   overflow-x: visible;
+
+  &.mysection {
+    width: calc(100% - 200px);
+    float: right;
+  }
 }
 
 product-card {
@@ -697,124 +707,6 @@ product-card .pr-inr .pr-info .pr-price {
   font-size: 1.4em;
   font-weight: 600;
   color: #c99759;
-}
-
-@media screen and (max-width: 1466px) {
-  #hdr {
-    margin-top: -18px;
-    height: 145px;
-    width: calc(100% + 48px);
-  }
-  #hdr .inr {
-    padding: 62px 132px;
-  }
-  #hdr .inr .search {
-    width: 32%;
-  }
-
-  #rgr {
-    height: 222px;
-    width: calc(100% + 5px);
-  }
-  #rgr .inr .buttons {
-    margin-top: 35px;
-  }
-
-  #main {
-    height: 286px;
-    width: calc(100%);
-  }
-
-  #ftr {
-    height: 220px;
-    width: calc(100% + 33px);
-  }
-}
-@media screen and (max-width: 1200px), screen and (max-height: 900px) {
-  #hdr {
-    background-image: url(https://statics.meintatenreich.de/img/global/kk/s/kk-s-top.svg);
-    width: calc(100% + 26px);
-    height: 110px;
-    margin: 0;
-    margin-top: -24px;
-    margin-left: -17px;
-
-    .inr {
-      padding: 44px 90px 0;
-      line-height: 90px;
-
-      .logo {
-        margin-top: 42px;
-        height: 72px;
-      }
-    }
-  }
-
-  #rgr {
-    background-image: url(https://statics.meintatenreich.de/img/global/kk/s/kk-s-reg.svg);
-
-    .inr {
-      .buttons {
-        margin-top: 42px;
-        margin-right: -42px;
-
-        button {
-          line-height: 32px;
-          padding: 0 12px;
-
-          &:hover {
-            line-height: 42px;
-            margin-top: -10px;
-          }
-        }
-      }
-
-      .ride-00 {
-        margin-top: 32px;
-        transform: rotate(4deg);
-        margin-left: -62px;
-      }
-
-      .left-buttons {
-        margin-top: 32px;
-        padding-left: 142px;
-
-        button {
-          padding: 0 12px;
-          line-height: 32px;
-        }
-      }
-    }
-  }
-
-  #main {
-    background-image: url(https://statics.meintatenreich.de/img/global/kk/s/kk-s-mid.svg);
-    width: calc(100%);
-    height: 254px;
-    margin-left: -3px;
-  }
-
-  #ftr {
-    background-image: url(https://statics.meintatenreich.de/img/global/kk/s/kk-s-down.svg);
-    height: 296px;
-    width: calc(100% + 25px);
-    margin-left: -7px;
-    margin-top: -2px;
-  }
-  footer#ftr .adjust {
-    padding: 62px 82px;
-  }
-
-  product-card {
-    width: calc(
-      33.33333333333333333333333333333333333333333333333333333333333333333333333% -
-        12px
-    );
-    margin: 0;
-    margin-top: 6px;
-    margin-left: 4px;
-    margin-right: 2px;
-  }
 }
 
 product-card.tri {
@@ -1261,18 +1153,6 @@ wide-container .product-desc .text {
 }
 .my-menu ul a li p {
   text-align: center;
-}
-
-@media screen and (max-width: 1200px), screen and (max-height: 900px) {
-  .my-menu {
-    width: 172px;
-    padding-top: 24px;
-  }
-  .my-menu ul a {
-    line-height: 54px;
-    width: 100%;
-    height: 64px;
-  }
 }
 
 .kartei-quer {

@@ -4,11 +4,11 @@
     <?php
 
     $getCourses = $pdo->prepare("
-            SELECT * 
-            FROM courses 
-            WHERE deleted != '1' 
-            ORDER BY id
-        ");
+        SELECT * 
+        FROM courses 
+        WHERE deleted != '1' 
+        ORDER BY id
+    ");
     $getCourses->execute();
 
     foreach ($getCourses->fetchAll() as $c) {

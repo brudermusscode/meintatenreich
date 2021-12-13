@@ -284,10 +284,21 @@ $(function(){
             contentType: false,
             processData: false,
             success: function(data){
-                
-                console.log(data);
+
+                // append newly added id to formData and send
+                // to next ajax request for adding content-card
+                formData.append("id", data.id);
 
                 if(data.status) {
+
+                    // get first content-card of all dates
+                    $isEmptyCard = $t.find(".all-dates content-card").first();
+
+                    // check if the frst element is "no dates added" card
+                    // and empty
+                    if($isEmptyCard.hasClass("isEmpty")) {
+                        $isEmptyCard.empty();
+                    }
 
                     $c = $(document).find('[data-react="manage:courses,dates"]');
                     url = dynamicHost + "/_magic_/ajax/elements/courses/date";
@@ -320,7 +331,6 @@ $(function(){
             },
             error: function(data) {
                 console.error(data);
-                Overlay.close(overlay.overlay.parent());
             }
         });
     })

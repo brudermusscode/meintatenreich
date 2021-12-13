@@ -137,7 +137,7 @@ include_once $sroot . "/assets/templates/global/header.php";
 
             ?>
 
-            <div class="main-overflow-scroll ph42 lt">
+            <div class="main-overflow-scroll lt mysection">
                 <div data-react="add-content">
                     <?php
 

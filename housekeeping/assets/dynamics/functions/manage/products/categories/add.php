@@ -9,7 +9,8 @@ header('Content-Type: application/json; charset=utf-8');
 // error output
 $return = [
     "status" => false,
-    "message" => "Da ist wohl ein Oopsie passiert"
+    "message" => "Da ist wohl ein Oopsie passiert",
+    "id" => 0
 ];
 
 // objectify return array
@@ -32,8 +33,11 @@ if (isset($_REQUEST['name']) && strlen($_REQUEST['name']) > 0 && $admin->isAdmin
 
         if ($stmt->status) {
 
+            $id = $stmt->lastInsertId;
+
             $return->status = true;
             $return->message = "Kategorie hinzugefügt: <strong>" . $name . "</strong>";
+            $return->id = $id;
             exit(json_encode($return));
         } else {
             exit(json_encode($return));

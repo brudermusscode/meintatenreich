@@ -25,7 +25,7 @@ if (
         $debugArray["orderExists"] = true;
 
         // UPDATE ORDER
-        $update = $pdo->prepare("UPDATE customer_buys SET paid = '1', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
+        $update = $pdo->prepare("UPDATE customer_buys SET paid = '1', cancability = '0', updated = CURRENT_TIMESTAMP WHERE id = ? AND uid = ?");
         $update->execute([$id, $uid]);
 
         if ($update) {

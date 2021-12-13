@@ -435,9 +435,12 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         $commentUpvotes = $getCommentsVotes->fetch()->up;
 
                                         // check my vote
-                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments_votes WHERE uid = ? AND rid = ?");
-                                        $getMyCommentsVotes->execute([$my->id, $c->commentid]);
-                                        $mcv = $getMyCommentsVotes->fetch();
+                                        if ($loggedIn) {
+
+                                            $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments_votes WHERE uid = ? AND rid = ?");
+                                            $getMyCommentsVotes->execute([$my->id, $c->commentid]);
+                                            $mcv = $getMyCommentsVotes->fetch();
+                                        }
 
                                     ?>
 

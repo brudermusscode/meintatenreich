@@ -1,12 +1,21 @@
 // TODO
 
 - Dashbrd
-
-++ custom mail in customers tab
-
 ++ dropdown menu still underflows next dropdown menu
+++ on some overlay content-cards an extra overlay is added to all cards
 
 ++ update cronjobs for
-    - course dates archiving
 
+- >> products
+++ update category content-card on edit
 
+- >> app
+++ add some sort of save button for the app settings
+
+- >> courses
+++ maybe add confirmation banner for archiving courses
+++ add "no dates" banner when all dates were removed
+++ show newly added course on course-banner
+
+- >> ratings
+++ do something with ratings, they suck

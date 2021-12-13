@@ -1042,6 +1042,7 @@ $(function(){
                     default:
                         res = 'Als bezahlt markiert';
                         $t.removeAttr('data-action data-json').attr('disabled', 'disabled').html('Als bezahlt markiert').toggleClass('hlf-white-s hlf-blue-s');
+                        $t.parents(1).find('[data-action="cancel-order"]').remove();
                 }
                 
                 showDialer(res);

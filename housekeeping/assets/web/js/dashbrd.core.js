@@ -110,9 +110,38 @@ $(function() {
         closeContentCardOverlay(this);
     });
 
-    // TODO: contantly check for messages, play sound if there are new ones
-    // ! here
+    // contantly check for messages, play sound if there are new ones
+    setInterval(() => {
+
+        checkForMessages(dynamicHost + "/ajax/cronjobs/dashbrd/check-messages");
+    }, 10000);
 });
+
+let checkForMessages = function(url) {
+
+    $.ajax({
+
+        url: url,
+        dataType: "JSON",
+        success: function(data) {
+
+            if(data.status) {
+                
+                $("body").find('[data-action="overview:messages,check"] .pulse').addClass("active");
+
+                return true;
+            } else {
+
+                return false;
+            }
+        },
+        error: function(data) {
+            console.error(data);
+        }
+
+    });
+
+}
 
 // load the content
 let loadContent = function(content, url, data) {
