@@ -53,6 +53,11 @@ content-card {
       .course-dates {
         margin-top: 24px;
       }
+
+      .bottom {
+        background: #e8f5e9;
+        border-radius: 0 0 18px 18px;
+      }
     }
 
     &.deactivated {
@@ -66,6 +71,11 @@ content-card {
         height: 0px;
         opacity: 0;
         margin-top: 0px;
+      }
+
+      .bottom {
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 0 0 18px 18px;
       }
     }
   }
@@ -84,5 +94,60 @@ content-card {
     .text {
       @extend .ml32;
     }
+  }
+}
+
+.fast-add {
+  width: 42px;
+  height: 42px;
+  position: relative;
+  margin-left: 24px;
+
+  .fa-inr {
+    height: 100%;
+    width: 100%;
+    line-height: 56px;
+    border-radius: 50%;
+    border: 0;
+    outline: 0;
+    background: var(--color-lila);
+    color: white;
+    cursor: pointer;
+    transition: all 0.1s linear;
+
+    @extend .mshd-1;
+
+    &:hover {
+      @extend .mshd-2;
+    }
+
+    &:focus {
+      @extend .mshd-1;
+    }
+
+    p {
+      text-align: center;
+    }
+  }
+}
+
+.delete {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 24px;
+
+  p {
+    text-align: center;
+    color: #333;
+    line-height: 53px;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.24);
   }
 }

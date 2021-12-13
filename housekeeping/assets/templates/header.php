@@ -378,6 +378,29 @@ if ($getAdminMailSettings->rowCount() > 0) {
             <div class="cl"></div>
         </div>
 
+    <?php } else if ($pid == "functions:mailer") { ?>
+
+        <div class="mm-heading" data-closeout="manage:filter">
+            <p class="title lt lh42">Mailer</p>
+            <div class="tools lt ml32">
+                <div data-element="admin-select" data-action="func:mailer,choose" data-list-size="244" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
+                    <div class="outline disfl fldirrow">
+                        <p class="text">Auswählen</p>
+                        <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
+                    </div>
+
+                    <datalist class="tran-all-cubic">
+                        <ul>
+                            <li class="trimfull" data-json='[{"mail":"all"}]'>Rundmail</li>
+                            <li class="trimfull" data-json='[{"mail":"single"}]'>Einzelmail</li>
+                        </ul>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="cl"></div>
+        </div>
+
     <?php } ?>
 
 

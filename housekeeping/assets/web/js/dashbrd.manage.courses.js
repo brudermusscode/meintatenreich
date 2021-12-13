@@ -285,6 +285,8 @@ $(function(){
             processData: false,
             success: function(data){
                 
+                console.log(data);
+
                 if(data.status) {
 
                     $c = $(document).find('[data-react="manage:courses,dates"]');

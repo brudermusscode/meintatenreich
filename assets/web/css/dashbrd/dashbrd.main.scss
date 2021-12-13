@@ -291,6 +291,8 @@ main-content {
   font-size: 1em;
   padding: 0 32px;
   color: #5068a1;
+  padding-bottom: 120px;
+  min-height: calc(100vh - 120px);
 }
 main-content .mc-heading {
   position: relative;

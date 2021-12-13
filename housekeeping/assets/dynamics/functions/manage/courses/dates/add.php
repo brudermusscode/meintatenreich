@@ -35,6 +35,7 @@ if (
     $date  = htmlspecialchars($_REQUEST['date']);
     $start = htmlspecialchars($_REQUEST['start']);
     $end   = htmlspecialchars($_REQUEST['end']);
+    $currentDate = date("Y-m-d");
 
     // CHECK IF COURSE EXISTS
     $sel = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND deleted != '1'");
@@ -45,30 +46,44 @@ if (
         // validate date
         if (validateDate($date)) {
 
-            // validate time
-            if (validateDate($start, $format = 'H:i') && validateDate($end, $format = 'H:i')) {
+            // check if date lies in the future
+            if ($currentDate <= $date) {
 
-                // start mysql transaction
-                $pdo->beginTransaction();
+                // validate time
+                if (validateDate($start, $format = 'H:i') && validateDate($end, $format = 'H:i')) {
 
-                // insert new appointment
-                $ins = $pdo->prepare("INSERT INTO courses_dates (cid, date, start, end) VALUES (?,?,?,?)");
-                $ins = $shop->tryExecute($ins, [$cid, $date, $start, $end], $pdo, true);
+                    // validate if beginning is before the ending
+                    if (strtotime($start) < strtotime($end)) {
 
-                if ($ins->status) {
+                        // start mysql transaction
+                        $pdo->beginTransaction();
 
-                    $course = $sel->fetch()->name;
+                        // insert new appointment
+                        $ins = $pdo->prepare("INSERT INTO courses_dates (cid, date, start, end) VALUES (?,?,?,?)");
+                        $ins = $shop->tryExecute($ins, [$cid, $date, $start, $end], $pdo, true);
 
-                    $return->status = true;
-                    $return->message = "Der Termin wurde am <strong>" . $date . "</strong> um <strong>" . $start . "</strong> zum Kurs <strong>" . $course . "</strong> hinzugefügt";
+                        if ($ins->status) {
 
-                    exit(json_encode($return));
+                            $course = $sel->fetch()->name;
+
+                            $return->status = true;
+                            $return->message = "Der Termin wurde am <strong>" . $date . "</strong> um <strong>" . $start . "</strong> zum Kurs <strong>" . $course . "</strong> hinzugefügt";
+
+                            exit(json_encode($return));
+                        } else {
+                            $return->message = "Ein Fehler ist beim Eintragen des neuen Termins aufgetreten";
+                            exit(json_encode($return));
+                        }
+                    } else {
+                        $return->message = "Das Ende des Kurses sollte weiter in der Zukunft liegen, als der Start";
+                        exit(json_encode($return));
+                    }
                 } else {
-                    $return->message = "Ein Fehler ist beim Eintragen des neuen Termins aufgetreten";
+                    $return->message = "Die eingegebenen Zeiten haben ein falsches Format. Bitte nutze <strong>STUNDE:MINUTE</strong>";
                     exit(json_encode($return));
                 }
             } else {
-                $return->message = "Die eingegebenen Zeiten haben ein falsches Format. Bitte nutze <strong>STUNDE:MINUTE</strong>";
+                $return->message = "Das Datum für den Termin sollte heute sein oder in der Zukunft liegen";
                 exit(json_encode($return));
             }
         } else {
@@ -79,5 +94,6 @@ if (
         exit(json_encode($return));
     }
 } else {
+    $return->message = "Bitte fülle alle Felder aus";
     exit(json_encode($return));
 }

@@ -139,5 +139,82 @@ $(function(){
             }
         });
     
+    })
+
+    // TODO: set delivery costs
+    .on('click', '[data-action="mail:deliverycosts"]', function(){
+
+        let $t = $(this);
+        let $r = $('[data-react="mail:deliverycosts"]');
+        let th = $r.find('.input-outer').height();
+
+        $r.css({ opacity:'1', height:'calc(' + th + 'px + 12px)', width:'100%', borderRadius:'20px' });
+
+        $t.find('p').text('E-Mail versenden');
+        $t.attr('data-action', 'mail:deliverycosts,send');
+
+    })
+    
+    // TODO: set delivery costs >> submit
+    .on('click', '[data-action="mail:deliverycosts,send"]', function(){
+
+        let $t = $(this);
+        let res;
+        let $wc = $('wide-container[data-json]');
+        let $co = $t.closest('content-card');
+        let url = '/hk/ajax/mail/dc';
+        let id = $wc.data('json')[0].id;
+        let co = $wc.find('[data-form="mail:deliverycosts"]').serialize();
+        let dS = co + '&id=' + id;
+
+        // RESET
+        let $btn = $('[data-react="mail:deliverycosts"]');
+        let $inp = $('[data-action="mail:deliverycosts,send"]');
+
+        if($.trim($('[data-form="mail:deliverycosts"]').find('input').val()).length < 1) {
+            
+            showDialer('Bitte gib einen Preis ein...');
+            
+        } else {
+        
+            addOverlay('255,255,255', $co, '%', false);
+            let $wcOv = $co.find('page-overlay');
+            addLoader('color', $wcOv);
+            let $wcLo = $wcOv.find('color-loader');
+
+            showDialer('E-Mail wird gesendet...');
+
+            // AJAX CALL
+            let ajax = $.ajax({
+                url: url,
+                data: dS,
+                type: 'TEXT',
+                method: 'POST',
+                success: function(data){
+
+                    switch(data) {
+                        case '0':
+                        default:
+                            res = 'Ein unbekannter Fehler ist aufgetreten';
+                            break;
+                        case '1':
+                            res = 'Diese Bestellung existiert nicht'
+                            break;
+                        case 'success':
+                            res = 'E-Mail wurde erfolgreich versandt';
+                            $btn.remove();
+                            $inp.remove();
+                            
+                            closeOverlay($wcOv);
+                    }
+
+                    showDialer(res);
+
+
+                }
+            });
+
+        }
+
     });
 });

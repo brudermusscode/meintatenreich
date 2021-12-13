@@ -1,11 +1,13 @@
 <?php
 
-require_once "../../../../../mysql/_.session.php";
+// include everything needed to keep a session
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mysql/_.session.php";
+
+$validId = ['all', 'single'];
 
 if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
     $id = htmlspecialchars($_REQUEST['id']);
-    $validId = ['all', 'single'];
 
     if (in_array($id, $validId)) {
 
@@ -14,14 +16,14 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 ?>
 
             <content-card class="mb24">
-                <div class="order hd-shd adjust posrel ovhid" data-react="show:loader">
+                <div class="hd-shd adjust bgf" data-react="show:loader">
                     <div style="padding:32px 42px">
 
                         <div class="fw6 mb24">
                             <p style="color:#5068A1;">Rundmail versenden</p>
                         </div>
 
-                        <form data-form="func:mailer">
+                        <form data-form="functions:mailer,roundmail" method="POST" action>
 
                             <div class="textarea">
 
@@ -31,16 +33,14 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                             </div>
 
-                            <div class="mt24 disfl fldirrow">
-                                <p class="mr12"><i class="material-icons md-24">new_releases</i></p>
-                                <p class="">Bitte beachte, dass diese Mail an alle Kunden, welche sich für diesen Shop registriert haben, verschickt wird.</p>
-
-                                <div class="cl"></div>
+                            <div class="info-box lila fw4 mt12 hasIcon">
+                                <p class="icon"><i class="material-icons md-24">help</i></p>
+                                <p class="text">Bitte beachte, dass diese Mail an alle Kunden, welche sich für diesen Shop registriert haben, verschickt wird.</p>
                             </div>
 
-                            <div data-action="func:mailer,send" data-wh="all" class="btn-outline rt mt24" style="border-color:#AC49BD;color:#AC49BD;">
+                            <button type="submit" class="btn-outline rt mt24 bgf tran-all" style="border-color:#AC49BD;color:#AC49BD;">
                                 <p>Rundmail versenden</p>
-                            </div>
+                            </button>
 
                         </form>
 
@@ -57,7 +57,7 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
         ?>
 
             <content-card class="mb24">
-                <div class="order hd-shd adjust posrel ovhid" data-react="show:loader">
+                <div class="hd-shd adjust bgf" data-react="show:loader">
                     <div style="padding:32px 42px">
 
                         <div class="fw6 mb24">
@@ -74,11 +74,9 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
 
                             </div>
 
-                            <div class="mt24 disfl fldirrow">
-                                <p class="mr12"><i class="material-icons md-24">new_releases</i></p>
-                                <p class="">Nachrichten, die hier versendet werden, können später im Nachrichten-Center unter "Gesendet" eingesehen werden.</p>
-
-                                <div class="cl"></div>
+                            <div class="info-box lila fw4 mt12 hasIcon">
+                                <p class="icon"><i class="material-icons md-24">help</i></p>
+                                <p class="text">Nachrichten, die hier versendet werden, können später im Nachrichten-Center unter "Gesendet" eingesehen werden.</p>
                             </div>
 
                             <div disabled="disabled" data-action="func:mailer,send" data-wh="single" class="btn-outline rt mt24" style="border-color:#AC49BD;color:#AC49BD;">

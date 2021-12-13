@@ -129,6 +129,7 @@ $(function(){
     })
     
     // categories > edit > save ~ works
+    // TODO: change category label after editing submission (on success ofc)
     .on('submit', '[data-form="manage:products,category,edit"]', function(e){
         
         e.preventDefault();
@@ -231,7 +232,7 @@ $(function(){
 
                     setTimeout(function(){
                         $card.fadeOut(400);
-                    }, 1600);
+                    }, 1000);
 
                 } else {
                     closeOverlay = Overlay.close(overlay.overlay.parent());
@@ -385,7 +386,7 @@ $(function(){
         
     })
     
-    // edit
+    // edit ~ works
     .on('click', '[data-action="manage:products,edit"]', function(){
 
         let overlay, url, formData;
@@ -418,7 +419,7 @@ $(function(){
         });
     })
 
-    // edit > upload images
+    // edit > upload images ~ works partially
     .on('change', '[data-form="uploadFiles:products,add"]', function(){
 
         let $t, $append, overlay, uri, react;
@@ -450,7 +451,7 @@ $(function(){
 
     })
 
-    // edit > save
+    // edit > save ~ works
     .on('submit', '[data-form="manage:products,edit"]', function(e){
 
         e.preventDefault();
@@ -483,7 +484,7 @@ $(function(){
 
                     setTimeout(function(){
                         window.location.replace(window.location);
-                    }, 1000);
+                    }, 600);
                 } else {
                     Overlay.close(overlay.overlay.parent());
                 }
@@ -501,7 +502,7 @@ $(function(){
         return false;
     })
 
-    // toggle
+    // toggle ~ works
     .on("click", "[data-action='manage:products,toggle']", function() {
 
         let $t, id, url, react, contentCard, buttonIcon, buttonText;
@@ -534,7 +535,7 @@ $(function(){
 
     })
 
-    // toggle archive
+    // toggle archive ~ works
     .on("click", "[data-action='manage:products,delete']", function(e) {
 
         let $t, overlay;
@@ -547,7 +548,7 @@ $(function(){
 
     })
 
-    // confirm archive
+    // confirm archive ~ works
     .on("click", "[data-action='manage:products,delete,confirm']", function(e) {
 
         let $t, $overlay, url, id, $contentCard;
@@ -594,6 +595,10 @@ $(function(){
     }
 });
 
+// actual uploading function ~ works partially
+// TODO: Pictures wont upload on first try. Upload will first start after choosing a second picture
+// ! which is not the first picture that had been chosen
+// ? may I have to preload jQuery Image Upload
 function uploadProductImages(uri, input, react, overlay = null, store = null) {
 
     let progress, formData, error, id, name, setValue, value;
@@ -618,7 +623,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
             progress = "Hochgeladen: " + parseInt(data.loaded / data.total * 100, 10) + " %";
 
             // stay responsive
-            responser(progress);
+            showDialer(progress, "casino", "Produkte");
         },
         done: function(e, data) {
 
@@ -668,7 +673,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
                     }
                 });
             } else {
-                responser(data._response.result.message);
+                showDialer(data._response.result.message, "casino", "Produkte");
             }
         },
         stop: function(e, data) {
@@ -684,7 +689,7 @@ function uploadProductImages(uri, input, react, overlay = null, store = null) {
         },
         fail: function(e, data) {
 
-            responser("Ein oder mehrere Bilder wurden nicht hochgeladen");
+            showDialer("Ein oder mehrere Bilder wurden nicht hochgeladen", "casino", "Produkte");
         }
     });
 

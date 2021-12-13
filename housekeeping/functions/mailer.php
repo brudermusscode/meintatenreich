@@ -7,7 +7,7 @@ if (!$admin->isAdmin()) {
 }
 
 $ptit = 'Funktionen: Mailer';
-$pid = "func:mailer";
+$pid = "functions:mailer";
 
 include_once $sroot . "/housekeeping/assets/templates/head.php";
 
@@ -23,28 +23,7 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
 
     <!-- MC: CONTENT -->
     <div class="mc-main">
-        <div class="wide">
-
-            <div class="mm-heading" data-closeout="manage:filter">
-                <p class="title lt lh42">Mailer</p>
-                <div class="tools lt ml32">
-                    <div data-element="admin-select" data-action="func:mailer,choose" data-list-size="244" style="border-color:#A247C0;color:#A247C0;" class="tran-all">
-                        <div class="outline disfl fldirrow">
-                            <p class="text">Auswählen</p>
-                            <p class="icon"><i class="material-icons md-24">keyboard_arrow_down</i></p>
-                        </div>
-
-                        <datalist class="tran-all-cubic">
-                            <ul>
-                                <li class="trimfull" data-json='[{"mail":"all"}]'>Rundmail</li>
-                                <li class="trimfull" data-json='[{"mail":"single"}]'>Einzelmail</li>
-                            </ul>
-                        </datalist>
-                    </div>
-                </div>
-
-                <div class="cl"></div>
-            </div>
+        <div class="lt left-content">
 
             <!-- LOADER -->
             <color-loader class="almid-h mt24 mb42 disn">
@@ -57,11 +36,11 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
             <div data-react="func:mailer,choose" class="mb42">
 
                 <content-card class="mb24">
-                    <div class="order hd-shd adjust">
+                    <div class="hd-shd adjust bgf">
                         <div style="padding:82px 42px;">
 
                             <p class="tac mb12">
-                                <i class="material-icons md-42">mail</i>
+                                <i class="material-icons md-42">mark_as_unread</i>
                             </p>
                             <p class="tac">Wähle oben den Typ der Mail</p>
 

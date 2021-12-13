@@ -11,7 +11,6 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
     $sel = $pdo->prepare("SELECT * FROM courses WHERE courses.id = ? LIMIT 1");
     $sel->execute([$oid]);
 
-
     if ($sel->rowCount() > 0) {
 
         // fetch course information
@@ -37,75 +36,52 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
             <form data-form="manage:courses,dates" method="POST" action>
 
                 <content-card class="mb24 posrel">
-                    <div class="mshd-1 normal-box" style="background:url(<?php echo $url["img"]; ?>/global/bggreen.jpg) repeat;background-size:42%;">
+                    <div class="mshd-1 normal-box">
                         <div style="padding:28px 42px;">
 
                             <input type="hidden" name="id" value="<?php echo $o->id; ?>" />
 
-                            <div style="width:calc(50% - 12px);" class="lt">
+                            <div style="width:calc(50% - 22px);" class="lt mr12">
                                 <div class="fw6 mb12">
-                                    <p class="cf">Datum</p>
+                                    <p>Datum</p>
                                 </div>
 
-                                <div class="input tran-all-cubic mb62">
+                                <div class="input tran-all-cubic">
                                     <div class="input-outer">
-                                        <div style="color:#009688;right:18px;padding-left:12px;line-height:42px;height:32px;top:5px;font-size:1.2em;border-left:1px solid rgba(0,0,0,.12);" class="fw6 posabs">
-                                            <p><i class="material-icons md-24">date_range</i></p>
-                                        </div>
-                                        <input type="text" autocomplete="off" name="date" placeholder="Format: JAHR-MONAT-TAG" class="tran-all" value="2021-12-24" style="padding-right:62px;width:calc(100% - 32px - 62px);">
+                                        <input type="date" autocomplete="off" name="date" class="tran-all">
                                     </div>
                                 </div>
                             </div>
 
+                            <div style="width:calc(50% - 62px);" class="lt">
 
-                            <style>
-                                .fast-add {
-                                    width: 40px;
-                                    height: 40px;
-                                    position: relative;
-                                    margin-left: 24px;
-                                }
+                                <div class="lt" style="width:calc(50% - 6px);">
+                                    <div class="fw6 mb12">
+                                        <p>Von</p>
+                                    </div>
 
-                                .fast-add .fa-inr {
-                                    height: 100%;
-                                    width: 100%;
-                                    line-height: 51px;
-                                    height: 40px;
-                                    border-radius: 50%;
-                                    border: 2px solid #fff;
-                                    color: #fff;
-                                    cursor: pointer;
-                                }
+                                    <div class="input tran-all-cubic">
+                                        <div class="input-outer">
+                                            <input type="time" autocomplete="off" name="start" placeholder="08:00" class="tran-all">
+                                        </div>
+                                    </div>
+                                </div>
 
-                                .fast-add .fa-inr:hover {
-                                    opacity: .6;
-                                }
+                                <div class="rt" style="width:calc(50% - 6px);">
+                                    <div class="fw6 mb12">
+                                        <p>Bis</p>
+                                    </div>
 
-                                .fast-add .fa-inr p {
-                                    text-align: center;
-                                }
+                                    <div class="input tran-all-cubic">
+                                        <div class="input-outer">
+                                            <input type="time" autocomplete="off" name="end" placeholder="16:00" class="tran-all">
+                                        </div>
+                                    </div>
+                                </div>
 
-                                .delete {
-                                    height: 42px;
-                                    width: 42px;
-                                    border-radius: 50%;
-                                    cursor: pointer;
-                                    position: absolute;
-                                    top: 50%;
-                                    transform: translateY(-50%);
-                                    right: 24px;
-                                }
+                                <div class="cl"></div>
 
-                                .delete:hover {
-                                    background: rgba(0, 0, 0, .24);
-                                }
-
-                                .delete p {
-                                    text-align: center;
-                                    color: #333;
-                                    line-height: 53px;
-                                }
-                            </style>
+                            </div>
 
                             <div class="fast-add rt">
 
@@ -118,38 +94,12 @@ if (isset($_REQUEST['id']) && $admin->isAdmin()) {
                                 </button>
                             </div>
 
-
-                            <div style="width:calc(50% - 72px);" class="rt">
-
-                                <div class="lt" style="width:calc(50% - 6px);">
-                                    <div class="fw6 mb12">
-                                        <p class="cf">Von</p>
-                                    </div>
-
-                                    <div class="input tran-all-cubic mb62">
-                                        <div class="input-outer">
-                                            <input type="text" autocomplete="off" name="start" placeholder="08:00" class="tran-all" value="08:00">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="rt" style="width:calc(50% - 6px);">
-                                    <div class="fw6 mb12">
-                                        <p class="cf">Bis</p>
-                                    </div>
-
-                                    <div class="input tran-all-cubic mb62">
-                                        <div class="input-outer">
-                                            <input type="text" autocomplete="off" name="end" placeholder="16:00" class="tran-all" value="16:00">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="cl"></div>
-
-                            </div>
-
                             <div class="cl"></div>
+
+                            <div class="info-box lila fw4 mt12 hasIcon">
+                                <p class="icon"><i class="material-icons md-24">help</i></p>
+                                <p class="text">Klicke auf das Kalendersymbol, um ein Datum auszuwählen</p>
+                            </div>
 
                         </div>
                     </div>

@@ -9,6 +9,19 @@
 
     <div class="inr">
 
+        <div class="menu mt24">
+            <ul>
+                <a href="<?php echo $url["main"]; ?>">
+                    <li class="point tran-all">
+                        <div class="point-inr">
+                            <p class="icon"><i class="material-icons md-24">arrow_back_ios</i>&nbsp;</p>
+                            <p class="text">zurück zum Shop</p>
+                        </div>
+                    </li>
+                </a>
+            </ul>
+        </div>
+
         <div class="menu-heading">
             <p>Übersicht</p>
         </div>
@@ -32,17 +45,8 @@
                                                     echo 'active';
                                                 } ?>">
                         <div class="point-inr">
-                            <p class="icon"><i class="material-icons md-24">sms</i>&nbsp;</p>
+                            <p class="icon"><i class="material-icons md-24">inbox</i>&nbsp;</p>
                             <p class="text">Nachrichten</p>
-                        </div>
-                    </li>
-                </a>
-
-                <a href="<?php echo $url["main"]; ?>">
-                    <li class="point tran-all">
-                        <div class="point-inr">
-                            <p class="icon"><i class="material-icons md-24">arrow_back</i>&nbsp;</p>
-                            <p class="text">Zurück zum Shop</p>
                         </div>
                     </li>
                 </a>
@@ -147,7 +151,7 @@
                                                     echo 'active';
                                                 } ?>">
                         <div class="point-inr">
-                            <p class="icon"><i class="material-icons md-24">mail</i>&nbsp;</p>
+                            <p class="icon"><i class="material-icons md-24">mark_as_unread</i>&nbsp;</p>
                             <p class="text">Mailer</p>
                         </div>
                     </li>

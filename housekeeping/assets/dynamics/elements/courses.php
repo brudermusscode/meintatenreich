@@ -147,7 +147,12 @@ if (isset($elementInclude) && $admin->isAdmin()) {
                         ?>
 
 
-                            <p class="cf fw4 mt24">Nächster Termin</p>
+                            <div class="disfl fldirrow" style="color:var(--color-lila);font-weight:500;">
+                                <p class="mr12">Nächster Termin</p>
+                                <p>
+                                    <i class="material-icons md-24">next_plan</i>
+                                </p>
+                            </div>
 
                             <content-card class="mt8 posrel">
                                 <div class="mshd-1 normal-box">
@@ -200,9 +205,8 @@ if (isset($elementInclude) && $admin->isAdmin()) {
 
                 </div>
 
-
-                <div class="pv18 ph32" style="background:rgba(0,0,0,.04);">
-                    <div class="lt mr32" style="background:rgba(0,0,0,.12);height:42px;width:42px;border-radius:50%;">
+                <div class="pv18 ph32 bottom">
+                    <div class="inr lt mr32" style="height:42px;width:42px;border-radius:50%;">
                         <p class="tac course-status" style="line-height:58px;">
                             <i class="material-icons md-28">trip_origin</i>
                         </p>
