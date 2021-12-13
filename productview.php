@@ -144,7 +144,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                 <p><i class="icon-star-empty"></i></p>
                                 <p class="ml12 trimfull">Merken</p>
                             <?php } else { ?>
-                                <p><i class="icon-star-filled"></i></p>
+                                <p><i class="icon-star"></i></p>
                                 <p class="ml12 trimfull">Gemerkt</p>
                             <?php } ?>
                         </div>
@@ -188,6 +188,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                             border: 3px solid #03a9f4;
                         }
                     </style>
+
                     <!-- ALL IMAGES OVERVIEW -->
                     <div class="image-preview--small lt">
                         <ul data-action="change-product-image">
@@ -251,7 +252,6 @@ include_once $sroot . "/assets/templates/global/header.php";
                         <li class="mshd-1"><?php echo $p->category_name; ?></li>
                     </ul>
                 </div>
-
 
                 <!-- COMMENT SECTION -->
                 <div class="po-comments">
@@ -403,7 +403,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         WHERE products_ratings_comments.uid = customer.id 
                                         AND products_ratings_comments.pid = ? 
                                         AND products_ratings_comments.up > products_ratings_comments.down 
-                                        AND products_ratings_comments.up >= 2 
+                                        AND products_ratings_comments.up > 6 
                                         ORDER BY up 
                                         DESC LIMIT 6
                                     ");
@@ -430,12 +430,12 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         $when = ($timeAgoObject->makeAgo($convertedTime));
 
                                         // get all comment's votes
-                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_comments_votes WHERE cid = ? AND vote = 'up' AND active = '1'");
+                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments WHERE id = ?");
                                         $getCommentsVotes->execute([$c->commentid]);
-                                        $cv = $getCommentsVotes->fetch();
+                                        $commentUpvotes = $getCommentsVotes->fetch()->up;
 
                                         // check my vote
-                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_comments_votes WHERE uid = ? AND cid = ? AND active = '1'");
+                                        $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments_votes WHERE uid = ? AND rid = ?");
                                         $getMyCommentsVotes->execute([$my->id, $c->commentid]);
                                         $mcv = $getMyCommentsVotes->fetch();
 
@@ -459,35 +459,24 @@ include_once $sroot . "/assets/templates/global/header.php";
                                             </div>
 
                                             <!-- Vote up/down comment -->
-                                            <div class="action-outer rt" data-action="comment-vote" data-json='[{"cid":"<?php echo $c->commentid; ?>", "pid":"<?php echo $c->pid; ?>", "uid":"<?php echo $c->uid; ?>"}]'>
-                                                <div class="up button disfl fldirrow
-                                                            <?php
+                                            <?php if ($loggedIn) { ?>
 
-                                                            if ($getMyCommentsVotes->rowCount() > 0 && $mcv->vote === 'up') {
-                                                                echo ' white';
-                                                            } else {
-                                                                echo ' blue';
-                                                            }
+                                                <div class="action-outer rt <?php if ($getMyCommentsVotes->rowCount() > 0) echo "voted";
+                                                                            else echo "unvoted"; ?>" data-action="productview:ratings,vote" data-json='[{"rid":"<?php echo $cn->commentid; ?>", "pid":"<?php echo $cn->pid; ?>"}]'>
 
-                                                            ?>" data-json='[{"vote":"up"}]'>
-                                                    <p><i class="icon-thumbs-up"></i></p>
-                                                    <p class="ml8"><?php echo $getCommentsVotes->rowCount(); ?></p>
-                                                </div>
-                                                <div class="down button
-                                                            <?php
+                                                    <div class="up button disfl fldirrow" data-json='[{"vote":"1"}]'>
+                                                        <p><i class="icon-thumbs-up"></i></p>
+                                                        <p class="ml8"><?php echo $commentUpvotes; ?></p>
+                                                    </div>
 
-                                                            if ($getMyCommentsVotes->rowCount() > 0 && $mcv->vote === 'down') {
-                                                                echo ' white ';
-                                                            } else {
-                                                                echo ' blue ';
-                                                            }
+                                                    <div class="down button" data-json='[{"vote":"0"}]'>
+                                                        <p><i class="icon-thumbs-down"></i></p>
+                                                    </div>
 
-                                                            ?>" data-json='[{"vote":"down"}]'>
-                                                    <p><i class="icon-thumbs-down"></i></p>
+                                                    <div class="cl"></div>
                                                 </div>
 
-                                                <div class="cl"></div>
-                                            </div>
+                                            <?php } ?>
 
                                             <div class="cl"></div>
                                         </div>
@@ -515,6 +504,7 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         FROM products_ratings_comments, customer 
                                         WHERE products_ratings_comments.uid = customer.id 
                                         AND products_ratings_comments.pid = ? 
+                                        AND products_ratings_comments.up <= '6'
                                         ORDER BY products_ratings_comments.id 
                                         DESC LIMIT 6
                                     ");
@@ -541,15 +531,15 @@ include_once $sroot . "/assets/templates/global/header.php";
                                         $when = ($timeAgoObject->makeAgo($convertedTime));
 
                                         // get comment's votes
-                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE cid = ? AND vote = 'up'");
+                                        $getCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments WHERE id = ?");
                                         $getCommentsVotes->execute([$cn->commentid]);
-                                        $cv = $getCommentsVotes->fetch();
+                                        $commentUpvotes = $getCommentsVotes->fetch()->up;
 
                                         if ($loggedIn) {
+
                                             // check my comment's vote
-                                            $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_votes WHERE uid = ? AND cid = ?");
+                                            $getMyCommentsVotes = $pdo->prepare("SELECT * FROM products_ratings_comments_votes WHERE uid = ? AND rid = ?");
                                             $getMyCommentsVotes->execute([$my->id, $cn->commentid]);
-                                            $mcv = $getMyCommentsVotes->fetch();
                                         }
 
                                     ?>
@@ -573,30 +563,16 @@ include_once $sroot . "/assets/templates/global/header.php";
 
                                             <!-- Vote up/down comment -->
                                             <?php if ($loggedIn) { ?>
-                                                <div class="action-outer rt" data-action="comment-vote" data-json='[{"cid":"<?php echo $cn->commentid; ?>", "pid":"<?php echo $s['pid']; ?>", "uid":"<?php echo $s['uid']; ?>"}]'>
-                                                    <div class="up button disfl fldirrow
-                                                            <?php
 
-                                                            if ($getMyCommentsVotes->rowCount() > 0 && $mcv->vote === 'up') {
-                                                                echo ' white';
-                                                            } else {
-                                                                echo ' blue';
-                                                            }
+                                                <div class="action-outer rt <?php if ($getMyCommentsVotes->rowCount() > 0) echo "voted";
+                                                                            else echo "unvoted"; ?>" data-action="productview:ratings,vote" data-json='[{"rid":"<?php echo $cn->commentid; ?>", "pid":"<?php echo $cn->pid; ?>"}]'>
 
-                                                            ?>" data-json='[{"vote":"up"}]'>
+                                                    <div class="up button disfl fldirrow" data-json='[{"vote":"1"}]'>
                                                         <p><i class="icon-thumbs-up"></i></p>
-                                                        <p class="ml8"><?php echo $getCommentsVotes->rowCount(); ?></p>
+                                                        <p class="ml8"><?php echo $commentUpvotes; ?></p>
                                                     </div>
-                                                    <div class="down button
-                                                            <?php
 
-                                                            if ($getCommentsVotes->rowCount() > 0 && $mcv->vote === 'down') {
-                                                                echo ' white ';
-                                                            } else {
-                                                                echo ' blue ';
-                                                            }
-
-                                                            ?>" data-json='[{"vote":"down"}]'>
+                                                    <div class="down button" data-json='[{"vote":"0"}]'>
                                                         <p><i class="icon-thumbs-down"></i></p>
                                                     </div>
 

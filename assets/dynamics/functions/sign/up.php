@@ -27,10 +27,10 @@ if (
     // variablize
     $agb = htmlspecialchars($_REQUEST["agb"]);
     $inputmail = htmlspecialchars($_REQUEST["mail"]);
-    $password = $_REQUEST["password"];
-    $password2 = $_REQUEST["password2"];
     $remoteaddr = $_SERVER['REMOTE_ADDR'];
     $captcha = $_REQUEST["g-recaptcha-response"];
+    $password = $_REQUEST["password"];
+    $password2 = $_REQUEST["password2"];
 
     // check if cookies are accepted
     if (isset($_COOKIE['cookies']) && $_COOKIE['cookies'] === 'true') {
@@ -59,8 +59,8 @@ if (
                             $key = $login->createString(64);
                             $displayname = 'customer-' . $login->createString(12);
 
-                            // hash password
-                            $password = password_hash($password, PASSWORD_DEFAULT);
+                            // encrypt password using function from login object
+                            $password = $login->encryptPassword($password);
 
                             // insert new customer
                             $insertCustomer = $pdo->prepare("INSERT INTO customer (displayname, mail, password, remoteaddr, httpx) VALUES (?,?,?,?,?)");

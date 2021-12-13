@@ -233,9 +233,11 @@ $(function() {
 
     // add rating >> activate send button ~ works
     .on('keyup', '[data-action="po-comment"]', function(){
-            
+
         let val = $.trim($(this).val().length);
-        let sendButton = $(this).closest("form").find('button[type="submit"]');
+        let sendButton = $(this).closest("form").find('button');
+
+        console.log(sendButton);
 
         if(val >= 3) {
             sendButton.addClass('active');
@@ -245,7 +247,8 @@ $(function() {
 
     })
 
-    // submit rating
+    // submit rating ~ works
+    // ! TODO: sucks, make better pls
     .on('submit', '[data-form="productview:rating"]', function(e){
 
         e.preventDefault();
@@ -327,68 +330,44 @@ $(function() {
         }
     })
 
-    // Comment voting
-    .on('click', '[data-action="comment-vote"] .button', function() {
+    // vote for ratings
+    // ! TODO: will suck, make better too pls
+    .on('click', '[data-action="productview:ratings,vote"] .button', function() {
 
-        let t = $(this);
-        let vote = t.data('json')[0].vote;
-        let cid = t.parent().data('json')[0].cid;
-        let pid = t.parent().data('json')[0].pid;
-        let uid = t.parent().data('json')[0].uid;
-        let action = 'comment-vote';
-        let res;
-        let amt = parseInt(t.parent().find('.up p:nth-of-type(2)').text());
-        
-        $.ajax({
+        let $t, $actionCard, url, vote, rid, pid;
 
-            data: { action: action, vote: vote, cid: cid, pid: pid, uid: uid },
-            url: '/ajax/commentvote',
-            method: 'POST',
-            type: 'TEXT',
-            success: function(data) {
-                
-                switch(data) {
-                    case '':
-                        res = 'Bitte logge Dich ein, um fortzufahren.';
-                        break;
-                    case '0':
-                        res = 'Ein unbekannter Fehler ist aufgetreten.';
-                        break;
-                    case '1':
-                        res = 'Der Kommentar existiert nicht!';
-                        break;
-                    case 'up':
-                        if(!(t.parent().find('.up').hasClass('white'))) {
-                            t.parent().find('.up p:nth-of-type(2)').html(amt + 1);
+        $t = $(this);
+        $actionCard = $t.closest(".action-outer");
+        vote = $t.data('json')[0].vote;
+        rid = $t.parent().data('json')[0].rid;
+        pid = $t.parent().data('json')[0].pid;
+        url = dynamicHost + "/ajax/functions/productview/rate-vote";
+
+        if($t.parent().hasClass("unvoted")) {
+
+            $.ajax({
+
+                url: url,
+                data: { vote: vote, rid: rid, pid: pid },
+                method: 'POST',
+                type: 'JSON',
+                success: function(data) {
+
+                    if(data.status) {
+
+                        $actionCard.addClass("voted").removeClass("unvoted");
+
+                        if(vote == "1") {
+                            $t.find("p:nth-of-type(2)").html(data.voteCount);
                         }
-                        t.toggleClass('blue white');
-                        t.parent().find('.down').addClass('blue').removeClass('white');
-                        res = 'Votum abgegeben!';
-                        break;
-                    case 'down':
-                        if(t.parent().find('.up').hasClass('white')) {
-                            t.parent().find('.up p:nth-of-type(2)').html(amt - 1);
-                        }
-                        t.toggleClass('blue white');
-                        t.parent().find('.up').addClass('blue').removeClass('white');
-                        res = 'Votum abgegeben!';
-                        
-                        break;
-                    case 'inactive':
-                        if(t.parent().find('.up').hasClass('white')) {
-                            t.parent().find('.up p:nth-of-type(2)').html(amt - 1);
-                        }
-                        t.parent().find('.button').addClass('blue').removeClass('white');
-                        res = 'Votum entfernt!';
-                        break;
+                    }
+
+                    showDialer(data.message);
+                },
+                error: function(data) {
+                    console.error(data.responseText);
                 }
-
-                showDialer(res);
-
-            }
-
-        });
-
+            });
+        }
     });
-
 });

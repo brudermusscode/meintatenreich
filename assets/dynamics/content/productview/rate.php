@@ -200,7 +200,7 @@ if (
 
                                     <div>
                                         <button type="submit" class="po-c-send mshd-1 tran-all">
-                                            <i class="icon-direction-outline"></i>
+                                            <i class="icon-ok-circled"></i>
                                         </button>
                                     </div>
                                 </form>

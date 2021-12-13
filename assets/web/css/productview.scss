@@ -239,97 +239,122 @@
       }
     }
   }
-}
 
-/* PRODUCT CATEGORIES */
-.product-overview .product-categories {
-  padding: 24px 0 0 6px;
-}
-.product-overview .product-categories ul li {
-  padding: 0 24px;
-  line-height: 38px;
-  height: 38px;
-  border-radius: 3px;
+  .product-categories {
+    padding: 24px 0 0 6px;
+
+    ul li {
+      padding: 0 24px;
+      line-height: 38px;
+      height: 38px;
+      border-radius: 3px;
+    }
+  }
 }
 
 /* COMMENT SECTION */
-.product-overview .hd {
-  color: #b3926f;
-  font-size: 1.8em;
-  text-align: center;
-}
-.product-overview .c-hd {
-  padding: 0 32px 12px 0;
-}
-.product-overview .all-comments {
-  margin-top: 12px;
-}
-.product-overview .all-comments .comment {
-  position: relative;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: white;
-  border-radius: 3px;
-}
-.product-overview .all-comments .comment .user-outer .uo-image {
-  height: 42px;
-  width: 42px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 50%;
-}
-.product-overview .all-comments .comment .user-outer .uo-image img {
-  height: 100%;
-  width: 100%;
-}
-.product-overview .all-comments .comment .user-outer .uo-name {
-  line-height: 42px;
-  margin-left: 8px;
-  color: #383838;
-  width: calc(100% - 2 * 70px);
-}
-.product-overview .all-comments .comment .user-outer .uo-name p {
-  font-family: "Indie Flower", cursive;
-  font-size: 1.4em;
-}
-.product-overview .all-comments .comment .user-outer .uo-date {
-  white-space: nowrap;
-  text-align: right;
-  line-height: 42px;
-  padding-right: 12px;
-}
-.product-overview .all-comments .comment .the-comment {
-  padding: 0 8px 0 8px;
-}
-.product-overview .all-comments .comment .the-comment p {
-  font-weight: 200;
-}
-.product-overview .all-comments .comment .action-outer {
-  margin-top: 12px;
-}
-.product-overview .all-comments .comment .action-outer .button {
-  line-height: 22px;
-  height: 22px;
-  padding: 0 12px;
-  border-radius: 3px;
-  font-size: 1em;
-  float: left;
-  margin-right: 6px;
-  cursor: pointer;
-}
-.product-overview .all-comments .comment .action-outer .button:hover {
-  opacity: 0.8;
-}
-.product-overview .all-comments .comment .action-outer .button:active {
-  opacity: 0.6;
-}
-.product-overview .all-comments .comment .action-outer .button.blue {
-  background: #2195f2;
-  color: white;
-}
-.product-overview .all-comments .comment .action-outer .button.white {
-  background: #fff;
-  color: #999;
+.product-overview {
+  .hd {
+    color: #b3926f;
+    font-size: 1.8em;
+    text-align: center;
+  }
+
+  .c-hd {
+    padding: 0 32px 12px 0;
+  }
+
+  .all-comments {
+    margin-top: 12px;
+
+    .comment {
+      position: relative;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: white;
+      border-radius: 3px;
+
+      .user-outer {
+        .uo-image {
+          height: 42px;
+          width: 42px;
+          position: relative;
+          overflow: hidden;
+          border-radius: 50%;
+
+          img {
+            height: 100%;
+            width: 100%;
+          }
+        }
+
+        .uo-name {
+          line-height: 42px;
+          margin-left: 8px;
+          color: #383838;
+          width: calc(100% - 2 * 70px);
+
+          p {
+            font-family: "Indie Flower", cursive;
+            font-size: 1.4em;
+          }
+        }
+
+        .uo-date {
+          white-space: nowrap;
+          text-align: right;
+          line-height: 42px;
+          padding-right: 12px;
+        }
+      }
+
+      .the-comment {
+        padding: 0 8px 0 8px;
+
+        p {
+          font-weight: 200;
+        }
+      }
+
+      .action-outer {
+        margin-top: 12px;
+
+        .button {
+          line-height: 22px;
+          height: 22px;
+          padding: 0 12px;
+          border-radius: 3px;
+          font-size: 1em;
+          float: left;
+          margin-right: 6px;
+        }
+
+        &.voted {
+          .button {
+            background: #fff;
+            color: #999;
+          }
+        }
+
+        &.unvoted {
+          .button {
+            background: #2195f2;
+            color: white;
+
+            cursor: pointer;
+
+            &:hover {
+              opacity: 0.8;
+            }
+
+            &:active {
+              opacity: 0.6;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /* COMMENT SECTION */

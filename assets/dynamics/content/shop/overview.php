@@ -91,7 +91,7 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
         <div data-element="select" data-action="products:sort,category">
             <div class="select rd3 mshd-1">
                 <p><?php echo $dropdownCategoryText; ?></p>
-                <p class="ml8"><i class="icon-down-open-1"></i></p>
+                <p class="ml8"><i class="icon-down-open"></i></p>
             </div>
 
             <div class="list mshd-2 rd3 tran-all-cubic">
@@ -122,7 +122,7 @@ if (isset($_REQUEST['action'], $_REQUEST['order'])) {
         <div data-element="select" data-action="sort-products">
             <div class="select rd3 mshd-1">
                 <p><?php echo $dropdownOrderText; ?></p>
-                <p class="ml8"><i class="icon-down-open-1"></i></p>
+                <p class="ml8"><i class="icon-down-open"></i></p>
             </div>
 
             <div class="list mshd-2 rd3 tran-all-cubic">

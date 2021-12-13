@@ -131,4 +131,18 @@ class Login
         setcookie('TOK', '', time() - 1, "/");
         setcookie('SER', '', time() - 1, "/");
     }
+
+    public static function encryptPassword(string $password)
+    {
+        $md5Password = md5($password);
+        $hashedMD5password = password_hash($md5Password, PASSWORD_ARGON2ID);
+
+        return $hashedMD5password;
+    }
+
+    public static function verifyPassword(string $password, $hash)
+    {
+        $md5Password = md5($password);
+        return password_verify($md5Password, $hash);
+    }
 }

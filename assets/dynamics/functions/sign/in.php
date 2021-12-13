@@ -35,7 +35,7 @@ if (
             $u = $getUserData->fetch();
             $loginpass = $u->password;
 
-            if (password_verify($pass, $loginpass)) {
+            if ($login->verifyPassword($pass, $loginpass)) {
 
                 // begin mysql transaction
                 $pdo->beginTransaction();
