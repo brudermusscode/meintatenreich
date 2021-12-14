@@ -1,0 +1,14 @@
+# files
+mysql/_.config.php
+pdf_test.php
+K4Bzb5RM72YpGGC.php
+mysql/objects/Login.php
+
+# dirs
+pdfbills/
+USED/
+assets/web/img/products
+assets/web/css/compiled
+_SECRET/
+_TOOLSET/
+**/*.min.*
