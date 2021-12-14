@@ -148,6 +148,11 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                             <p class="pt4">Neue Benachrichtigungs-Anzeige, welche genauere Informationen zum Bereich und der genauen Änderung anzeigt</p>
                         </div>
 
+                        <div class="info-box hasIcon lila mb12 mt12">
+                            <p class="icon"><i class="material-icons">extension</i></p>
+                            <p class="text"><strong>Wusstest du:</strong> Wenn du den Mauszeiger auf eine Benachrichtigung unten rechts in der Ecke hälst, verschwindet sie erst, wenn du den Mauszeiger wieder wegbewegst!</p>
+                        </div>
+
                         <div class="chl-box--p">
                             <div class="icon"><i class="material-icons md-24">keyboard_arrow_right</i></div>
                             <p class="pt4">Verbesserte Filter-Funktion auf jeglichen Seiten</p>

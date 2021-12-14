@@ -11,12 +11,17 @@
 
 >>>> app
 ++ add some sort of save button for the app settings
+++ shop settings won't save?
 
 >>>> courses
 ++ maybe add confirmation banner for archiving courses
 ++ add "no dates" banner when all dates were removed
 ++ show newly added course on course-banner
 ++ old dates still be shown
+++ let people get interested in courses and send mails when new dates had been added
 
 >>>> ratings
 ++ do something with ratings, they suck
+
+- Shop
+++ Archived products will be shown when sorting shop start page
