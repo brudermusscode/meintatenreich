@@ -1,9 +1,8 @@
 <p align="center">
   <img src="https://statics.meintatenreich.de/img/global/logo-green.svg" alt="The Logo!"/>
 </p>
-<p align="center">
+
 # MeinTatenReich
-</p>
 Welcome to MeinTatenReich, an online shop for slate plates with custom quotes! I coded this shop for a customer back in 2018 and took some time now to update it to the latest PHP version while using PHP Data Objects (PDO) library.
 
 ## About the Shop
