@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.products.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.courses.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.orders.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.messages.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/classes.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $url["css"]; ?>/dashbrd.import.css">
 

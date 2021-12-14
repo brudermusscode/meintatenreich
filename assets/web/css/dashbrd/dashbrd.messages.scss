@@ -1,0 +1,149 @@
+@charset "UTF-8";
+@import "../classes.scss";
+
+.chooser ul.outer {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  line-height: 42px;
+}
+
+.chooser ul.outer li.point {
+  height: 42px;
+  margin-right: 12px;
+  border-radius: 6px;
+  background: rgb(71, 115, 234);
+  color: white;
+  font-weight: 400;
+  padding: 0 12px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.chooser ul.outer li.point.green {
+  background: #4caf50;
+}
+
+.chooser ul.outer li.point.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.chooser ul.outer li.point:hover.active {
+  opacity: 1;
+}
+
+.chooser ul.outer li.point:hover {
+  opacity: 0.8;
+}
+
+.chooser ul.outer li.point p.icon {
+  height: 42px;
+}
+
+.msg-outer {
+  background: white;
+  border-radius: 6px;
+  border: 0px solid white;
+}
+
+.msg-outer.new {
+  border-left: 4px solid #2273df;
+  background: rgb(237, 247, 255);
+}
+
+.msg-outer.fav {
+  border-right: 4px solid #00ac21;
+}
+
+.msg-outer.nofav {
+  background: rgb(244, 239, 223);
+}
+
+.msg-outer.read {
+  background: rgb(223, 244, 226);
+}
+
+.msg-outer .ui {
+  position: relative;
+  width: 260px;
+  height: 100px;
+}
+
+.msg-outer .msg {
+  width: calc(100% - 261px);
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.msg-outer .msg .inr {
+  padding: 24px;
+}
+
+.msg-outer .msg .inr .cat .i {
+  height: 24px;
+  width: 24px;
+  margin-right: 12px;
+}
+
+.msg-outer .msg .inr .cat .i i,
+.msg-outer .msg .inr .cat .t {
+  line-height: 1.2;
+}
+
+.msg-outer .msg .inr .cat .t {
+  color: #383838;
+  font-weight: 600;
+}
+
+.msg-outer .ov {
+  background: rgba(255, 255, 255, 0.84);
+  border-radius: 6px;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 2;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.msg-outer .ov ul {
+  list-style: none;
+  height: 42px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.msg-outer .ov ul li.p {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  line-height: 42px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.msg-outer .ov ul li.p:last-of-type {
+  margin-right: 0px;
+}
+
+.msg-outer .ov ul li.p p.text,
+.msg-outer .ov ul li.p i.material-icons {
+  line-height: 42px;
+  overflow: hidden;
+}
+
+.msg-outer .ov ul li.p:hover {
+  margin-top: -4px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.msg-outer .ui:hover .ov,
+.msg-outer .msg:hover .ov {
+  visibility: visible;
+  opacity: 1;
+}

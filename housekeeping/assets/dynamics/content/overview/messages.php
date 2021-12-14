@@ -102,10 +102,10 @@ if (
 
             <div class="msg-outer mshd-1 posrel <?php if ($s->isread === '0') echo 'new'; ?> <?php if ($s->fav === '1') echo 'fav'; ?> tran-all-cubic" data-react="overview:messages">
 
-                <div class="ui lt posabs w100 h100 l0 t0">
+                <div class="ui lt">
 
                     <?php if ($overlay === true) { ?>
-                        <div class="ov us posabs t0 l0 w100 h100 tran-all">
+                        <div class="ov us tran-all">
                             <ul class="ov-inr almid posabs">
                                 <li class="p tac tran-all-cubic posrel" data-tooltip="E-Mail senden" data-tooltip-align="bottom" data-action="mail:custom" data-json='[{"which":"msg", "rel":"<?php echo $ref; ?>"}]'>
                                     <p class="text">
@@ -116,14 +116,14 @@ if (
                         </div>
                     <?php } ?>
 
-                    <div class="posabs almid-w">
+                    <div class="pv24 ph24">
                         <div class="name">
                             <p class="fw6 trimfull w100 c3">
                                 <?php echo $fullname; ?>
                             </p>
                         </div>
-                        <div class="mail">
-                            <p class="fw4 trimfull w100"><?php echo $ref; ?></p>
+                        <div class="mail posrel w100">
+                            <p class="fw4 trimfull"><?php echo $ref; ?></p>
                         </div>
                     </div>
 
@@ -131,8 +131,8 @@ if (
 
                 <div class="msg rt posrel">
 
-                    <div class="ov ms posabs t0 l0 w100 h100 tran-all">
-                        <ul class="ov-inr almid posabs">
+                    <div class="ov">
+                        <ul class="ov-inr">
 
                             <form data-form="overview:messages,actions">
 
@@ -195,9 +195,6 @@ if (
                             <p class="trimfull w100 veralmid c3" style="height:24px;" data-react="overview:messages,open,fulltext">
                                 <?php echo $s->msg; ?>
                             </p>
-                        </div>
-                        <div class="timestamp mt8">
-                            <p class="c7 tar trimfull w100 veralmid"><?php echo $when; ?></p>
                         </div>
                     </div>
                 </div>

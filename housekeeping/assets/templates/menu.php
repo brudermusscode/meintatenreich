@@ -26,60 +26,9 @@
             <p>Übersicht</p>
         </div>
 
-        <style>
-            .changelog {
-                background: rgba(228, 79, 213, 1);
-                padding: 8px 0;
-                border-bottom: 1px solid rgba(255, 255, 255, .12);
-                border-top: 1px solid rgba(255, 255, 255, .12);
-                margin-bottom: 12px;
-                transition: all .1s linear;
-            }
-
-            .changelog:hover {
-                background: rgba(166, 88, 246, 1);
-            }
-
-            .changelog p {
-                color: white !important;
-            }
-
-            .changelog .inr {
-                padding: 0 38px 2px;
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: flex-start;
-                line-height: 38px !important;
-                height: 38px;
-                overflow: hidden;
-            }
-
-            .changelog .inr .icon {
-                margin-right: 24px;
-                margin-top: 8px;
-            }
-
-            .changelog .inr .text {
-                font-size: 0.8em;
-                font-weight: 600;
-                padding-top: 2px;
-            }
-        </style>
 
         <div class="menu">
             <ul>
-
-                <a href="<?php echo $url["dashbrd"]; ?>/changelog">
-                    <li class="tran-all <?php if ($pid === 'overview:changelog') {
-                                            echo 'active';
-                                        } ?> changelog">
-                        <div class="disfl fldirrow ph24 inr">
-                            <p class="icon"><i class="material-icons md-24">change_circle</i>&nbsp;</p>
-                            <p class="text">Was ist neu?</p>
-                        </div>
-                    </li>
-                </a>
 
                 <a href="<?php echo $url["dashbrd"]; ?>/black">
                     <li class="point tran-all <?php if ($pid === 'aindex') {
@@ -99,6 +48,17 @@
                         <div class="point-inr">
                             <p class="icon"><i class="material-icons md-24">inbox</i>&nbsp;</p>
                             <p class="text">Nachrichten</p>
+                        </div>
+                    </li>
+                </a>
+
+                <a href="<?php echo $url["dashbrd"]; ?>/changelog">
+                    <li class="changelog point tran-all <?php if ($pid === 'overview:changelog') {
+                                                            echo 'active';
+                                                        } ?>">
+                        <div class="point-inr">
+                            <p class="icon"><i class="material-icons md-24">change_circle</i>&nbsp;</p>
+                            <p class="text">Was ist neu?</p>
                         </div>
                     </li>
                 </a>
@@ -199,7 +159,7 @@
             <ul>
 
                 <a href="<?php echo $url["dashbrd"]; ?>/functions/mailer">
-                    <li class="point tran-all <?php if ($pid === 'func:mailer') {
+                    <li class="point tran-all <?php if ($pid === 'functions:mailer') {
                                                     echo 'active';
                                                 } ?>">
                         <div class="point-inr">
