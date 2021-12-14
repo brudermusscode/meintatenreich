@@ -29,6 +29,11 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) && $admin->isAdmin()) 
 
         <wide-container style="padding-top:62px;" data-json='[{"id":"<?php echo $id; ?>"}]'>
 
+            <div class="info-box hasIcon lila mb24">
+                <p class="icon"><i class="material-icons md-24">help</i></p>
+                <p class="text">Zur Zeit gibt es einen Fehler, bei dem Bilder nicht beim ersten Versuch hochgeladen werden. Hier muss erst ein Bild ausgewählt werden, welches nicht hochgeladen werden soll und im Anschluss die Bilder, die hochgeladen werden sollen. An diesem Fehler wird gearbeitet</p>
+            </div>
+
             <div style="visibility:hidden;height:0px;width:0px;opacity:0;overflow:hidden;">
                 <form data-form="uploadFiles:products,add" method="POST" enctype="multipart/form-data" action>
                     <input name="pictures" type="file" multiple accept="image/*" />

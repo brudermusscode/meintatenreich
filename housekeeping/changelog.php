@@ -236,6 +236,16 @@ include_once $sroot . "/housekeeping/assets/templates/head.php";
                             <p class="pt4">Deaktivierungs-Funktion</p>
                         </div>
 
+                        <div class="chl-box--p">
+                            <div class="icon"><i class="material-icons md-24">keyboard_arrow_right</i></div>
+                            <p class="pt4">Kategorie "Kein Kategorie" kann nicht mehr bearbeitet werden</p>
+                        </div>
+
+                        <div class="chl-box--p">
+                            <div class="icon"><i class="material-icons md-24">keyboard_arrow_right</i></div>
+                            <p class="pt4">Funktionelle Optimierungen für Kategorie-Bearbeitung, hinzufügen und löschen</p>
+                        </div>
+
                     </div>
 
                 </div>
